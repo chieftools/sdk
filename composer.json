@@ -1,0 +1,23 @@
+{
+    "name": "irongate/integrationchief",
+    "description": "Tools for integrating Chief Tools with Account Chief.",
+    "license": "proprietary",
+    "require": {
+        "php": ">=7.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "illuminate/support": "^5.7",
+        "laravel/socialite": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "IronGate\\Integration\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "IronGate\\Integration\\ServiceProvider"
+            ]
+        }
+    }
+}

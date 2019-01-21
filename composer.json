@@ -5,13 +5,17 @@
     "require": {
         "php": ">=7.2",
         "guzzlehttp/guzzle": "^6.3",
-        "illuminate/support": "^5.7",
-        "laravel/socialite": "^4.0"
+        "laravel/framework": "^5.7",
+        "laravel/socialite": "^4.0",
+        "ramsey/uuid": "^3.8"
     },
     "autoload": {
         "psr-4": {
             "IronGate\\Integration\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
         "laravel": {
@@ -19,5 +23,10 @@
                 "IronGate\\Integration\\ServiceProvider"
             ]
         }
+    },
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
     }
 }

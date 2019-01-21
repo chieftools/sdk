@@ -2,7 +2,6 @@
 
 namespace IronGate\Integration\Socialite;
 
-use GuzzleHttp\ClientInterface;
 use Laravel\Socialite\Two\User;
 use IronGate\Integration\API\Client;
 use Laravel\Socialite\Two\AbstractProvider;

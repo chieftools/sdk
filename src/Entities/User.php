@@ -3,6 +3,7 @@
 namespace IronGate\Integration\Entities;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use IronGate\Integration\Concerns\UsesUUID;
 use IronGate\Integration\Concerns\Observable;
@@ -33,6 +34,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'name',
         'email',
+        'password',
         'timezone',
         'chief_id',
     ];
@@ -64,6 +66,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         if (!$this->exists) {
             $this->attributes['email'] = strtolower(trim($value));
+        }
+    }
+    public function setPasswordAttribute($value): void
+    {
+        if (!empty($value)) {
+            $this->attributes['password'] = Hash::make($value);
         }
     }
     public function setTimezoneAttribute($value): void

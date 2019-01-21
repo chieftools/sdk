@@ -38,11 +38,13 @@ class ServiceProvider extends IlluminateServiceProvider
                 /** @var \Illuminate\Console\Scheduling\Schedule $schedule */
                 $schedule = $this->app->make(Schedule::class);
 
-                $schedule->command(Commands\QueueHealthCheck::class)
-                         ->appendOutputTo(storage_path('logs/schedule.log'))
-                         ->runInBackground()
-                         ->withoutOverlapping()
-                         ->everyMinute();
+                if (!empty(config('queue.monitor'))) {
+                    $schedule->command(Commands\QueueHealthCheck::class)
+                             ->appendOutputTo(storage_path('logs/schedule.log'))
+                             ->runInBackground()
+                             ->withoutOverlapping()
+                             ->everyMinute();
+                }
             });
         }
     }

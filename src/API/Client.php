@@ -1,8 +1,10 @@
 <?php
 
-namespace IronGate\Integration;
+namespace IronGate\Integration\API;
 
-class Client extends \GuzzleHttp\Client
+use GuzzleHttp\Client as HttpClient;
+
+class Client extends HttpClient
 {
     /**
      * Get the base URL for the account chief.

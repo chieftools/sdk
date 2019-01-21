@@ -12,16 +12,7 @@ class ServiceProvider extends IlluminateServiceProvider
 {
     public function boot(): void
     {
-        $this->publishes([
-            __DIR__ . '/../config/chief.php' => config_path('chief.php'),
-        ], 'chief-config');
-
-        $this->publishes([
-            __DIR__ . '/../database/migrations/' => database_path('migrations'),
-        ], 'chief-migrations');
-
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         $socialite = $this->app->make(Factory::class);
         $socialite->extend('chief', function ($app) use ($socialite) {
@@ -29,6 +20,16 @@ class ServiceProvider extends IlluminateServiceProvider
         });
 
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/chief.php' => config_path('chief.php'),
+            ], 'chief-config');
+
+            $this->publishes([
+                __DIR__ . '/../database/migrations/' => database_path('migrations'),
+            ], 'chief-migrations');
+
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
             $this->commands([
                 Commands\QueueHealthCheck::class,
             ]);

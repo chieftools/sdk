@@ -64,7 +64,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     // Setters
     public function setEmailAttribute($value): void
     {
-        if (!$this->exists) {
+        if (!empty($value)) {
             $this->attributes['email'] = strtolower(trim($value));
         }
     }

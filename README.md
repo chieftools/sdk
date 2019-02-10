@@ -1,4 +1,9 @@
-## Integration Chief 
+## Integration Chief
+
+[![Total Downloads](https://poser.pugx.org/irongate/integrationchief/downloads)](https://packagist.org/packages/irongate/integrationchief)
+[![Monthly Downloads](https://poser.pugx.org/irongate/integrationchief/d/monthly)](https://packagist.org/packages/irongate/integrationchief)
+[![Latest Stable Version](https://poser.pugx.org/irongate/integrationchief/v/stable)](https://packagist.org/packages/irongate/integrationchief)
+[![License](https://poser.pugx.org/irongate/integrationchief/license)](https://packagist.org/packages/irongate/integrationchief)
 
 Tools for integrating Chief Tools with Account Chief.
 

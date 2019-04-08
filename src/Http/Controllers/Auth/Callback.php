@@ -23,6 +23,6 @@ class Callback extends Controller
             config('chief.auth.model')::createOrUpdateFromRemote($remote)
         );
 
-        return redirect()->to(config('chief.auth.redirect'));
+        return redirect()->intended(config('chief.auth.redirect'));
     }
 }

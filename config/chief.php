@@ -2,6 +2,8 @@
 
 return [
 
+    'id' => null,
+
     'auth' => [
 
         'model' => IronGate\Integration\Entities\User::class,

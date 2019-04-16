@@ -31,6 +31,7 @@ class ServiceProvider extends IlluminateServiceProvider
             $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
             $this->commands([
+                Commands\RefreshApps::class,
                 Commands\QueueHealthCheck::class,
             ]);
 

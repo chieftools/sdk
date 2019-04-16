@@ -2,6 +2,7 @@
 
 namespace IronGate\Integration\API;
 
+use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
 
 class Client extends HttpClient
@@ -25,5 +26,53 @@ class Client extends HttpClient
             'base_uri' => self::getBaseUrl(),
             'verify'   => config('services.chief.verify', true),
         ], $config));
+    }
+
+    /**
+     * Get the information for an app by it's ID.
+     *
+     * @param string $id
+     *
+     * @return array
+     */
+    public function app(string $id): array
+    {
+        if (empty($id)) {
+            throw new \RuntimeException('The app ID cannot be empty!');
+        }
+
+        $response = $this->get("/api/app/{$id}");
+
+        if ($response->getStatusCode() !== 200) {
+            throw new \RuntimeException('Could not retrieve Chief app from API.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Get all apps available from the API.
+     *
+     * @param string|null $except        Comma seperated string of apps to exclude
+     * @param string|null $group         The group of apps to retrieve (primary/secondary/...)
+     * @param bool|null   $authenticated Indicate if only authenticated (or un-authenticated) apps should be retrieved
+     *
+     * @return array
+     */
+    public function apps(?string $except = null, ?string $group = null, ?bool $authenticated = null): Collection
+    {
+        $response = $this->get('/api/apps', [
+            'query' => array_filter([
+                'except'        => $except,
+                'group'         => $group,
+                'authenticated' => $authenticated === null ? null : ($authenticated ? '1' : '0'),
+            ]),
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new \RuntimeException('Could not retrieve Chief apps from API.');
+        }
+
+        return collect(json_decode($response->getBody()->getContents(), true));
     }
 }

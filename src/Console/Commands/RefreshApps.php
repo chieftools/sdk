@@ -2,6 +2,7 @@
 
 namespace IronGate\Integration\Console\Commands;
 
+use RuntimeException;
 use Illuminate\Console\Command;
 use IronGate\Integration\API\Client;
 
@@ -28,11 +29,13 @@ class RefreshApps extends Command
      */
     public function handle(Client $api): void
     {
+        $this->warn('Please use the new `chief_apps` helper and/or `chief::bootstrap/dropdown/apps` view instead.');
+
         // Retrieve all apps (except this one) that require authentication
         $apps = $api->apps(config('chief.id'), null, true);
 
         if ($apps->isEmpty()) {
-            throw new \RuntimeException('There are no apps to store!');
+            throw new RuntimeException('There are no apps to store!');
         }
 
         $output = "<?php\n\nreturn " . var_export($apps->all(), true) . ';' . PHP_EOL;

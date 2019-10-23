@@ -2,6 +2,7 @@
 
 namespace IronGate\Integration\API;
 
+use RuntimeException;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
 
@@ -14,7 +15,7 @@ class Client extends HttpClient
      */
     public static function getBaseUrl(): string
     {
-        return config('services.chief.base_url', 'https://account.chief.app');
+        return config('chief.base_url', 'https://account.chief.app');
     }
 
     /**
@@ -38,13 +39,13 @@ class Client extends HttpClient
     public function app(string $id): array
     {
         if (empty($id)) {
-            throw new \RuntimeException('The app ID cannot be empty!');
+            throw new RuntimeException('The app ID cannot be empty!');
         }
 
         $response = $this->get("/api/app/{$id}");
 
         if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException('Could not retrieve Chief app from API.');
+            throw new RuntimeException('Could not retrieve Chief app from API.');
         }
 
         return json_decode($response->getBody()->getContents(), true);
@@ -57,7 +58,7 @@ class Client extends HttpClient
      * @param string|null $group         The group of apps to retrieve (primary/secondary/...)
      * @param bool|null   $authenticated Indicate if only authenticated (or un-authenticated) apps should be retrieved
      *
-     * @return array
+     * @return \Illuminate\Support\Collection
      */
     public function apps(?string $except = null, ?string $group = null, ?bool $authenticated = null): Collection
     {
@@ -70,7 +71,7 @@ class Client extends HttpClient
         ]);
 
         if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException('Could not retrieve Chief apps from API.');
+            throw new RuntimeException('Could not retrieve Chief apps from API.');
         }
 
         return collect(json_decode($response->getBody()->getContents(), true));

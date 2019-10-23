@@ -13,6 +13,7 @@ class ServiceProvider extends IlluminateServiceProvider
     public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../views', 'chief');
 
         $socialite = $this->app->make(Factory::class);
         $socialite->extend('chief', function ($app) use ($socialite) {

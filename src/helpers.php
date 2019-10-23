@@ -53,3 +53,20 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
             : $retriever();
     });
 }
+
+/**
+ * Get the path to the most up-to-date CA bundle file.
+ *
+ * @return string
+ */
+function latest_ca_bundle_file_path(): string
+{
+    $certaintyPath = rescue(function () {
+        /** @var \ParagonIE\Certainty\RemoteFetch $fetch */
+        $fetch = app(ParagonIE\Certainty\RemoteFetch::class);
+
+        return $fetch->getLatestBundle()->getFilePath();
+    }, null, false);
+
+    return $certaintyPath ?? resource_path('files/cacert-2019-08-28.pem');
+}

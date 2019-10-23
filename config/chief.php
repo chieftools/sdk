@@ -27,4 +27,12 @@ return [
 
     ],
 
+    'chronicle' => [
+
+        'url' => 'https://chronicle.devdomein.nl/chronicle/replica/LogbDtnCLxxdWsrtUQKAueytA7igS2p9Y_ZUz8L-QbZ2/',
+
+        'pubkey' => 'Bgcc1QfkP0UNgMZuHzi0hC1hA1SoVAyUrskmSkzRw3E=',
+
+    ],
+
 ];

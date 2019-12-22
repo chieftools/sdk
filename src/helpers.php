@@ -49,7 +49,7 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
         $cacheKey = 'chief:apps:' . $authenticatedCacheKeys[$authenticated];
 
         return $cached
-            ? cache()->tags('chief:apps')->remember($cacheKey, now()->addHours(12), $retriever)
+            ? cache()->remember($cacheKey, now()->addHours(12), $retriever)
             : $retriever();
     });
 }

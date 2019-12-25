@@ -5,10 +5,16 @@
     "require": {
         "php": ">=7.2",
         "guzzlehttp/guzzle": "^6.3",
-        "laravel/framework": "^5.7|^6.0",
+        "haydenpierce/class-finder": "^0.4",
+        "laravel/framework": "^6.0",
+        "laravel/helpers": "^1.1",
+        "laravel/passport": "^8.0",
         "laravel/socialite": "^4.0",
+        "mll-lab/graphql-php-scalars": "^2.1",
+        "nuwave/lighthouse": "^4.7",
         "paragonie/certainty": "^2.6",
-        "ramsey/uuid": "^3.8"
+        "ramsey/uuid": "^3.8",
+        "sentry/sentry-laravel": "^1.5"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,20 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-01-01 13:00:00`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"A date string with format `Y-m-d`, e.g. `2011-05-23`."
+scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
+
+"Argument type for an user uploaded file."
+scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+"A string containing cleaned and sanitized HTML."
+scalar HTMLString @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\HTML")
+
+"A valid JSON blob."
+scalar JSON @scalar(class: "MLL\\GraphQLScalars\\JSON")
+
+"A valid e-mail address."
+scalar Email @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\Email")
+
+"A valid URL."
+scalar URL @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\URL")

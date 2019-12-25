@@ -1,0 +1,18 @@
+#import ./scalars.graphql
+#import ./interfaces.graphql
+
+#import ./types/*.graphql
+#import ./queries/*.graphql
+#import ./mutations/*.graphql
+
+"All queries"
+type Query {
+    "Get the app version."
+    version: String! @field(resolver: "IronGate\\Integration\\GraphQL\\Queries\\Version")
+}
+
+"All mutations"
+type Mutation {
+    "Playing a game or just testing?"
+    ping: String! @field(resolver: "IronGate\\Integration\\GraphQL\\Mutations\\Ping")
+}

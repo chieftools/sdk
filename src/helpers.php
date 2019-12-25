@@ -3,6 +3,54 @@
 use Illuminate\Support\Carbon;
 
 /**
+ * Get active state based on whitelist.
+ * Used to indicate active menu's.
+ *
+ * @param string|array $whitelist
+ * @param string|array $blacklist
+ * @param mixed        $active
+ * @param mixed        $inactive
+ *
+ * @return mixed
+ */
+function active($whitelist = null, $blacklist = null, $active = 'active', $inactive = '')
+{
+    $whitelisted = false;
+    $blacklisted = false;
+
+    // Match against the whitelist, if any
+    if (!empty($whitelist)) {
+        foreach ((array)$whitelist as $item) {
+            if (request()->is($item)) {
+                $whitelisted = true;
+
+                break;
+            }
+        }
+    }
+
+    // Match against the blacklist, if any
+    if (!empty($blacklist)) {
+        $blacklisted = false;
+
+        foreach ((array)$blacklist as $item) {
+            if (request()->is($item)) {
+                $blacklisted = true;
+
+                break;
+            }
+        }
+    }
+
+    // If there was nu whitelist, only check if we are not blacklisted
+    if (empty($whitelist)) {
+        return (!$blacklisted) ? $active : $inactive;
+    }
+
+    return ($whitelisted && !$blacklisted) ? $active : $inactive;
+}
+
+/**
  * Return an key-value list of all timezones.
  *
  * @return array
@@ -22,6 +70,27 @@ function timezones(): array
 function user_now(): Carbon
 {
     return now()->setTimezone(config('app.timezone_user'));
+}
+
+/**
+ * Validate some data.
+ *
+ * @param string|array $fields
+ * @param string|array $rules
+ *
+ * @return bool
+ */
+function validate($fields, $rules): bool
+{
+    if (!is_array($fields)) {
+        $fields = ['default' => $fields];
+    }
+
+    if (!is_array($rules)) {
+        $rules = ['default' => $rules];
+    }
+
+    return Validator::make($fields, $rules)->passes();
 }
 
 /**

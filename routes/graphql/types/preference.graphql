@@ -1,0 +1,20 @@
+"A user preference."
+type UserPreference {
+    "Preference key."
+    key: String!
+
+    "Preference name."
+    name: String!
+
+    "Preference description."
+    description: String!
+
+    "The current value for this preference."
+    value: Boolean!
+
+    "The default value for this preference."
+    default: Boolean!
+
+    "Indicates if the user has changed the preference."
+    changed: Boolean!
+}

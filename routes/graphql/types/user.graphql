@@ -1,0 +1,16 @@
+"A user or actor in the system."
+type User implements Entity {
+    id: ID!
+
+    "The user name."
+    name: String!
+
+    "The user email address."
+    email: String!
+
+    "The timezone configured for the user."
+    timezone: String!
+
+    "Identifies the date and time when the object was created."
+    createdAt: DateTime! @rename(attribute: "created_at")
+}

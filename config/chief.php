@@ -14,7 +14,23 @@ return [
 
     'routes' => [
 
-        'middleware' => ['web'],
+        'api' => [
+
+            'middleware' => ['api'],
+
+        ],
+
+        'web' => [
+
+            'middleware' => ['web'],
+
+            'api' => [
+
+                'middleware' => ['web', 'auth'],
+
+            ],
+
+        ],
 
     ],
 

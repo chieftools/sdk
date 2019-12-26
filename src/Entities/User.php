@@ -2,6 +2,8 @@
 
 namespace IronGate\Integration\Entities;
 
+use Laravel\Passport\Passport;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +27,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable, UsesUUID, Observable;
+    use Authenticatable, Authorizable, HasApiTokens, UsesUUID, Observable;
 
     public $incrementing = false;
 
@@ -83,6 +85,24 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
 
         $this->attributes['timezone'] = $value;
+    }
+
+    // Relations
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder */
+    public function personalAccessTokens()
+    {
+        /** @var \Illuminate\Database\Eloquent\Model $clientModel */
+        $clientModel = app(Passport::clientModel());
+
+        /** @var \Illuminate\Database\Eloquent\Model $tokenModel */
+        $tokenModel = app(Passport::tokenModel());
+
+        return $this->hasMany(Passport::tokenModel(), 'user_id')
+                    ->select([$tokenModel->qualifyColumn('*')])
+                    ->join($clientModel->getTable(), $tokenModel->qualifyColumn('client_id'), '=', $clientModel->qualifyColumn('id'))
+                    ->where($clientModel->qualifyColumn('personal_access_client'), '=', 1)
+                    ->where($tokenModel->qualifyColumn('revoked'), '=', false)
+                    ->orderBy($tokenModel->qualifyColumn('created_at'), 'desc');
     }
 
     // Auth helpers

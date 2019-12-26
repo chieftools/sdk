@@ -10,6 +10,7 @@ use IronGate\Integration\Console\Commands;
 use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Integration\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use IronGate\Integration\Entities\Passport as PassportEntities;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -65,6 +66,8 @@ class ServiceProvider extends IlluminateServiceProvider
             $routes->forAccessTokens();
             $routes->forAuthorization();
         });
+
+        Passport::useTokenModel(PassportEntities\Token::class);
 
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));

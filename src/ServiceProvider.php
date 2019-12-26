@@ -62,6 +62,10 @@ class ServiceProvider extends IlluminateServiceProvider
         if (config('chief.routes.web')) {
             $this->loadRoutesFrom(static::basePath('routes/web.php'));
         }
+
+        if (config('chief.routes.web-api')) {
+            $this->loadRoutesFrom(static::basePath('routes/web-api.php'));
+        }
     }
 
     private function loadPassport(): void

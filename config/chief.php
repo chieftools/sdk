@@ -24,11 +24,11 @@ return [
 
             'middleware' => ['web'],
 
-            'api' => [
+        ],
 
-                'middleware' => ['web', 'auth'],
+        'web-api' => [
 
-            ],
+            'middleware' => ['web', 'auth'],
 
         ],
 

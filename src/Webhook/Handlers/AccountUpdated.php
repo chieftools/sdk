@@ -6,6 +6,7 @@ class AccountUpdated
 {
     public function __invoke(array $webhookData)
     {
+        /** @var \IronGate\Integration\Entities\User|null $user */
         $user = config('chief.auth.model')::query()->where('chief_id', '=', array_get($webhookData, 'user.id'))->first();
 
         if ($user !== null) {
@@ -13,7 +14,13 @@ class AccountUpdated
                 'name'     => array_get($webhookData, 'data.name'),
                 'email'    => array_get($webhookData, 'data.email'),
                 'timezone' => array_get($webhookData, 'data.timezone'),
-            ])->save();
+            ]);
+
+            if (array_get($webhookData, 'data.is_admin', false) === true) {
+                $user->is_admin = true;
+            }
+
+            $user->save();
         }
     }
 }

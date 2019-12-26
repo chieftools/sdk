@@ -34,14 +34,32 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public $incrementing = false;
 
-    protected $table   = 'users';
-    protected $keyType = 'string';
-    protected $dates   = [
-        'last_login',
+    protected $table    = 'users';
+    protected $keyType  = 'string';
+    protected $fillable = [
+        'name',
+        'email',
+        'timezone',
+        'password',
     ];
-    protected $casts   = [
+    protected $visible  = [
+        'id',
+        'name',
+        'email',
+        'is_admin',
+        'timezone',
+        'last_login',
+        'created_at',
+        'updated_at',
+        'preferences',
+        'is_email_verified',
+    ];
+    protected $casts    = [
         'is_admin'    => 'bool',
         'preferences' => 'array',
+    ];
+    protected $dates    = [
+        'last_login',
     ];
 
     // Getters

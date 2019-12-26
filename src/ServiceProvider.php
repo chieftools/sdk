@@ -85,7 +85,6 @@ class ServiceProvider extends IlluminateServiceProvider
     private function loadCommands(): void
     {
         $this->commands([
-            Commands\RefreshApps::class,
             Commands\QueueHealthCheck::class,
         ]);
 

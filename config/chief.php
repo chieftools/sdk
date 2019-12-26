@@ -12,6 +12,12 @@ return [
 
     ],
 
+    'queue' => [
+
+        'monitor' => env('QUEUE_MONITOR_URL'),
+
+    ],
+
     'routes' => [
 
         'api' => [

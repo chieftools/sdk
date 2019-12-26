@@ -28,10 +28,8 @@ class QueueHealthCheck extends Command
      */
     public function handle()
     {
-        if (is_null(config('queue.monitor'))) {
-            $this->warn('Queue not being monitored because monitor webhook is not set.');
-
-            return;
+        if (empty(config('chief.queue.monitor'))) {
+            return $this->warn('Queue not being monitored because monitor webhook is not set.');
         }
 
         dispatch(new HealthCheck);

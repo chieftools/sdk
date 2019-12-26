@@ -18,7 +18,7 @@ class HealthCheck extends Job implements ShouldQueue
     {
         try {
             retry(3, function () use ($client) {
-                $client->get(config('queue.monitor'));
+                $client->get(config('chief.queue.monitor'));
             }, 10);
         } catch (Exception $e) {
             // We try again later if we cannot reach the monitor!

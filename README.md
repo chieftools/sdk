@@ -60,13 +60,13 @@ That's all, you should be able to authenticate against Account Chief.
 You will need to create a `routes/graphql/schema.graphql` in your own project with the following contents:
 
 ```graphql
-#import ../../vendor/irongate/integrationchief/routes/graphql/schema.graphql
+#import ../../vendor/irongate/chief-base/routes/graphql/schema.graphql
 ```
 
 Anything you want to add the the schema you can do thereafter, for example:
 
 ```graphql
-#import ../../vendor/irongate/integrationchief/routes/graphql/schema.graphql
+#import ../../vendor/irongate/chief-base/routes/graphql/schema.graphql
 
 #import ./types/*.graphql
 #import ./queries/*.graphql

@@ -1,4 +1,4 @@
 extend type User {
     "The user preferences."
-    preferences(only: [String]): [UserPreference!]! @method(name: "getUserPreferences")
+    preferences(only: [String]): [UserPreference!]! @field(resolver: "IronGate\\Integration\\GraphQL\\Resolvers\\UserPreferences")
 }

@@ -51,4 +51,15 @@ return [
 
     ],
 
+    'preferences' => [
+
+//        'category_key' => [
+//            'This is an example preference', // (string) Title of the preference
+//            'When enabled this example preference should do exactly nothing.', // (string) Longer description
+//            'hashtag', // (string) Font Awesome icon name
+//            false, // (bool) default value
+//        ],
+
+    ],
+
 ];

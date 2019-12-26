@@ -20,10 +20,13 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string              $email
  * @property string              $timezone
  * @property string              $chief_id
+ * @property string              $password
  * @property bool                $is_admin
  * @property \Carbon\Carbon|null $last_login
  * @property \Carbon\Carbon      $created_at
  * @property \Carbon\Carbon      $updated_at
+ * @property array               $preferences
+ * @property string|null         $remember_token
  */
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -31,26 +34,14 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public $incrementing = false;
 
-    protected $table    = 'users';
-    protected $keyType  = 'string';
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'timezone',
-        'chief_id',
-    ];
-    protected $visible  = [
-        'id',
-        'name',
-        'email',
-        'timezone',
+    protected $table   = 'users';
+    protected $keyType = 'string';
+    protected $dates   = [
         'last_login',
-        'created_at',
-        'updated_at',
     ];
-    protected $dates    = [
-        'last_login',
+    protected $casts   = [
+        'is_admin'    => 'bool',
+        'preferences' => 'array',
     ];
 
     // Getters
@@ -103,6 +94,36 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
                     ->where($clientModel->qualifyColumn('personal_access_client'), '=', 1)
                     ->where($tokenModel->qualifyColumn('revoked'), '=', false)
                     ->orderBy($tokenModel->qualifyColumn('created_at'), 'desc');
+    }
+
+    // Preference helpers
+    public function getPreference($preference, $default = null)
+    {
+        if (($template = config("chief.preferences.{$preference}", false)) === false) {
+            throw new RuntimeException("Preference '{$preference}' does not exist.");
+        }
+
+        return array_get($this->preferences, $preference, $default ?? $template[3]);
+    }
+    public function setPreference($preference, $value)
+    {
+        if (config("chief.preferences.{$preference}", false) === false) {
+            throw new RuntimeException("Preference '{$preference}' does not exist.");
+        }
+
+        $preferences = $this->preferences;
+
+        if ($value === null) {
+            unset($preferences[$preference]);
+        } else {
+            array_set($preferences, $preference, (bool)$value);
+        }
+
+        $this->preferences = $preferences;
+    }
+    public static function getPreferences()
+    {
+        return config('chief.preferences', []);
     }
 
     // Auth helpers

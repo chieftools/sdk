@@ -23,6 +23,10 @@ class CreateUsersTable extends Migration
             $table->string('password', 60);
             $table->rememberToken();
 
+            $table->text('preferences')->nullable();
+            $table->string('timezone')->nullable();
+
+            $table->boolean('is_admin')->default(0);
             $table->timestamp('last_login')->nullable();
             $table->timestamps();
 

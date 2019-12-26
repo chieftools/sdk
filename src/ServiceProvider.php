@@ -67,7 +67,8 @@ class ServiceProvider extends IlluminateServiceProvider
         });
 
         Passport::tokensExpireIn(now()->addDays(7));
-        Passport::refreshTokensExpireIn(now()->addDays(28));
+        Passport::refreshTokensExpireIn(now()->addDays(31));
+        Passport::personalAccessTokensExpireIn(now()->addYears(20));
     }
 
     private function loadCommands(): void

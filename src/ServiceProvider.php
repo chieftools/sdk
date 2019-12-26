@@ -121,6 +121,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function loadSocialiteIntegration(): void
     {
+        if (!$this->app['config']['services.chief']) {
+            return;
+        }
+
         /** @var \Laravel\Socialite\SocialiteManager $socialite */
         $socialite = $this->app->make(Socialite::class);
 

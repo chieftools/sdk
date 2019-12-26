@@ -1,6 +1,6 @@
 {
-    "name": "irongate/integrationchief",
-    "description": "Tools for integrating Chief Tools with Account Chief.",
+    "name": "irongate/chief-base",
+    "description": "Tools and base functionality for Chief apps.",
     "license": "MIT",
     "require": {
         "php": ">=7.2",

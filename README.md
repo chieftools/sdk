@@ -1,18 +1,25 @@
-## Integration Chief
+## Chief base
 
-[![Total Downloads](https://poser.pugx.org/irongate/integrationchief/downloads)](https://packagist.org/packages/irongate/integrationchief)
-[![Monthly Downloads](https://poser.pugx.org/irongate/integrationchief/d/monthly)](https://packagist.org/packages/irongate/integrationchief)
-[![Latest Stable Version](https://poser.pugx.org/irongate/integrationchief/v/stable)](https://packagist.org/packages/irongate/integrationchief)
-[![License](https://poser.pugx.org/irongate/integrationchief/license)](https://packagist.org/packages/irongate/integrationchief)
+[![Total Downloads](https://poser.pugx.org/irongate/chief-base/downloads)](https://packagist.org/packages/irongate/chief-base)
+[![Monthly Downloads](https://poser.pugx.org/irongate/chief-base/d/monthly)](https://packagist.org/packages/irongate/chief-base)
+[![Latest Stable Version](https://poser.pugx.org/irongate/chief-base/v/stable)](https://packagist.org/packages/irongate/chief-base)
+[![License](https://poser.pugx.org/irongate/chief-base/license)](https://packagist.org/packages/irongate/chief-base)
 
-Tools for integrating Chief Tools with Account Chief.
+Tools and base functionality for Chief apps.
+
+### Contains / configures
+
+- Configured [Laravel Passport](https://laravel.com/docs/6.x/passport) including migrations
+- Configured Socialite + routes authenticating against [Account Chief](https://account.chief.app/)
+- Configured [Sentry](https://docs.sentry.io/platforms/php/laravel/) client including optional context middleware
+- (optional) [Lighthouse GraphQL](https://lighthouse-php.com/) server with base schema
 
 ### Installation
 
 Start with requiring the package:
 
 ```bash
-composer require irongate/integration
+composer require irongate/chief-base
 ```
 
 Publish the configuration files and optionally the migrations:
@@ -47,3 +54,32 @@ return [
 ```
 
 That's all, you should be able to authenticate against Account Chief.
+
+### GraphQL API
+
+You will need to create a `routes/graphql/schema.graphql` in your own project with the following contents:
+
+```graphql
+#import ../../vendor/irongate/integrationchief/routes/graphql/schema.graphql
+```
+
+Anything you want to add the the schema you can do thereafter, for example:
+
+```graphql
+#import ../../vendor/irongate/integrationchief/routes/graphql/schema.graphql
+
+#import ./types/*.graphql
+#import ./queries/*.graphql
+```
+
+Keep in mind that the `User` type is already provided so you will need to extend that if you want to append fields.
+
+```graphql
+type OfType implements Entity {
+    id: ID!
+}
+
+extend type User {
+    relation: [OfType!]! @hasMany(type: "paginator")
+}
+```

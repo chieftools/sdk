@@ -89,7 +89,7 @@ class ServiceProvider extends IlluminateServiceProvider
             Commands\QueueHealthCheck::class,
         ]);
 
-        if (!empty(config('queue.monitor'))) {
+        if (!empty(config('chief.queue.monitor'))) {
             $this->app->booted(function () {
                 /** @var \Illuminate\Console\Scheduling\Schedule $schedule */
                 $schedule = $this->app->make(Schedule::class);

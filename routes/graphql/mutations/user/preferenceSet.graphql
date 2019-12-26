@@ -1,0 +1,19 @@
+extend type Mutation {
+    "Sets a user preference value."
+    preferenceSet(input: PreferenceSetInput!): PreferenceSetPayload! @middleware(checks: ["auth.auto"]) @field(resolver: "IronGate\\Integration\\GraphQL\\Mutations\\User\\Preference\\Set")
+}
+
+input PreferenceSetInput {
+    "The preference key."
+    key: String!
+
+    "The preference value."
+    value: Boolean!
+}
+
+type PreferenceSetPayload implements MutationPayload {
+    "The preference resetted."
+    preference: UserPreference
+
+    status: MutationStatus!
+}

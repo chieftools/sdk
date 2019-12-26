@@ -4,6 +4,7 @@ namespace IronGate\Integration\Http\Middleware;
 
 use Closure;
 use RuntimeException;
+use Illuminate\Auth\Middleware\Authenticate;
 
 class AutoAuthenticate extends Authenticate
 {

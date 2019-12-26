@@ -1,7 +1,0 @@
-extend type Mutation {
-    "Set a user preference."
-    setUserPreference(key: String! value: Boolean!): UserPreference! @middleware(checks: ["auth.auto"])
-
-    "Resets a user preference back to it's default value."
-    resetUserPreference(key: String!): UserPreference! @middleware(checks: ["auth.auto"])
-}

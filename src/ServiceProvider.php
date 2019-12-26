@@ -8,8 +8,10 @@ use Laravel\Passport\RouteRegistrar;
 use IronGate\Integration\Http\Middleware;
 use IronGate\Integration\Console\Commands;
 use Illuminate\Console\Scheduling\Schedule;
+use IronGate\Integration\GraphQL\ContextFactory;
 use IronGate\Integration\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use IronGate\Integration\Entities\Passport as PassportEntities;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
@@ -26,6 +28,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadMiddleware();
 
         $this->loadSocialiteIntegration();
+
+        $this->app->singleton(CreatesContext::class, ContextFactory::class);
 
         if ($this->app->runningInConsole()) {
             $this->publishStaticFiles();

@@ -1,0 +1,26 @@
+"Information container about the status of the mutation."
+type MutationStatus {
+    "Indicates if the request was successful."
+    success: Boolean!
+
+    "Array of validation errors if any."
+    errors: [ValidationError!]
+
+    "A internal error reference used by support to trace the request."
+    errorId: String
+}
+
+"A validation error for a field."
+type ValidationError {
+    "The name of the field."
+    name: String!
+
+    "The messages explaining the validation errors."
+    messages: [String!]
+}
+
+"The default payload returned from a mutation."
+interface MutationPayload {
+    "Information about the status of the mutation."
+    status: MutationStatus!
+}

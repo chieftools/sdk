@@ -38,6 +38,8 @@ return [
 
         ],
 
+        'passport' => [],
+
     ],
 
     'base_url' => env('CHIEF_BASE_URL', 'https://account.chief.app'),

@@ -12,7 +12,7 @@ Route::group(config('chief.routes.web'), function () {
     Route::get('logout', Controllers\Auth\Logout::class)->middleware('auth')->name('auth.logout');
 
     Route::get('terms', Controllers\Pages\Terms::class)->name('chief.terms');
-    Route::get('contact', Controllers\Pages\Terms::class)->name('chief.contact');
+    Route::get('contact', Controllers\Pages\Contact::class)->name('chief.contact');
     Route::get('privacy', Controllers\Pages\Privacy::class)->name('chief.privacy');
 
     Route::post('webhooks/chief', Controllers\Webhook::class)->middleware(AuthenticateChief::class)->name('chief.webhook');

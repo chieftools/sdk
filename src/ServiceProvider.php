@@ -4,7 +4,6 @@ namespace IronGate\Integration;
 
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
-use IronGate\Integration\Entities;
 use Laravel\Passport\RouteRegistrar;
 use IronGate\Integration\Http\Middleware;
 use IronGate\Integration\Console\Commands;

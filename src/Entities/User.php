@@ -7,6 +7,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use IronGate\Integration\Concerns\UsesUUID;
 use IronGate\Integration\Concerns\Observable;
 use Laravel\Socialite\Two\User as SocialiteUser;
@@ -150,27 +151,31 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->fill([
             'name'     => $remote->getName(),
             'email'    => $remote->getEmail(),
-            'chief_id' => $remote->getId(),
             'timezone' => $remote['timezone'],
             'password' => $this->chief_id === null ? str_random(64) : null,
-        ])->save();
+        ]);
+
+        $this->chief_id = $remote->getId();
+
+        $this->save();
     }
     public static function createFromRemote(SocialiteUser $remote): self
     {
-        return self::create([
-            'name'     => $remote->getName(),
-            'email'    => $remote->getEmail(),
-            'chief_id' => $remote->getId(),
-            'timezone' => $remote['timezone'],
-            'password' => str_random(64),
-        ]);
+        $user = new static();
+
+        $user->updateFromRemote($remote);
+
+        return $user;
     }
     public static function createOrUpdateFromRemote(SocialiteUser $remote): self
     {
         /** @var self|null $local */
         $local = self::query()
                      ->where('chief_id', '=', $remote->getId())
-                     ->orWhere('email', '=', $remote->getEmail())
+                     ->orWhere(function (Builder $query) use ($remote) {
+                         $query->whereNull('chief_id')
+                               ->where('email', '=', $remote->getEmail());
+                     })
                      ->first();
 
         if ($local === null) {

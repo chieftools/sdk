@@ -79,6 +79,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
             'name'     => $user['name'],
             'email'    => $user['email'],
             'timezone' => $user['timezone'],
+            'is_admin' => (bool)($user['is_admin'] ?? false),
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace IronGate\Integration;
 
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
+use IronGate\Integration\Entities;
 use Laravel\Passport\RouteRegistrar;
 use IronGate\Integration\Http\Middleware;
 use IronGate\Integration\Console\Commands;
@@ -12,7 +13,6 @@ use IronGate\Integration\GraphQL\ContextFactory;
 use IronGate\Integration\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
-use IronGate\Integration\Entities\Passport as PassportEntities;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -73,9 +73,9 @@ class ServiceProvider extends IlluminateServiceProvider
         Passport::routes(function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
             $routes->forAuthorization();
-        });
+        }, config('chief.routes.passport', []));
 
-        Passport::useTokenModel(PassportEntities\Token::class);
+        Passport::useTokenModel(Entities\Passport\Token::class);
 
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));

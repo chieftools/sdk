@@ -55,6 +55,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'preferences',
         'is_email_verified',
     ];
+    protected $hidden   = [
+        'password',
+        'remember_token',
+        'two_factor_secret',
+    ];
     protected $casts    = [
         'is_admin'    => 'bool',
         'preferences' => 'array',
@@ -148,16 +153,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     // Auth helpers
     public function updateFromRemote(SocialiteUser $remote): void
     {
+        $this->chief_id = $remote->getId();
+        $this->is_admin = !empty($remote['is_admin']) && $remote['is_admin'] === true;
+
         $this->fill([
             'name'     => $remote->getName(),
             'email'    => $remote->getEmail(),
             'timezone' => $remote['timezone'],
             'password' => $this->chief_id === null ? str_random(64) : null,
-        ]);
-
-        $this->chief_id = $remote->getId();
-
-        $this->save();
+        ])->save();
     }
     public static function createFromRemote(SocialiteUser $remote): self
     {

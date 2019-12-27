@@ -125,6 +125,36 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
 }
 
 /**
+ * Get the Chief account manager base url.
+ *
+ * @param string|null $path
+ *
+ * @return string
+ */
+function chief_base_url(?string $path = null): string
+{
+    $base = rtrim(config('chief.base_url'), '/');
+    $path = $path === null ? '' : ltrim($path, '/');
+
+    return "{$base}/{$path}";
+}
+
+/**
+ * Get the global Chief site url.
+ *
+ * @param string|null $path
+ *
+ * @return string
+ */
+function chief_site_url(?string $path = null): string
+{
+    $base = rtrim(config('chief.site_url'), '/');
+    $path = $path === null ? '' : ltrim($path, '/');
+
+    return "{$base}/{$path}";
+}
+
+/**
  * Get the path to the most up-to-date CA bundle file.
  *
  * @return string

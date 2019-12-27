@@ -42,6 +42,8 @@ return [
 
     'base_url' => env('CHIEF_BASE_URL', 'https://account.chief.app'),
 
+    'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),
+
     'webhooks' => [
 
         'account_closed'  => IronGate\Integration\Webhook\Handlers\AccountClosed::class,

@@ -3,17 +3,9 @@
 namespace IronGate\Integration\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use IronGate\Integration\Models\User;
-use IronGate\Integration\Http\Middleware\AuthenticateChief;
 
-class Webhook extends Controller
+class Webhook
 {
-    public function __construct()
-    {
-        $this->middleware(AuthenticateChief::class);
-    }
-
     public function __invoke(Request $request): array
     {
         $event = $request->json('event');

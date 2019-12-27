@@ -100,6 +100,7 @@ function validate($fields, $rules): bool
  * @param bool      $cached
  *
  * @throws \Exception
+ *
  * @return \Illuminate\Support\Collection|null
  */
 function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illuminate\Support\Collection

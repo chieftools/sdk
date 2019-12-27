@@ -13,7 +13,6 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-
             $table->uuid('id')->primary();
             $table->uuid('chief_id')->unique();
 
@@ -29,7 +28,6 @@ class CreateUsersTable extends Migration
             $table->boolean('is_admin')->default(0);
             $table->timestamp('last_login')->nullable();
             $table->timestamps();
-
         });
     }
 

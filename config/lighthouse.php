@@ -6,7 +6,7 @@ use IronGate\Integration\Exceptions\GraphQLHandler;
 use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionRouter;
 
-$appNamespace = ucfirst(config('chief.id', config('chief.namespace')));
+$appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
 
 return [
 

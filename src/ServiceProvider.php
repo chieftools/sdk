@@ -94,7 +94,6 @@ class ServiceProvider extends IlluminateServiceProvider
                 $schedule = $this->app->make(Schedule::class);
 
                 $schedule->command(Commands\QueueHealthCheck::class)
-                         ->appendOutputTo(storage_path('logs/schedule.log'))
                          ->runInBackground()
                          ->withoutOverlapping()
                          ->everyMinute();

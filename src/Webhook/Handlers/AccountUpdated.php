@@ -16,9 +16,7 @@ class AccountUpdated
                 'timezone' => array_get($webhookData, 'data.timezone'),
             ]);
 
-            if (array_get($webhookData, 'data.is_admin', false) === true) {
-                $user->is_admin = true;
-            }
+            $user->is_admin = ((bool)array_get($webhookData, 'data.is_admin', false)) === true;
 
             $user->save();
         }

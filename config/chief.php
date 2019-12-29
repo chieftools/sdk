@@ -22,6 +22,7 @@ return [
 
         'api' => [
 
+            'prefix'     => 'api',
             'middleware' => ['api'],
 
         ],
@@ -34,6 +35,7 @@ return [
 
         'web-api' => [
 
+            'prefix'     => 'api',
             'middleware' => ['web', 'auth'],
 
         ],

@@ -6,6 +6,9 @@ type UserPreference {
     "Preference name."
     name: String!
 
+    "The category the preference belongs to."
+    category: UserPreferenceCategory!
+
     "Preference description."
     description: String!
 
@@ -17,4 +20,13 @@ type UserPreference {
 
     "Indicates if the user has changed the preference."
     changed: Boolean!
+}
+
+"A user preference category."
+type UserPreferenceCategory {
+    "Category key."
+    key: String!
+
+    "Category name."
+    name: String!
 }

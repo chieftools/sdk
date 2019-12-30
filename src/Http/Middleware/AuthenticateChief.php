@@ -3,8 +3,8 @@
 namespace IronGate\Integration\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use RuntimeException;
+use Illuminate\Http\Request;
 
 class AuthenticateChief
 {

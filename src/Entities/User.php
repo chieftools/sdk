@@ -3,6 +3,7 @@
 namespace IronGate\Integration\Entities;
 
 use Laravel\Passport\Passport;
+use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
@@ -145,9 +146,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         $this->preferences = $preferences;
     }
-    public static function getPreferences()
+    public static function hasPreferences(): bool
+    {
+        return !empty(self::getPreferences());
+    }
+    public static function getPreferences(): array
     {
         return config('chief.preferences', []);
+    }
+    public static function getPreferencesByCategory(): Collection
+    {
+        return collect(self::getPreferences())->groupBy(4, true);
     }
 
     // Auth helpers

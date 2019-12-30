@@ -8,7 +8,7 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
 
 "A string containing cleaned and sanitized HTML."
-scalar HTMLString @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\HTML")
+scalar HTML @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\Str")
 
 "A valid JSON blob."
 scalar JSON @scalar(class: "MLL\\GraphQLScalars\\JSON")
@@ -18,3 +18,12 @@ scalar Email @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\Email")
 
 "A valid URL."
 scalar URL @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\URL")
+
+"A valid IPv4 address."
+scalar IPv4 @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\IPv4")
+
+"A valid IPv6 address."
+scalar IPv6 @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\IPv6")
+
+"A valid IP address (can be IPv4 or IPv6)."
+scalar IP @scalar(class: "IronGate\\Integration\\GraphQL\\Scalars\\IP")

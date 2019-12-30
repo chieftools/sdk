@@ -3,11 +3,12 @@
 namespace IronGate\Integration\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use RuntimeException;
 
 class AuthenticateChief
 {
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
         if (empty(config('services.chief.webhook_secret'))) {
             throw new RuntimeException('Missing a Chief webhook secret, not accepting any webhook calls!');

@@ -5,6 +5,8 @@ namespace IronGate\Integration;
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
 use Laravel\Passport\RouteRegistrar;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Events as AuthEvents;
 use IronGate\Integration\Http\Middleware;
 use IronGate\Integration\Console\Commands;
 use Illuminate\Console\Scheduling\Schedule;
@@ -19,6 +21,8 @@ class ServiceProvider extends IlluminateServiceProvider
     public function boot(): void
     {
         $this->loadRoutes();
+
+        $this->loadEvents();
 
         $this->loadPassport();
 
@@ -65,6 +69,11 @@ class ServiceProvider extends IlluminateServiceProvider
         if (config('chief.routes.web-api')) {
             $this->loadRoutesFrom(static::basePath('routes/web-api.php'));
         }
+    }
+
+    private function loadEvents(): void
+    {
+        Event::listen(AuthEvents\Login::class, Listeners\Auth\Login::class);
     }
 
     private function loadPassport(): void

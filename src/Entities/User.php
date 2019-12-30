@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use IronGate\Integration\Concerns\UsesUUID;
 use IronGate\Integration\Concerns\Observable;
-use Laravel\Socialite\Two\User as SocialiteUser;
+use IronGate\Integration\Socialite\ChiefUser;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -151,19 +151,19 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
 
     // Auth helpers
-    public function updateFromRemote(SocialiteUser $remote): void
+    public function updateFromRemote(ChiefUser $remote): void
     {
         $this->chief_id = $remote->getId();
-        $this->is_admin = !empty($remote['is_admin']) && $remote['is_admin'] === true;
+        $this->is_admin = $remote->isAdmin();
 
         $this->fill([
             'name'     => $remote->getName(),
             'email'    => $remote->getEmail(),
-            'timezone' => $remote['timezone'],
+            'timezone' => $remote->getTimezone(),
             'password' => $this->chief_id === null ? str_random(64) : null,
         ])->save();
     }
-    public static function createFromRemote(SocialiteUser $remote): self
+    public static function createFromRemote(ChiefUser $remote): self
     {
         $user = new static();
 
@@ -171,7 +171,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
         return $user;
     }
-    public static function createOrUpdateFromRemote(SocialiteUser $remote): self
+    public static function createOrUpdateFromRemote(ChiefUser $remote): self
     {
         /** @var self|null $local */
         $local = self::query()

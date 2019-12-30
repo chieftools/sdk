@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers;
+namespace IronGate\Integration\Http\Controllers\API;
 
 use Illuminate\Http\Response;
 use GraphQL\Utils\SchemaPrinter;

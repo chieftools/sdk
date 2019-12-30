@@ -5,50 +5,68 @@ namespace IronGate\Integration\GraphQL\Scalars;
 use GraphQL\Error\Error;
 use GraphQL\Utils\Utils;
 use Illuminate\Validation\Rule;
-use GraphQL\Type\Definition\ScalarType;
-use GraphQL\Language\AST\StringValueNode;
 
-abstract class ValidatedStringScalar extends ScalarType
+abstract class ValidatedStringScalar extends Str
 {
+    /**
+     * Either a single validation rule or array of rules.
+     *
+     * @var string|array
+     */
     protected static $validationRule;
 
-    public static function getValidationRule()
+    /**
+     * Retrieve the validation rule or rules.
+     *
+     * @return array
+     */
+    private static function getValidationRules(): array
     {
-        if (class_exists(static::$validationRule)) {
-            $rule = new static::$validationRule;
+        $rules = [];
 
-            if ($rule instanceof Rule) {
-                return $rule;
+        foreach ((array)static::$validationRule as $validationRule) {
+            // Allow for defining a validation rule class name
+            if (class_exists($validationRule)) {
+                $rule = new $validationRule;
+
+                if ($rule instanceof Rule) {
+                    $validationRule = $rule;
+                }
+            }
+
+            $rules[] = $validationRule;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function parseValue($value)
+    {
+        foreach (static::getValidationRules() as $validationRule) {
+            if (!validate($value, $validationRule)) {
+                return parent::parseValue($value);
             }
         }
 
-        return static::$validationRule;
+        throw new Error('Cannot represent following value as a ' . class_basename($this) . ': ' . Utils::printSafeJson($value));
     }
 
-    public function serialize($value)
-    {
-        return $value;
-    }
-
-    public function parseValue($value)
-    {
-        if (!validate($value, static::getValidationRule())) {
-            throw new Error('Cannot represent following value as a ' . class_basename($this) . ': ' . Utils::printSafeJson($value));
-        }
-
-        return $value;
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function parseLiteral($valueNode, ?array $variables = null)
     {
-        if (!$valueNode instanceof StringValueNode) {
-            throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
+        $return = parent::parseLiteral($valueNode, $variables);
+
+        foreach (static::getValidationRules() as $validationRule) {
+            if (!validate($valueNode->value, $validationRule)) {
+                return $return;
+            }
         }
 
-        if (!validate($valueNode->value, static::getValidationRule())) {
-            throw new Error('Not a valid ' . class_basename($this), [$valueNode]);
-        }
-
-        return $this->parseValue($valueNode->value);
+        throw new Error('Not a valid ' . class_basename($this), [$valueNode]);
     }
 }

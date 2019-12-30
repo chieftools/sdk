@@ -6,7 +6,7 @@ use GraphQL\Error\Error;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Language\AST\StringValueNode;
 
-class HTML extends ScalarType
+class Str extends ScalarType
 {
     public function serialize($value)
     {

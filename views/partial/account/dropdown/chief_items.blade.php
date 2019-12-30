@@ -1,7 +1,6 @@
 @php($_chief_apps = chief_apps())
 
 @if($_chief_apps !== null && $_chief_apps->isNotEmpty())
-    <div class="dropdown-divider"></div>
     <h6 class="dropdown-header">
         Chief Tools <small><a href="{{ config('chief.base_url') }}/" target="_blank" class="text-muted text-xs"><i class="fal fa-fw fa-external-link"></i></a></small>
     </h6>
@@ -17,4 +16,6 @@
             <i class="fal fa-fw fa-atom-alt"></i> All apps & tools
         </a>
     @endif
+
+    <div class="dropdown-divider"></div>
 @endif

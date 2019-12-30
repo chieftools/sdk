@@ -2,7 +2,6 @@
 
 namespace IronGate\Integration\Socialite;
 
-use Laravel\Socialite\Two\User;
 use IronGate\Integration\API\Client;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
@@ -72,9 +71,9 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    protected function mapUserToObject(array $user)
+    protected function mapUserToObject(array $user): ChiefUser
     {
-        return (new User)->setRaw($user)->map([
+        return (new ChiefUser)->setRaw($user)->map([
             'id'       => $user['id'],
             'name'     => $user['name'],
             'email'    => $user['email'],

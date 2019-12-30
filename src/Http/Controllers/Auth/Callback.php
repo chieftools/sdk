@@ -10,7 +10,7 @@ class Callback
 {
     public function __invoke(): RedirectResponse
     {
-        /** @var \Laravel\Socialite\Two\User $remote */
+        /** @var \IronGate\Integration\Socialite\ChiefUser $remote */
         $remote = Socialite::driver('chief')->user();
 
         Auth::guard()->login(

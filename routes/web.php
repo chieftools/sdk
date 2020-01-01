@@ -1,7 +1,7 @@
 <?php
 
-use IronGate\Integration\Http\Controllers;
-use IronGate\Integration\Http\Middleware\AuthenticateChief;
+use IronGate\Chief\Http\Controllers;
+use IronGate\Chief\Http\Middleware\AuthenticateChief;
 
 Route::group(config('chief.routes.web'), function () {
     Route::get('register', Controllers\Auth\Register::class)->name('auth.register');

@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers\Account;
+namespace IronGate\Chief\Http\Controllers\Account;
 
 use Illuminate\Http\Request;
-use IronGate\Integration\Entities\User;
+use IronGate\Chief\Entities\User;
 
 class Preferences
 {
@@ -17,7 +17,7 @@ class Preferences
 
     public function toggle(Request $request): array
     {
-        /** @var \IronGate\Integration\Entities\User $user */
+        /** @var \IronGate\Chief\Entities\User $user */
         $user = $request->user();
 
         // Extract the preference key from the identity

@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Integration\Socialite;
+namespace IronGate\Chief\Socialite;
 
-use IronGate\Integration\API\Client;
+use IronGate\Chief\API\Client;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 

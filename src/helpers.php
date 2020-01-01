@@ -106,8 +106,8 @@ function validate($fields, $rules): bool
 function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illuminate\Support\Collection
 {
     $retriever = function () use ($authenticated) {
-        /** @var \IronGate\Integration\API\Client $api */
-        $api = app(IronGate\Integration\API\Client::class);
+        /** @var \IronGate\Chief\API\Client $api */
+        $api = app(IronGate\Chief\API\Client::class);
 
         // Retrieve all apps (except the current) that require authentication
         return $api->apps(config('chief.id'), null, $authenticated);

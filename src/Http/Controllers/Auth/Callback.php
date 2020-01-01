@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers\Auth;
+namespace IronGate\Chief\Http\Controllers\Auth;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
@@ -10,7 +10,7 @@ class Callback
 {
     public function __invoke(): RedirectResponse
     {
-        /** @var \IronGate\Integration\Socialite\ChiefUser $remote */
+        /** @var \IronGate\Chief\Socialite\ChiefUser $remote */
         $remote = Socialite::driver('chief')->user();
 
         Auth::guard()->login(

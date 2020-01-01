@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers\Auth;
+namespace IronGate\Chief\Http\Controllers\Auth;
 
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;

@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\API;
+namespace IronGate\Chief\API;
 
 use RuntimeException;
 use Illuminate\Support\Collection;

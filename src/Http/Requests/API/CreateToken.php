@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Integration\Http\Requests\API;
+namespace IronGate\Chief\Http\Requests\API;
 
-use IronGate\Integration\Http\Requests\Request;
+use IronGate\Chief\Http\Requests\Request;
 
 class CreateToken extends Request
 {

@@ -1,18 +1,18 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers\API;
+namespace IronGate\Chief\Http\Controllers\API;
 
 use Atrox\Haikunator;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use IronGate\Integration\Http\Requests\API\CreateToken;
+use IronGate\Chief\Http\Requests\API\CreateToken;
 
 class Tokens
 {
     public function __invoke(Request $request): View
     {
-        /** @var \IronGate\Integration\Entities\User $user */
+        /** @var \IronGate\Chief\Entities\User $user */
         $user = $request->user();
 
         return view('chief::api.tokens.index', compact('user'));
@@ -38,7 +38,7 @@ class Tokens
 
     public function delete(Request $request, string $token): RedirectResponse
     {
-        /** @var \IronGate\Integration\Entities\User $user */
+        /** @var \IronGate\Chief\Entities\User $user */
         $user = $request->user();
 
         $user->personalAccessTokens()->findOrFail($token)->forceDelete();

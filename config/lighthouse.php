@@ -2,7 +2,7 @@
 
 use GraphQL\Error\Debug;
 use GraphQL\Validator\Rules\DisableIntrospection;
-use IronGate\Integration\Exceptions\GraphQLHandler;
+use IronGate\Chief\GraphQL\Exceptions\GraphQLHandler;
 use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionRouter;
 

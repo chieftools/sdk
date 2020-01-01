@@ -1,6 +1,6 @@
 <?php
 
-use IronGate\Integration\Http\Controllers;
+use IronGate\Chief\Http\Controllers;
 
 Route::group(config('chief.routes.api'), function () {
     Route::get('graphql/schema', [Controllers\API\GraphQL::class, 'schema'])->name('api.schema');

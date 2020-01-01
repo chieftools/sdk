@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Integration\GraphQL\Resolvers;
+namespace IronGate\Chief\GraphQL\Resolvers;
 
-use IronGate\Integration\Entities\User;
+use IronGate\Chief\Entities\User;
 
 class UserPreferences
 {

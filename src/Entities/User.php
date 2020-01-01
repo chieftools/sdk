@@ -1,17 +1,17 @@
 <?php
 
-namespace IronGate\Integration\Entities;
+namespace IronGate\Chief\Entities;
 
 use Laravel\Passport\Passport;
 use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use IronGate\Chief\Concerns\UsesUUID;
 use Illuminate\Database\Eloquent\Model;
+use IronGate\Chief\Concerns\Observable;
+use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
-use IronGate\Integration\Concerns\UsesUUID;
-use IronGate\Integration\Concerns\Observable;
-use IronGate\Integration\Socialite\ChiefUser;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;

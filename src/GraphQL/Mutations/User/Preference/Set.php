@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Integration\GraphQL\Mutations\User\Preference;
+namespace IronGate\Chief\GraphQL\Mutations\User\Preference;
 
-use IronGate\Integration\GraphQL\Mutations\Mutation;
+use IronGate\Chief\GraphQL\Mutations\Mutation;
 
 class Set extends Mutation
 {

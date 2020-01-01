@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Exceptions;
+namespace IronGate\Chief\GraphQL\Exceptions;
 
 use Closure;
 use Sentry\State\Scope;

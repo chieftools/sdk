@@ -56,6 +56,8 @@ class Entity extends \Illuminate\Database\Eloquent\Model
 <br>Make sure the request is over `https://`
 - `IronGate\Chief\Middleware\MoveAccessTokenFromURLToHeader`
 <br>Move the access token from `access_token` GET paramater to the `Authorization` header
+- `IronGate\Chief\Middleware\SecurityHeaders`
+<br>Adds a default set of security headers, can be configured by setting `chief.response.securityheaders` (array) in the app config
 - `IronGate\Chief\Middleware\SentryContext`
 <br>[Sentry](https://docs.sentry.io/platforms/php/) context middleware which set's the user context
 - `IronGate\Chief\Middleware\TrustProxiesOnVapor`

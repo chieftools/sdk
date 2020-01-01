@@ -1,17 +1,17 @@
 <?php
 
-namespace IronGate\Integration;
+namespace IronGate\Chief;
 
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
+use IronGate\Chief\Http\Middleware;
+use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events as AuthEvents;
-use IronGate\Integration\Http\Middleware;
-use IronGate\Integration\Console\Commands;
+use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
-use IronGate\Integration\GraphQL\ContextFactory;
-use IronGate\Integration\Socialite\ChiefProvider;
+use IronGate\Chief\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;

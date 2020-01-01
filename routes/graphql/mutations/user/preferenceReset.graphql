@@ -1,6 +1,6 @@
 extend type Mutation {
     "Resets a user preference to it's default value."
-    preferenceReset(input: PreferenceResetInput!): PreferenceResetPayload! @middleware(checks: ["auth.auto"]) @field(resolver: "IronGate\\Integration\\GraphQL\\Mutations\\User\\Preference\\Reset")
+    preferenceReset(input: PreferenceResetInput!): PreferenceResetPayload! @middleware(checks: ["auth.auto"]) @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\User\\Preference\\Reset")
 }
 
 input PreferenceResetInput {

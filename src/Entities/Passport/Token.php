@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Entities\Passport;
+namespace IronGate\Chief\Entities\Passport;
 
 use Laravel\Passport\Token as PassportToken;
 

@@ -1,7 +1,9 @@
 {
-    "name": "irongate/chief-base",
-    "description": "Tools and base functionality for Chief apps.",
+    "name": "irongate/chief",
+    "description": "Base functionality and helpers used for building for Chief Tools.",
+    "homepage": "https://chief.app/",
     "license": "MIT",
+    "type": "library",
     "require": {
         "php": ">=7.4",
         "anahkiasen/former": "^4.3",
@@ -24,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "IronGate\\Integration\\": "src/"
+            "IronGate\\Chief\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -33,7 +35,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "IronGate\\Integration\\ServiceProvider"
+                "IronGate\\Chief\\ServiceProvider"
             ]
         }
     },

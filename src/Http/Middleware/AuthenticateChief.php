@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Middleware;
+namespace IronGate\Chief\Http\Middleware;
 
 use Closure;
 use RuntimeException;

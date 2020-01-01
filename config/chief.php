@@ -6,7 +6,7 @@ return [
 
     'auth' => [
 
-        'model' => IronGate\Integration\Entities\User::class,
+        'model' => IronGate\Chief\Entities\User::class,
 
         'redirect' => '/dashboard',
 
@@ -50,8 +50,8 @@ return [
 
     'webhooks' => [
 
-        'account_closed'  => IronGate\Integration\Webhook\Handlers\AccountClosed::class,
-        'account_updated' => IronGate\Integration\Webhook\Handlers\AccountUpdated::class,
+        'account_closed'  => IronGate\Chief\Webhook\Handlers\AccountClosed::class,
+        'account_updated' => IronGate\Chief\Webhook\Handlers\AccountUpdated::class,
 
     ],
 

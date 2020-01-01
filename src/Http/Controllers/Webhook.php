@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Controllers;
+namespace IronGate\Chief\Http\Controllers;
 
 use Illuminate\Http\Request;
 

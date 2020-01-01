@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\GraphQL\Mutations;
+namespace IronGate\Chief\GraphQL\Mutations;
 
 class Ping
 {

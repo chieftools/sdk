@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\GraphQL\Queries;
+namespace IronGate\Chief\GraphQL\Queries;
 
 class Version
 {

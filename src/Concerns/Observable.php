@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Concerns;
+namespace IronGate\Chief\Concerns;
 
 trait Observable
 {

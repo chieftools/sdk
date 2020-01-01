@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Rules;
+namespace IronGate\Chief\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 

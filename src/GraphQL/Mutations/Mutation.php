@@ -1,12 +1,12 @@
 <?php
 
-namespace IronGate\Integration\GraphQL\Mutations;
+namespace IronGate\Chief\GraphQL\Mutations;
 
 use Exception;
-use IronGate\Integration\Entities\User;
+use IronGate\Chief\Entities\User;
+use IronGate\Chief\GraphQL\Context;
 use GraphQL\Type\Definition\ResolveInfo;
-use IronGate\Integration\GraphQL\Context;
-use IronGate\Integration\GraphQL\Exceptions\GraphQLErrorResponse;
+use IronGate\Chief\GraphQL\Exceptions\GraphQLErrorResponse;
 
 abstract class Mutation
 {

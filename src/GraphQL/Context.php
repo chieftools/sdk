@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Integration\GraphQL;
+namespace IronGate\Chief\GraphQL;
 
 use Illuminate\Http\Request;
-use IronGate\Integration\Entities\User;
+use IronGate\Chief\Entities\User;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Context implements GraphQLContext
@@ -38,7 +38,7 @@ class Context implements GraphQLContext
      *
      * May be null since some fields may be accessible without authentication.
      *
-     * @return \IronGate\Integration\Entities\User|null
+     * @return \IronGate\Chief\Entities\User|null
      */
     public function user(): ?User
     {

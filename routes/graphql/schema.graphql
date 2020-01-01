@@ -9,11 +9,11 @@
 "All queries"
 type Query {
     "Get the app version."
-    version: String! @field(resolver: "IronGate\\Integration\\GraphQL\\Queries\\Version")
+    version: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Queries\\Version")
 }
 
 "All mutations"
 type Mutation {
     "Playing a game or just testing?"
-    ping: String! @field(resolver: "IronGate\\Integration\\GraphQL\\Mutations\\Ping")
+    ping: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\Ping")
 }

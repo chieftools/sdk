@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Socialite;
+namespace IronGate\Chief\Socialite;
 
 use Laravel\Socialite\Two\User;
 

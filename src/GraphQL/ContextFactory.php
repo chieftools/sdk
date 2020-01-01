@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\GraphQL;
+namespace IronGate\Chief\GraphQL;
 
 use Illuminate\Http\Request;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;

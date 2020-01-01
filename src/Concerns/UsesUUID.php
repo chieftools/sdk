@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Concerns;
+namespace IronGate\Chief\Concerns;
 
 use Ramsey\Uuid\Uuid;
 use Illuminate\Database\Eloquent\Model;

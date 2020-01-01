@@ -1,10 +1,10 @@
 <?php
 
-namespace IronGate\Integration\Jobs\Queue;
+namespace IronGate\Chief\Jobs\Queue;
 
 use Exception;
 use GuzzleHttp\Client;
-use IronGate\Integration\Jobs\Job;
+use IronGate\Chief\Jobs\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HealthCheck extends Job implements ShouldQueue

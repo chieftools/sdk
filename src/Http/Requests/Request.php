@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Requests;
+namespace IronGate\Chief\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -31,7 +31,7 @@ abstract class Request extends FormRequest
      *
      * @param null $guard
      *
-     * @return \IronGate\Integration\Entities\User
+     * @return \IronGate\Chief\Entities\User
      */
     public function user($guard = null)
     {

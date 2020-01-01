@@ -4,7 +4,7 @@
         <i class="fad fa-fw fa-user-circle"></i> Profile
     </a>
 </li>
-@if(IronGate\Integration\Entities\User::hasPreferences())
+@if(IronGate\Chief\Entities\User::hasPreferences())
     <li class="nav-item">
         <a class="nav-link {{ active('account/preferences') }}" href="{{ route('account.preferences') }}">
             <i class="fad fa-fw fa-cog"></i> Preferences

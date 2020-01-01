@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Integration\Http\Middleware;
+namespace IronGate\Chief\Http\Middleware;
 
 use Closure;
 use Sentry\State\Scope;
@@ -14,7 +14,7 @@ class SentryContext
             /** @var \Sentry\State\Hub $sentry */
             $sentry = app('sentry');
 
-            /** @var \IronGate\Integration\Entities\User $user */
+            /** @var \IronGate\Chief\Entities\User $user */
             $user = $request->user();
 
             $userData = $user ? [

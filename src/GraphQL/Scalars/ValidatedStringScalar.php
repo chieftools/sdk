@@ -46,7 +46,7 @@ abstract class ValidatedStringScalar extends Str
     public function parseValue($value)
     {
         foreach (static::getValidationRules() as $validationRule) {
-            if (!validate($value, $validationRule)) {
+            if (validate($value, $validationRule)) {
                 return parent::parseValue($value);
             }
         }
@@ -62,7 +62,7 @@ abstract class ValidatedStringScalar extends Str
         $return = parent::parseLiteral($valueNode, $variables);
 
         foreach (static::getValidationRules() as $validationRule) {
-            if (!validate($valueNode->value, $validationRule)) {
+            if (validate($valueNode->value, $validationRule)) {
                 return $return;
             }
         }

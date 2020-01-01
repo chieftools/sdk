@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-body">
                     <div class="alert alert-warning">
-                        <i class="fa fa-fw fa-exclamation-circle"></i> The API is in <b>beta</b>, it <b>can and will</b> change it's schema in a <b>breaking</b> manner <b>without notice</b>!
+                        <i class="fad fa-fw fa-exclamation-circle"></i> The API is in <b>beta</b>, it <b>can and will</b> change it's schema in a <b>breaking</b> manner <b>without notice</b>!
                     </div>
 
                     The API is based on the <a href="https://graphql.org/learn/" target="_blank" rel="noopener">GraphQL</a> query language and lives here: <code>{{ route('api') }}</code>.

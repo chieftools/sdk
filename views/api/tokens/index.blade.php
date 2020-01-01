@@ -14,7 +14,7 @@
                     </div>
                     <div class="card-body">
                         <div class="alert alert-warning">
-                            <i class="fa fa-fw fa-exclamation-circle"></i> This token will only be shown once! If you lose it you can disable the token and create a new one.
+                            <i class="fad fa-fw fa-exclamation-circle"></i> This token will only be shown once! If you lose it you can disable the token and create a new one.
                         </div>
 
                         <div class="input-group">

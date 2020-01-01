@@ -48,6 +48,20 @@ return [
 
     'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),
 
+    'response' => [
+
+        'securityheaders' => [
+
+            'Feature-Policy'            => "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'",
+            'Referrer-Policy'           => 'strict-origin-when-cross-origin',
+            'X-Frame-Options'           => 'SAMEORIGIN',
+            'X-Content-Type-Options'    => 'nosniff',
+            'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload',
+
+        ],
+
+    ],
+
     'webhooks' => [
 
         'account_closed'  => IronGate\Chief\Webhook\Handlers\AccountClosed::class,

@@ -169,7 +169,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             'name'     => $remote->getName(),
             'email'    => $remote->getEmail(),
             'timezone' => $remote->getTimezone(),
-            'password' => $this->chief_id === null ? str_random(64) : null,
+            'password' => empty($this->password) ? str_random(64) : null,
         ])->save();
     }
     public static function createFromRemote(ChiefUser $remote): self

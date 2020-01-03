@@ -18,6 +18,8 @@ class GraphQL extends GraphQLController
     {
         auth()->shouldUse($guard);
 
+        sync_user_timezone();
+
         config([
             'lighthouse.security.disable_introspection' => auth()->check()
                 ? DisableIntrospection::DISABLED

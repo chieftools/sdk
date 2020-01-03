@@ -16,6 +16,8 @@ class AutoAuthenticate extends Authenticate
 
         $this->authenticate($request, ['api', 'web']);
 
+        sync_user_timezone();
+
         return $next($request);
     }
 }

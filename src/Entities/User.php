@@ -8,7 +8,6 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use IronGate\Chief\Concerns\UsesUUID;
-use Illuminate\Database\Eloquent\Model;
 use IronGate\Chief\Concerns\Observable;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,7 +29,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property array               $preferences
  * @property string|null         $remember_token
  */
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, HasApiTokens, UsesUUID, Observable;
 

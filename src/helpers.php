@@ -73,6 +73,16 @@ function user_now(): Carbon
 }
 
 /**
+ * Sync the authenticated user timezone to the correct config key.
+ */
+function sync_user_timezone(): void
+{
+    config([
+        'app.timezone_user' => auth()->check() ? auth()->user()->timezone : null,
+    ]);
+}
+
+/**
  * Validate some data.
  *
  * @param string|array $fields

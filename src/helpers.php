@@ -165,6 +165,24 @@ function chief_site_url(?string $path = null): string
 }
 
 /**
+ * Check if we can reach the outside internet.
+ *
+ * @return bool
+ */
+function outside_reachable(): bool
+{
+    $connected = @fsockopen('www.google.com', 443);
+
+    if ($connected) {
+        @fclose($connected);
+
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Get the path to the most up-to-date CA bundle file.
  *
  * @return string

@@ -4,7 +4,6 @@ namespace IronGate\Chief\Http\Middleware;
 
 use Closure;
 use RuntimeException;
-use Illuminate\Auth\Middleware\Authenticate;
 
 class AutoAuthenticate extends Authenticate
 {
@@ -15,8 +14,6 @@ class AutoAuthenticate extends Authenticate
         }
 
         $this->authenticate($request, ['api', 'web']);
-
-        sync_user_timezone();
 
         return $next($request);
     }

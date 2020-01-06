@@ -12,9 +12,4 @@ class Authenticate extends IlluminateAuthenticate
 
         sync_user_timezone();
     }
-
-    protected function redirectTo($request)
-    {
-        return redirect()->guest('login');
-    }
 }

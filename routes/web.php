@@ -4,8 +4,8 @@ use IronGate\Chief\Http\Controllers;
 use IronGate\Chief\Http\Middleware\AuthenticateChief;
 
 Route::group(config('chief.routes.web'), function () {
-    Route::redirect('auth/login', 'login')->name('login');
-    Route::redirect('auth/register', 'register')->name('register');
+    Route::redirect('auth/login', '/login')->name('login');
+    Route::redirect('auth/register', '/register')->name('register');
 
     Route::get('register', Controllers\Auth\Register::class)->name('auth.register');
 

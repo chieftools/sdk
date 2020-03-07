@@ -6,20 +6,20 @@
     "type": "library",
     "require": {
         "php": ">=7.4",
-        "anahkiasen/former": "^4.3",
+        "anahkiasen/former": "^4.4",
         "atrox/haikunator": "^1.2",
-        "fideloper/proxy": "^4.2",
-        "guzzlehttp/guzzle": "^6.3",
+        "fideloper/proxy": "^4.3",
+        "guzzlehttp/guzzle": "^6.5",
         "haydenpierce/class-finder": "^0.4",
-        "laravel/framework": "^6.0",
-        "laravel/helpers": "^1.1",
-        "laravel/passport": "^8.0",
-        "laravel/socialite": "^4.0",
-        "mll-lab/graphql-php-scalars": "^2.1",
-        "nuwave/lighthouse": "^4.7",
+        "laravel/framework": "^7.0",
+        "laravel/helpers": "^1.2",
+        "laravel/passport": "^8.4",
+        "laravel/socialite": "^4.3",
+        "mll-lab/graphql-php-scalars": "^3.0",
+        "nuwave/lighthouse": "^4.10",
         "paragonie/certainty": "^2.6",
-        "ramsey/uuid": "^3.8",
-        "sentry/sentry-laravel": "^1.5"
+        "ramsey/uuid": "^3.9",
+        "sentry/sentry-laravel": "^1.7"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "2.16.*"

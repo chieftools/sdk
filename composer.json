@@ -18,7 +18,7 @@
         "mll-lab/graphql-php-scalars": "^3.0",
         "nuwave/lighthouse": "^4.10",
         "paragonie/certainty": "^2.6",
-        "ramsey/uuid": "^3.9",
+        "ramsey/uuid": "^3.9|^4.0",
         "sentry/sentry-laravel": "^1.7"
     },
     "require-dev": {

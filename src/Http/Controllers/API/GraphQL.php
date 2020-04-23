@@ -8,13 +8,14 @@ use Nuwave\Lighthouse\GraphQL as Lighthouse;
 use Nuwave\Lighthouse\Execution\GraphQLRequest;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use Nuwave\Lighthouse\Support\Http\Controllers\GraphQLController;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class GraphQL extends GraphQLController
 {
     /**
      * {@inheritdoc}
      */
-    public function query(GraphQLRequest $request, string $guard = 'api')
+    public function query(GraphQLRequest $request, string $guard = 'api'): SymfonyResponse
     {
         auth()->shouldUse($guard);
 

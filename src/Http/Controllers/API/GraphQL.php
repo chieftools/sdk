@@ -29,11 +29,13 @@ class GraphQL extends GraphQLController
 
         // If we are in a local environment we print the schema on every request
         // it's a bit wasteful but the impact is not that big and it saves using git hooks
-        if (config('app.env') === 'local') {
+        if (app()->environment('local')) {
             file_put_contents(
                 base_path('routes/graphql/exported/schema.public.graphql'),
                 SchemaPrinter::doPrint($this->graphQL->prepSchema())
             );
+
+            config(['lighthouse.security.disable_introspection' => DisableIntrospection::DISABLED]);
         }
 
         return parent::query($request);

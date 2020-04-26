@@ -9,12 +9,14 @@ use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events as AuthEvents;
+use Illuminate\Support\Facades\Broadcast;
 use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Chief\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use IronGate\Chief\Broadcasting\Channels\LighthouseSubscriptionChannel;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
@@ -25,6 +27,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadEvents();
 
         $this->loadPassport();
+
+        $this->loadBroadcast();
 
         $this->loadViewsFrom(static::basePath('views'), 'chief');
 
@@ -108,6 +112,15 @@ class ServiceProvider extends IlluminateServiceProvider
                          ->everyMinute();
             });
         }
+    }
+
+    private function loadBroadcast(): void
+    {
+        if (!config('chief.graphql.subscriptions.enabled')) {
+            return;
+        }
+
+        Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
     }
 
     private function loadMiddleware(): void

@@ -44,6 +44,18 @@ return [
 
     ],
 
+    'graphql' => [
+
+        'subscriptions' => [
+
+            'enabled' => env('CHIEF_GRAPHQL_SUBSCRIPTIONS_ENABLED', false),
+
+            'webhook_secret' => env('CHIEF_GRAPHQL_SUBSCRIPTIONS_WEBHOOK_SECRET'),
+
+        ],
+
+    ],
+
     'base_url' => env('CHIEF_BASE_URL', 'https://account.chief.app'),
 
     'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),

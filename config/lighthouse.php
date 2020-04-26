@@ -4,7 +4,6 @@ use GraphQL\Error\Debug;
 use GraphQL\Validator\Rules\DisableIntrospection;
 use IronGate\Chief\GraphQL\Exceptions\GraphQLHandler;
 use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
-use Nuwave\Lighthouse\Subscriptions\SubscriptionRouter;
 
 $appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
 
@@ -12,34 +11,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | GraphQL endpoint
+    | Route Configuration
     |--------------------------------------------------------------------------
     |
-    | Set the endpoint to which the GraphQL server responds.
-    | The default route endpoint is "yourdomain.com/graphql".
-    |
-    */
-
-    'route_name' => 'api/graphql',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Enable GET requests
-    |--------------------------------------------------------------------------
-    |
-    | This setting controls if GET requests to the GraphQL endpoint are allowed.
-    |
-    */
-
-    'route_enable_get' => true,
-
-    /*
-    |--------------------------------------------------------------------------
-    | Route configuration
-    |--------------------------------------------------------------------------
-    |
-    | Additional configuration for the route group.
-    | Check options here https://lumen.laravel.com/docs/routing#route-groups
+    | Controls the HTTP route that your GraphQL server responds to.
+    | You may set `route` => false, to disable the default route
+    | registration and take full control.
     |
     */
 
@@ -47,7 +24,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Schema declaration
+    | Schema Location
     |--------------------------------------------------------------------------
     |
     | This is a path that points to where your GraphQL schema is located
@@ -65,9 +42,9 @@ return [
     | Schema Cache
     |--------------------------------------------------------------------------
     |
-    | A large part of the Schema generation is parsing into an AST.
-    | This operation is pretty expensive so it is recommended to enable
-    | caching in production mode.
+    | A large part of schema generation consists of parsing and AST manipulation.
+    | This operation is very expensive, so it is highly recommended to enable
+    | caching of the final schema to optimize performance of large schemas.
     |
     */
 
@@ -82,8 +59,9 @@ return [
     | Namespaces
     |--------------------------------------------------------------------------
     |
-    | These are the default namespaces where Lighthouse looks for classes
-    | that extend functionality of the schema.
+    | These are the default namespaces where Lighthouse looks for classes to
+    | extend functionality of the schema. You may pass in either a string
+    | or an array, they are tried in order and the first match is used.
     |
     */
 
@@ -104,8 +82,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Control how Lighthouse handles security related query validation.
-    | This configures the options from http://webonyx.github.io/graphql-php/security/
-    | A setting of "0" means that the validation rule is disabled.
+    | Read more at http://webonyx.github.io/graphql-php/security/
     |
     */
 
@@ -135,11 +112,26 @@ return [
     |
     | Set the name to use for the generated argument on paginated fields
     | that controls how many results are returned.
-    | This will default to "first" in v4.
+    |
+    | DEPRECATED This setting will be removed in v5.
     |
     */
 
     'pagination_amount_argument' => 'first',
+
+    /*
+    |--------------------------------------------------------------------------
+    | @orderBy input name
+    |--------------------------------------------------------------------------
+    |
+    | Set the name to use for the generated argument on the
+    | OrderByClause used for the @orderBy directive.
+    |
+    | DEPRECATED This setting will be removed in v5.
+    |
+    */
+
+    'orderBy' => 'field',
 
     /*
     |--------------------------------------------------------------------------
@@ -171,22 +163,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | GraphQL Controller
-    |--------------------------------------------------------------------------
-    |
-    | Specify which controller (and method) you want to handle GraphQL requests.
-    |
-    */
-
-    'controller' => false,
-
-    /*
-    |--------------------------------------------------------------------------
     | Global ID
     |--------------------------------------------------------------------------
     |
-    | When creating a GraphQL type that is Relay compliant, provide a named field
-    | for the Node identifier.
+    | The name that is used for the global id field on the Node interface.
+    | When creating a Relay compliant server, this must be named "id".
     |
     */
 
@@ -209,12 +190,24 @@ return [
     | Transactional Mutations
     |--------------------------------------------------------------------------
     |
-    | Sets default setting for transactional mutations.
-    | You may set this flag to have @create|@update mutations transactional or not.
+    | If set to true, mutations such as @create or @update will be
+    | wrapped in a transaction to ensure atomicity.
     |
     */
 
     'transactional_mutations' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Batchload Relations
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, relations marked with directives like @hasMany or @belongsTo
+    | will be optimized by combining the queries through the BatchLoader.
+    |
+    */
+
+    'batchload_relations' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -235,12 +228,28 @@ return [
         'queue_broadcasts' => env('LIGHTHOUSE_QUEUE_BROADCASTS', true),
 
         /*
+         * Determines the queue to use for broadcasting queue jobs.
+         */
+
+        'broadcasts_queue_name' => env('LIGHTHOUSE_BROADCASTS_QUEUE_NAME', null),
+
+        /*
          * Default subscription storage.
          *
          * Any Laravel supported cache driver options are available here.
          */
 
         'storage' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE', 'redis'),
+
+        /*
+         * Default subscription storage time to live in seconds.
+         *
+         * Indicates how long a subscription can be active before it's automatically removed from storage.
+         * Setting this to `null` means the subscriptions are stored forever. This may cause
+         * stale subscriptions to linger indefinitely in case cleanup fails for any reason.
+         */
+
+        'storage_ttl' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE_TTL', 60 * 60),
 
         /*
          * Default subscription broadcaster.
@@ -253,15 +262,16 @@ return [
          */
 
         'broadcasters' => [
+
             'log' => [
                 'driver' => 'log',
             ],
 
             'pusher' => [
                 'driver'     => 'pusher',
-                'routes'     => SubscriptionRouter::class . '@pusher',
                 'connection' => env('BROADCAST_DRIVER'),
             ],
+
         ],
 
     ],

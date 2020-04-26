@@ -9,12 +9,15 @@ use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events as AuthEvents;
+use Illuminate\Support\Facades\Broadcast;
 use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Chief\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
+use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use IronGate\Chief\Broadcasting\Channels\LighthouseSubscriptionChannel;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
@@ -29,6 +32,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadViewsFrom(static::basePath('views'), 'chief');
 
         $this->loadMiddleware();
+
+        $this->loadGraphQLSubscriptions();
 
         $this->loadSocialiteIntegration();
 
@@ -47,7 +52,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
+        $this->mergeConfigFrom(static::basePath('config/former.php'), 'former');
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
+
+        $this->registerGraphQLSubscriptions();
 
         $this->app->singleton(Certainty\RemoteFetch::class, function () {
             $fetch = new Certainty\RemoteFetch(storage_path('framework/cache'));
@@ -129,6 +137,15 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadMigrationsFrom(static::basePath('database/migrations'));
     }
 
+    private function loadGraphQLSubscriptions(): void
+    {
+        if (!config('chief.graphql.subscriptions.enabled')) {
+            return;
+        }
+
+        Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
+    }
+
     private function loadSocialiteIntegration(): void
     {
         if (!$this->app['config']['services.chief']) {
@@ -143,6 +160,17 @@ class ServiceProvider extends IlluminateServiceProvider
                 ChiefProvider::class,
                 $app['config']['services.chief']
             );
+        });
+    }
+
+    private function registerGraphQLSubscriptions(): void
+    {
+        if (!config('chief.graphql.subscriptions.enabled')) {
+            return;
+        }
+
+        $this->app->booting(function () {
+            $this->app->register(SubscriptionServiceProvider::class);
         });
     }
 

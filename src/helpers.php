@@ -198,3 +198,26 @@ function latest_ca_bundle_file_path(): string
 
     return $certaintyPath ?? resource_path('files/cacert-2019-08-28.pem');
 }
+
+/*
+ * Dispatch to a GraphQL subscription.
+ *
+ * @param string    $subscription
+ * @param mixed     $root
+ * @param bool|null $shouldQueue
+ */
+function dispatch_subscription(string $subscription, $root, ?bool $shouldQueue = null): void
+{
+    if (!config('chief.graphql.subscriptions.enabled')) {
+        return;
+    }
+
+    // Try and be clever to get a subscription name for a subscription class name
+    if (class_exists($subscription)) {
+        $subscription = lcfirst(class_basename($subscription));
+    }
+
+    logger()->debug("Dispatching subscription:{$subscription}");
+
+    Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);
+}

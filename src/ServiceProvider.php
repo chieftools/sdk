@@ -52,12 +52,11 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
-        $this->mergeConfigFrom(static::basePath('config/former.php'), 'former');
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
 
         $this->registerGraphQLSubscriptions();
 
-        $this->app->singleton(Certainty\RemoteFetch::class, function () {
+        $this->app->singleton(Certainty\RemoteFetch::class, static function () {
             $fetch = new Certainty\RemoteFetch(storage_path('framework/cache'));
 
             return $fetch->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
@@ -86,7 +85,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function loadPassport(): void
     {
-        Passport::routes(function (RouteRegistrar $routes) {
+        Passport::routes(static function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
             $routes->forAuthorization();
         }, config('chief.routes.passport', []));
@@ -155,7 +154,7 @@ class ServiceProvider extends IlluminateServiceProvider
         /** @var \Laravel\Socialite\SocialiteManager $socialite */
         $socialite = $this->app->make(Socialite::class);
 
-        $socialite->extend('chief', function ($app) use ($socialite) {
+        $socialite->extend('chief', static function ($app) use ($socialite) {
             return $socialite->buildProvider(
                 ChiefProvider::class,
                 $app['config']['services.chief']

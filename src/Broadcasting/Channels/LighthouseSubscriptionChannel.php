@@ -5,7 +5,7 @@ namespace IronGate\Chief\Broadcasting\Channels;
 use IronGate\Chief\Entities\User;
 use Nuwave\Lighthouse\Subscriptions\Contracts\AuthorizesSubscriptions;
 
-class LighthouseSubscriptionChannel extends Channel
+class LighthouseSubscriptionChannel
 {
     private AuthorizesSubscriptions $subscriptionAuthorizer;
 

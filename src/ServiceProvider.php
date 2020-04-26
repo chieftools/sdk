@@ -47,6 +47,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
+        $this->mergeConfigFrom(static::basePath('config/former.php'), 'former');
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
 
         $this->app->singleton(Certainty\RemoteFetch::class, function () {

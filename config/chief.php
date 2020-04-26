@@ -46,6 +46,8 @@ return [
 
     'graphql' => [
 
+        'playground' => env('CHIEF_GRAPHQL_PLAYGROUND', 'graphiql'),
+
         'subscriptions' => [
 
             'enabled' => env('CHIEF_GRAPHQL_SUBSCRIPTIONS_ENABLED', false),

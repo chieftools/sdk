@@ -239,7 +239,7 @@ return [
          * Any Laravel supported cache driver options are available here.
          */
 
-        'storage' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE', 'redis'),
+        'storage' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE', env('CACHE_DRIVER', 'redis')),
 
         /*
          * Default subscription storage time to live in seconds.

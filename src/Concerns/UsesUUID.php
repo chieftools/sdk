@@ -17,6 +17,15 @@ trait UsesUUID
         });
     }
 
+    public function initializeUsesUUID(): void
+    {
+        // If the UUID is the primary key we set some attributes to have Eloquent play nice with it
+        if ($this->getKeyName() === $this->getUuidColumnName()) {
+            $this->keyType      = 'string';
+            $this->incrementing = false;
+        }
+    }
+
     /**
      * Find by the UUID attribute.
      *

@@ -46,6 +46,12 @@ return [
 
     'graphql' => [
 
+        'namespace' => [
+
+            'prefix' => 'Http',
+
+        ],
+
         'playground' => env('CHIEF_GRAPHQL_PLAYGROUND', 'graphiql'),
 
         'subscriptions' => [

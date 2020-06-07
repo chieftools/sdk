@@ -7,6 +7,9 @@ use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
 
 $appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
 
+$prefixNamespace = config('chief.graphql.namespace.prefix', 'Http');
+$prefixNamespace = empty($prefixNamespace) ? '' : "{$prefixNamespace}\\";
+
 return [
 
     /*
@@ -67,13 +70,16 @@ return [
 
     'namespaces' => [
         'models'        => "IronGate\\{$appNamespace}\\Models",
-        'queries'       => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Queries",
-        'mutations'     => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Mutations",
-        'subscriptions' => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Subscriptions",
-        'interfaces'    => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Interfaces",
-        'unions'        => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Unions",
-        'scalars'       => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Scalars",
-        'directives'    => "IronGate\\{$appNamespace}\\Http\\GraphQL\\Directives",
+        'queries'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Queries",
+        'mutations'     => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Mutations",
+        'subscriptions' => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Subscriptions",
+        'interfaces'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Interfaces",
+        'unions'        => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Unions",
+        'scalars'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Scalars",
+        'directives'    => [
+            "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
+            'IronGate\\Chief\\GraphQL\\Directives',
+        ],
     ],
 
     /*

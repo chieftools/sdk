@@ -11,7 +11,9 @@ trait UsesUUID
     public static function bootUsesUUID(): void
     {
         self::creating(function (Model $model) {
-            $model->{$model->getUuidColumnName()} = Uuid::uuid4()->toString();
+            if (empty($model->getAttribute($model->getUuidColumnName()))) {
+                $model->{$model->getUuidColumnName()} = Uuid::uuid4()->toString();
+            }
         });
     }
 

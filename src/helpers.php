@@ -199,8 +199,8 @@ function latest_ca_bundle_file_path(): string
     return $certaintyPath ?? resource_path('files/cacert-2019-08-28.pem');
 }
 
-/*
- * Dispatch to a GraphQL subscription.
+/**
+ * Dispatch a GraphQL subscription.
  *
  * @param string    $subscription
  * @param mixed     $root
@@ -220,4 +220,18 @@ function dispatch_subscription(string $subscription, $root, ?bool $shouldQueue =
     logger()->debug("Dispatching subscription:{$subscription}");
 
     Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);
+}
+
+/**
+ * Dispatch a job but retry it a few times in case SQS has issues.
+ *
+ * @param mixed $job
+ *
+ * @throws \Exception
+ */
+function dispatch_vapor($job): void
+{
+    retry(10, static function () use ($job) {
+        dispatch($job);
+    }, 200);
 }

@@ -13,10 +13,10 @@
         "haydenpierce/class-finder": "^0.4",
         "laravel/framework": "^7.0",
         "laravel/helpers": "^1.2",
-        "laravel/passport": "^8.4",
+        "laravel/passport": "^9.2",
         "laravel/socialite": "^4.3",
         "mll-lab/graphql-php-scalars": "^3.0",
-        "nuwave/lighthouse": "4.12.*",
+        "nuwave/lighthouse": "4.14.*",
         "paragonie/certainty": "^2.6",
         "ramsey/uuid": "^3.9|^4.0",
         "sentry/sentry-laravel": "^1.7"

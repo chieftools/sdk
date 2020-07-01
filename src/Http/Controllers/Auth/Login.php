@@ -9,6 +9,6 @@ class Login
 {
     public function __invoke(): RedirectResponse
     {
-        return Socialite::driver('chief')->redirect();
+        return Socialite::driver('chief')->stateless()->redirect();
     }
 }

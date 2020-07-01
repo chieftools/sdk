@@ -11,7 +11,7 @@ class Callback
     public function __invoke(): RedirectResponse
     {
         /** @var \IronGate\Chief\Socialite\ChiefUser $remote */
-        $remote = Socialite::driver('chief')->user();
+        $remote = Socialite::driver('chief')->stateless()->user();
 
         Auth::guard()->login(
             config('chief.auth.model')::createOrUpdateFromRemote($remote)

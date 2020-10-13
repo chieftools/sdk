@@ -19,6 +19,10 @@
             z-index: 10;
         }
 
+        #graphiql {
+            height: {{ config('debugbar.enabled') ? 'calc(100vh - 60px - 28px)' : 'calc(100vh - 60px)' }};
+        }
+
         #graphiql .title {
             display: none;
         }
@@ -29,6 +33,17 @@
 
         #graphiql .history-title-bar, #graphiql .doc-explorer-title-bar {
             min-height: 50px;
+        }
+
+        #graphiql .query-editor .CodeMirror {
+            padding: 0 20px;
+            height: 100% !important;
+        }
+
+        #graphiql .result-window .CodeMirror {
+            left: 20px;
+            padding: 0;
+            height: 100% !important;
         }
     </style>
 @endpush
@@ -215,7 +230,7 @@
     @include('partial.menu', ['fluid' => true])
 
     <div class="container-fluid p-0" style="height: calc(100% - 55px);">
-        <div id="graphiql" style="height: 100%;">
+        <div id="graphiql">
             <div style="text-align: center; margin-top: 20px;">
                 <i class="fal fa-3x fa-fw fa-circle-notch fa-spin"></i>
             </div>

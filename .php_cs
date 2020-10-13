@@ -9,7 +9,6 @@ $finder = PhpCsFixer\Finder::create()
 ;
 
 return PhpCsFixer\Config::create()
-    ->setUsingCache(false)
     ->setRules(array(
         '@Symfony' => true,
 
@@ -31,7 +30,7 @@ return PhpCsFixer\Config::create()
         ],
         'binary_operator_spaces' => [
             'operators' => [
-                '=' => 'align_single_space',
+                '='  => 'align_single_space',
                 '=>' => 'align_single_space',
             ],
         ],

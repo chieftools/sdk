@@ -74,11 +74,15 @@ function user_now(): Carbon
 
 /**
  * Sync the authenticated user timezone to the correct config key.
+ *
+ * @param \IronGate\Chief\Entities\User|null $user
  */
-function sync_user_timezone(): void
+function sync_user_timezone(?IronGate\Chief\Entities\User $user = null): void
 {
+    $user = $user ?? auth()->user();
+
     config([
-        'app.timezone_user' => auth()->check() ? auth()->user()->timezone : null,
+        'app.timezone_user' => $user->timezone ?? null,
     ]);
 }
 

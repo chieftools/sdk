@@ -81,6 +81,7 @@ class ServiceProvider extends IlluminateServiceProvider
     private function loadEvents(): void
     {
         Event::listen(AuthEvents\Login::class, Listeners\Auth\Login::class);
+        Event::listen(AuthEvents\Authenticated::class, Listeners\Auth\Authenticated::class);
     }
 
     private function loadPassport(): void

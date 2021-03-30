@@ -23,4 +23,20 @@ trait EloquentUserTimezones
 
         return $value;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fromDateTime($value): ?string
+    {
+        if ($value instanceof Carbon && !request()->is('nova*')) {
+            $timezone = config('app.timezone_user');
+
+            if (!empty($timezone)) {
+                $value->shiftTimezone($timezone);
+            }
+        }
+
+        return parent::fromDateTime($value);
+    }
 }

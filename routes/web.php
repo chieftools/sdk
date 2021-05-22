@@ -25,11 +25,9 @@ Route::group(config('chief.routes.web'), function () {
         'prefix'     => 'account',
         'middleware' => 'auth',
     ], function () {
-
         Route::view('profile', 'chief::account.profile')->name('profile');
         Route::get('preferences', Controllers\Account\Preferences::class)->name('preferences');
         Route::post('preference/toggle', [Controllers\Account\Preferences::class, 'toggle'])->name('preferences.toggle');
-
     });
 
     Route::group([
@@ -37,13 +35,11 @@ Route::group(config('chief.routes.web'), function () {
         'prefix'     => 'api',
         'middleware' => 'auth',
     ], function () {
-
         Route::view('docs/graphql', 'chief::api.docs.graphql')->name('docs.graphql');
 
         Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
         Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');
         Route::post('token/create', [Controllers\API\Tokens::class, 'store']);
         Route::post('token/{id}/delete', [Controllers\API\Tokens::class, 'delete'])->name('tokens.delete');
-
     });
 });

@@ -12,9 +12,9 @@ class ContextFactory implements CreatesContext
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \Nuwave\Lighthouse\Support\Contracts\GraphQLContext
+     * @return \IronGate\Chief\GraphQL\Context
      */
-    public function generate(Request $request)
+    public function generate(Request $request): Context
     {
         return new Context($request);
     }

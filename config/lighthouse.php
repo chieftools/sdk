@@ -1,9 +1,11 @@
 <?php
 
 use GraphQL\Error\Debug;
+use GraphQL\Error\DebugFlag;
+use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\DisableIntrospection;
-use IronGate\Chief\GraphQL\Exceptions\GraphQLHandler;
 use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
+use Nuwave\Lighthouse\Execution\ReportingErrorHandler;
 
 $appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
 
@@ -27,12 +29,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Authentication Guard
+    |--------------------------------------------------------------------------
+    |
+    | The guard to use for authenticating GraphQL requests, if needed.
+    | This setting is used whenever Lighthouse looks for an authenticated user, for example in directives
+    | such as `@guard` and when applying the `AttemptAuthentication` middleware.
+    |
+    */
+
+    'guard' => 'api',
+
+    /*
+    |--------------------------------------------------------------------------
     | Schema Location
     |--------------------------------------------------------------------------
     |
-    | This is a path that points to where your GraphQL schema is located
-    | relative to the app path. You should define your entire GraphQL
-    | schema in this file (additional files may be imported).
+    | Path to your .graphql schema file.
+    | Additional schema files may be imported from within that file.
     |
     */
 
@@ -53,6 +67,7 @@ return [
 
     'cache' => [
         'enable' => env('LIGHTHOUSE_CACHE_ENABLE', !env('APP_DEBUG', false)),
+        'store'  => env('LIGHTHOUSE_CACHE_STORE'),
         'key'    => env('LIGHTHOUSE_CACHE_KEY', 'lighthouse-schema:' . str_replace('.', '_', config('app.version'))),
         'ttl'    => env('LIGHTHOUSE_CACHE_TTL', 60 * 60 * 24 * 14),
     ],
@@ -76,10 +91,8 @@ return [
         'interfaces'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Interfaces",
         'unions'        => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Unions",
         'scalars'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Scalars",
-        'directives'    => [
-            "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
-            'IronGate\\Chief\\GraphQL\\Directives',
-        ],
+        'directives'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
+        'validators'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Validators",
     ],
 
     /*
@@ -88,12 +101,12 @@ return [
     |--------------------------------------------------------------------------
     |
     | Control how Lighthouse handles security related query validation.
-    | Read more at http://webonyx.github.io/graphql-php/security/
+    | Read more at https://webonyx.github.io/graphql-php/security/
     |
     */
 
     'security' => [
-        'max_query_complexity'  => 0,
+        'max_query_complexity'  => QueryComplexity::DISABLED,
         'max_query_depth'       => 12,
         'disable_introspection' => DisableIntrospection::ENABLED,
     ],
@@ -103,53 +116,54 @@ return [
     | Pagination
     |--------------------------------------------------------------------------
     |
-    | Limits the maximum "count" that users may pass as an argument
-    | to fields that are paginated with the @paginate directive.
-    | A setting of "null" means the count is unrestricted.
+    | Set defaults for the pagination features within Lighthouse, such as
+    | the @paginate directive, or paginated relation directives.
     |
     */
 
-    'paginate_max_count' => 100,
+    'pagination' => [
+        /*
+         * Allow clients to query paginated lists without specifying the amount of items.
+         * Setting this to `null` means clients have to explicitly ask for the count.
+         */
+        'default_count' => null,
 
-    /*
-    |--------------------------------------------------------------------------
-    | Pagination Amount Argument
-    |--------------------------------------------------------------------------
-    |
-    | Set the name to use for the generated argument on paginated fields
-    | that controls how many results are returned.
-    |
-    | DEPRECATED This setting will be removed in v5.
-    |
-    */
-
-    'pagination_amount_argument' => 'first',
-
-    /*
-    |--------------------------------------------------------------------------
-    | @orderBy input name
-    |--------------------------------------------------------------------------
-    |
-    | Set the name to use for the generated argument on the
-    | OrderByClause used for the @orderBy directive.
-    |
-    | DEPRECATED This setting will be removed in v5.
-    |
-    */
-
-    'orderBy' => 'field',
+        /*
+         * Limit the maximum amount of items that clients can request from paginated lists.
+         * Setting this to `null` means the count is unrestricted.
+         */
+        'max_count'     => 100,
+    ],
 
     /*
     |--------------------------------------------------------------------------
     | Debug
     |--------------------------------------------------------------------------
     |
-    | Control the debug level as described in http://webonyx.github.io/graphql-php/error-handling/
+    | Control the debug level as described in https://webonyx.github.io/graphql-php/error-handling/
     | Debugging is only applied if the global Laravel debug config is set to true.
+    |
+    | When you set this value through an environment variable, use the following reference table:
+    |  0 => INCLUDE_NONE
+    |  1 => INCLUDE_DEBUG_MESSAGE
+    |  2 => INCLUDE_TRACE
+    |  3 => INCLUDE_TRACE | INCLUDE_DEBUG_MESSAGE
+    |  4 => RETHROW_INTERNAL_EXCEPTIONS
+    |  5 => RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_DEBUG_MESSAGE
+    |  6 => RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_TRACE
+    |  7 => RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_TRACE | INCLUDE_DEBUG_MESSAGE
+    |  8 => RETHROW_UNSAFE_EXCEPTIONS
+    |  9 => RETHROW_UNSAFE_EXCEPTIONS | INCLUDE_DEBUG_MESSAGE
+    | 10 => RETHROW_UNSAFE_EXCEPTIONS | INCLUDE_TRACE
+    | 11 => RETHROW_UNSAFE_EXCEPTIONS | INCLUDE_TRACE | INCLUDE_DEBUG_MESSAGE
+    | 12 => RETHROW_UNSAFE_EXCEPTIONS | RETHROW_INTERNAL_EXCEPTIONS
+    | 13 => RETHROW_UNSAFE_EXCEPTIONS | RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_DEBUG_MESSAGE
+    | 14 => RETHROW_UNSAFE_EXCEPTIONS | RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_TRACE
+    | 15 => RETHROW_UNSAFE_EXCEPTIONS | RETHROW_INTERNAL_EXCEPTIONS | INCLUDE_TRACE | INCLUDE_DEBUG_MESSAGE
     |
     */
 
-    'debug' => Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE,
+    'debug' => env('LIGHTHOUSE_DEBUG', DebugFlag::INCLUDE_DEBUG_MESSAGE | DebugFlag::INCLUDE_TRACE),
 
     /*
     |--------------------------------------------------------------------------
@@ -164,7 +178,27 @@ return [
 
     'error_handlers' => [
         ExtensionErrorHandler::class,
-        GraphQLHandler::class,
+        ReportingErrorHandler::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Field Middleware
+    |--------------------------------------------------------------------------
+    |
+    | Register global field middleware directives that wrap around every field.
+    | Execution happens in the defined order, before other field middleware.
+    | The classes must implement \Nuwave\Lighthouse\Support\Contracts\FieldMiddleware
+    |
+    */
+
+    'field_middleware' => [
+        Nuwave\Lighthouse\Schema\Directives\TrimDirective::class,
+        Nuwave\Lighthouse\Schema\Directives\SanitizeDirective::class,
+        Nuwave\Lighthouse\Validation\ValidateDirective::class,
+        Nuwave\Lighthouse\Schema\Directives\TransformArgsDirective::class,
+        Nuwave\Lighthouse\Schema\Directives\SpreadDirective::class,
+        Nuwave\Lighthouse\Schema\Directives\RenameArgsDirective::class,
     ],
 
     /*
@@ -205,6 +239,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Mass Assignment Protection
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, mutations will use forceFill() over fill() when populating
+    | a model with arguments in mutation directives. Since GraphQL constrains
+    | allowed inputs by design, mass assignment protection is not needed.
+    |
+    */
+
+    'force_fill' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Batchload Relations
     |--------------------------------------------------------------------------
     |
@@ -220,7 +267,7 @@ return [
     | GraphQL Subscriptions
     |--------------------------------------------------------------------------
     |
-    | Here you can define GraphQL subscription "broadcasters" and "storage" drivers
+    | Here you can define GraphQL subscription broadcaster and storage drivers
     | as well their required configuration options.
     |
     */
@@ -280,6 +327,68 @@ return [
 
         ],
 
+        /*
+         * Controls the format of the extensions response.
+         * Allowed values: 1, 2
+         */
+
+        'version' => env('LIGHTHOUSE_SUBSCRIPTION_VERSION', 2),
+
+        /*
+         * Should the subscriptions extension be excluded when the response has no subscription channel?
+         * This optimizes performance by sending less data, but clients must anticipate this appropriately.
+         * Will default to true in v6 and be removed in v7.
+         */
+
+        'exclude_empty' => env('LIGHTHOUSE_SUBSCRIPTION_EXCLUDE_EMPTY', true),
+
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Defer
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the experimental @defer directive support.
+    |
+    */
+
+    'defer' => [
+
+        /*
+         * Maximum number of nested fields that can be deferred in one query.
+         * Once reached, remaining fields will be resolved synchronously.
+         * 0 means unlimited.
+         */
+
+        'max_nested_fields' => 0,
+
+        /*
+         * Maximum execution time for deferred queries in milliseconds.
+         * Once reached, remaining fields will be resolved synchronously.
+         * 0 means unlimited.
+         */
+
+        'max_execution_ms' => 0,
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Apollo Federation
+    |--------------------------------------------------------------------------
+    |
+    | Lighthouse can act as a federated service: https://www.apollographql.com/docs/federation/federation-spec.
+    |
+    */
+
+    'federation' => [
+
+        /*
+         * Location of resolver classes when resolving the `_entities` field.
+         */
+
+        'entities_resolver_namespace' => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Entities",
+
+    ],
 ];

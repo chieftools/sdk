@@ -64,6 +64,8 @@ return [
 
     ],
 
+    'app_home' => env('CHIEF_APP_HOME', route('site.home')),
+
     'base_url' => env('CHIEF_BASE_URL', 'https://account.chief.app'),
 
     'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),

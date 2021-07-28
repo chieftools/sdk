@@ -3,8 +3,10 @@
 namespace IronGate\Chief\API;
 
 use RuntimeException;
+use GuzzleHttp\HandlerStack;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
+use Sentry\Tracing\GuzzleTracingMiddleware;
 
 class Client extends HttpClient
 {
@@ -21,12 +23,24 @@ class Client extends HttpClient
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $config = [])
+    public function __construct(array $config = [], array $headers = [], int $timeout = 10)
     {
-        parent::__construct(array_merge([
-            'base_uri' => self::getBaseUrl(),
-            'verify'   => config('services.chief.verify', true),
-        ], $config));
+        $stack = HandlerStack::create();
+
+        if (app()->bound('sentry')) {
+            $stack->push(GuzzleTracingMiddleware::trace());
+        }
+
+        parent::__construct(array_merge($config, [
+            'base_uri'        => self::getBaseUrl(),
+            'handler'         => $stack,
+            'verify'          => config('services.chief.verify', true),
+            'timeout'         => $timeout,
+            'connect_timeout' => $timeout,
+            'headers'         => array_merge($headers, [
+                'User-Agent' => user_agent(),
+            ]),
+        ]));
     }
 
     /**

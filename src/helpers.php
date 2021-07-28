@@ -247,7 +247,12 @@ function dispatch_vapor($job): void
  */
 function user_agent(): string
 {
-    return str_replace(' ', '', config('app.name')) . '/' . config('app.version') . ' (+' . config('chief.app_home') . ')';
+    return sprintf(
+        '%s/%s (+%s)',
+        str_replace(' ', '', config('app.name')),
+        config('app.version'),
+        config('chief.app_home') ?? url('/')
+    );
 }
 
 /**

@@ -3,21 +3,23 @@
 namespace IronGate\Chief\Http\Middleware;
 
 use Illuminate\Http\Request;
-use Fideloper\Proxy\TrustProxies as Middleware;
+use Illuminate\Http\Middleware\TrustProxies;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
-class TrustProxiesOnVapor extends Middleware
+class TrustProxiesOnVapor extends TrustProxies
 {
-    /**
-     * The trusted proxies for this application.
-     *
-     * @var array|string
-     */
-    protected $proxies = '*';
+    protected function setTrustedProxyIpAddresses(Request $request): void
+    {
+        if ($this->isRunningInVapor()) {
+            $this->proxies = ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3'];
+            $this->headers = SymfonyRequest::HEADER_X_FORWARDED_FOR;
+        }
 
-    /**
-     * The headers that should be used to detect proxies.
-     *
-     * @var int
-     */
-    protected $headers = Request::HEADER_X_FORWARDED_FOR;
+        parent::setTrustedProxyIpAddresses($request);
+    }
+
+    private function isRunningInVapor(): bool
+    {
+        return isset($_SERVER['VAPOR_ARTIFACT_NAME']);
+    }
 }

@@ -32,6 +32,7 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadPassport();
 
         $this->loadViewsFrom(static::basePath('views/chief'), 'chief');
+        $this->loadViewsFrom(static::basePath('views/tailwind'), 'tw');
 
         $this->loadMiddleware();
 

@@ -52,7 +52,8 @@
                                 <a href="{{ route('api.tokens.delete', [$token->id]) }}"
                                    data-confirm="true"
                                    data-method="post"
-                                   data-title="Disable token"
+                                   data-title="Disable {{ $token->name }} token"
+                                   data-text="Are you sure you want to disable this token?"
                                    data-toggle="tooltip"
                                    class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
                                 >

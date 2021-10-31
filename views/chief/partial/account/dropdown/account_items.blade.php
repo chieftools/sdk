@@ -7,12 +7,13 @@
     </p>
 </div>
 <div class="py-1" role="none">
-    <a href="{{ route('account.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1">
-        <i class="mr-1 fa fa-fw fa-user-circle text-gray-400 group-hover:text-gray-500"></i> Profile
-    </a>
+    <x-chief::account.dropdown-link :href="route('account.profile')" icon="fa-user-circle">
+        Profile
+    </x-chief::account.dropdown-link>
+
     @if(IronGate\Chief\Entities\User::hasPreferences())
-        <a href="{{ route('account.preferences') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900" role="menuitem" tabindex="-1">
-            <i class="mr-1 fa fa-fw fa-cog text-gray-400 group-hover:text-gray-500"></i> Preferences
-        </a>
+        <x-chief::account.dropdown-link :href="route('account.preferences')" icon="fa-cog">
+            Preferences
+        </x-chief::account.dropdown-link>
     @endif
 </div>

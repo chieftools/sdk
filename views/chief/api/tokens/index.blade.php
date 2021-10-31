@@ -33,15 +33,19 @@
                                     {{ $token->name }}
                                 </p>
                                 <p class="text-sm text-gray-500 truncate">
-                                    Created
-                                    <time data-toggle="tooltip" title="{{ $token->created_at->format('d-m-Y H:i:s') }}" datetime="{{ $token->created_at->toIso8601String() }}">
-                                        {{ $token->created_at->diffForHumans() }}
-                                    </time>
+                                    <span data-toggle="tooltip" data-title="{{ $token->created_at->format('d-m-Y H:i:s') }}">
+                                        Created
+                                        <time datetime="{{ $token->created_at->toIso8601String() }}">
+                                            {{ $token->created_at->diffForHumans() }}
+                                        </time>
+                                    </span>
                                     &middot;
-                                    Expires
-                                    <time data-toggle="tooltip" title="{{ $token->expires_at->format('d-m-Y H:i:s') }}" datetime="{{ $token->expires_at->toIso8601String() }}">
-                                        {{ $token->expires_at->diffForHumans() }}
-                                    </time>
+                                    <span data-toggle="tooltip" data-title="{{ $token->expires_at->format('d-m-Y H:i:s') }}">
+                                        Expires
+                                        <time datetime="{{ $token->expires_at->toIso8601String() }}">
+                                            {{ $token->expires_at->diffForHumans() }}
+                                        </time>
+                                    </span>
                                 </p>
                             </div>
                             <div>

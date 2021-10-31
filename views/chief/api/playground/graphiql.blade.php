@@ -1,4 +1,4 @@
-@extends('layout.html', ['title' => 'Playground - API', 'bodyClass' => 'layout-app'])
+@extends('layout.html', ['title' => 'Playground - API'])
 
 @push('head.meta')
     <meta name="robots" content="noindex, nofollow">
@@ -111,16 +111,20 @@
         // use fetch, and could instead implement graphQLFetcher however you like,
         // as long as it returns a Promise or Observable.
         function graphQLFetcher(graphQLParams) {
-            const container  = jQuery('.result-window'),
-                  codemirror = container.find('.CodeMirror');
+            const container  = document.getElementsByClassName('result-window')[0],
+                  codemirror = container.getElementsByClassName('CodeMirror')[0];
 
-            let nativeWrapper     = container.find('.native-wrapper'),
+            let nativeWrapper     = container.getElementsByClassName('native-wrapper'),
                 fallbackRendering = false;
 
-            if (!nativeWrapper.length) {
-                container.append('<div class="native-wrapper"/>');
+            if (nativeWrapper.length) {
+                nativeWrapper = nativeWrapper[0];
+            } else {
+                nativeWrapper = document.createElement('div');
 
-                nativeWrapper = container.find('.native-wrapper');
+                nativeWrapper.classList.add('native-wrapper');
+
+                container.append(nativeWrapper);
             }
 
             // This example expects a GraphQL server at the path /graphql.
@@ -130,7 +134,7 @@
                     headers:     {
                         'Accept':       'application/json',
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     },
                     body:        JSON.stringify(graphQLParams),
                     credentials: 'same-origin',
@@ -144,16 +148,20 @@
                     }
                 }
 
-                codemirror.show();
-                nativeWrapper.html('').hide();
+                codemirror.style.display = 'block';
+
+                nativeWrapper.htmlContent   = '';
+                nativeWrapper.style.display = 'none';
 
                 fallbackRendering = !response.headers.get('content-type').startsWith('application/json');
 
                 return response.text();
             }).then(function (responseBody) {
                 if (fallbackRendering) {
-                    codemirror.hide();
-                    nativeWrapper.html(responseBody).show();
+                    codemirror.style.display = 'none';
+
+                    nativeWrapper.htmlContent   = responseBody;
+                    nativeWrapper.style.display = 'block';
 
                     return 'No JSON response, falling back to native rendering!';
                 }
@@ -222,12 +230,12 @@
             document.getElementById('graphiql'),
         );
 
-        jQuery('.toolbar-button:first')[0].click();
+        document.getElementsByClassName('toolbar-button')[0].click();
     </script>
 @endpush
 
 @section('body')
-    @include('partial.menu', ['fluid' => true])
+    @include('partial.menu', ['fullwidth' => true])
 
     <div class="container-fluid p-0" style="height: calc(100% - 55px);">
         <div id="graphiql">

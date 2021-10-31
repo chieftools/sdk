@@ -8,10 +8,10 @@
 
         <div class="prose-sm prose-brand max-w-none mt-3 mb-3">
             <p>
-                The API is based on the <a href="https://graphql.org/learn/" target="_blank" rel="noopener">GraphQL</a> query language and lives here: <code>{{ route('api') }}</code>.
+                The API is based on the <a href="https://graphql.org/learn/" target="_blank" rel="noopener" class="font-medium text-brand-600 hover:text-brand-500">GraphQL</a> query language and lives here: <code>{{ route('api') }}</code>.
             </p>
             <p>
-                Currently there is no full documentation yet since the API is in constant flux, however introspection queries are enabled and you can view the generated documentation from inside the playground. If you want you can even download the full <a href="{{ route('api.schema') }}" target="_blank">GraphQL schema file</a>.
+                Currently there is no full documentation yet since the API is in constant flux, however introspection queries are enabled and you can view the generated documentation from inside the playground. If you want you can even download the full <a href="{{ route('api.schema') }}" target="_blank" class="font-medium text-brand-600 hover:text-brand-500">GraphQL schema file</a>.
             </p>
             <p>
                 You can use the playground to poke around in the API, it has a documentation sidebar you can use to figure out which information is available and how to obtain it.

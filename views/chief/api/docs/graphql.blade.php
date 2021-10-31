@@ -23,8 +23,8 @@
         </x-tw::alert>
 
         <x-slot name="footer">
-            <x-tw::button :href="route('api.playground')">
-                <i class="fal fa-fw fa-rocket"></i> Open playground
+            <x-tw::button :href="route('api.playground')" icon="fa-rocket">
+                Open playground
             </x-tw::button>
         </x-slot>
     </x-tw::panel>

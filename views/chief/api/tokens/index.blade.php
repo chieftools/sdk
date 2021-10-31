@@ -1,57 +1,38 @@
 @extends('chief::layout.developer', ['title' => 'Personal access tokens'])
 
 @section('maincontent')
-    @component('chief::components.page-header', ['nomargin' => true])
-        <i class="fad fa-fw fa-key text-muted"></i> Personal access tokens
-    @endcomponent
+    @if(session()->has('access_token'))
+        <x-tw::panel icon="fa-key" :title="'New access token: ' . $user->personalAccessTokens->find(session()->get('access_token_id'))->name">
+            <x-tw::alert type="warning" class="mb-3">
+                This token will only be shown once! If you lose it you can disable the token and create a new one.
+            </x-tw::alert>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-12">
-            @if(session()->has('access_token'))
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fal fa-fw fa-key"></i> New access token <b>{{ $user->personalAccessTokens->find(session()->get('access_token_id'))->name }}</b>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-warning">
-                            <i class="fad fa-fw fa-exclamation-circle"></i> This token will only be shown once! If you lose it you can disable the token and create a new one.
-                        </div>
+            <x-tw::form.input name="pat" :readonly="true" :copyable="true" :value="session()->get('access_token')"/>
+        </x-tw::panel>
+    @endif
 
-                        <div class="input-group">
-                            <input id="access_token" class="form-control" type="text" value="{{ session()->get('access_token') }}" readonly>
-                            <div class="input-group-append">
-                                <button id="accesss_token_copy" class="btn btn-outline-secondary" type="button" data-clipboard-target="#access_token" data-toggle="tooltip" data-placement="top" title="Copied!" data-trigger="click">
-                                    <i class="fal fa-fw fa-copy"></i>
-                                </button>
-                                @push('body.script')
-                                    <script>
-                                        new ClipboardJS('#accesss_token_copy');
-                                        jQuery('#accesss_token_copy').on('show.bs.tooltip', function (e) {
-                                            var button = jQuery(this);
-                                            setTimeout(function () {
-                                                button.tooltip('hide');
-                                            }, 500);
-                                        });
-                                    </script>
-                                @endpush
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
-            <div class="card mb-4">
-                <div class="card-body">
-                    These tokens can be used to access the API authenticated as your account without having to create an OAuth2 client and authorize your account through that client.
-                </div>
-                @if($user->personalAccessTokens->isNotEmpty())
-                    <ul class="list-group list-group-flush">
-                        @foreach($user->personalAccessTokens as $token)
-                            <li class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <h6 class="mb-0">{{ $token->name }}</h6>
-                                </div>
-                                <small class="text-muted">
+    <x-tw::panel icon="fa-key" title="Personal access tokens">
+        <p class="text-sm mb-3">
+            These tokens can be used to access the API authenticated as your account without having to create an OAuth2 client and authorize your account through that client.
+        </p>
+
+        @if($user->personalAccessTokens->isEmpty())
+            <x-tw::alert type="info">
+                You don't have any active personal access tokens.
+            </x-tw::alert>
+        @else
+            <hr class="my-5">
+
+            <ul role="list" class="-my-5 divide-y divide-gray-200">
+                @foreach($user->personalAccessTokens as $token)
+                    <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ $token->name }}
+                                </p>
+                                <p class="text-sm text-gray-500 truncate">
                                     Created
                                     <time data-toggle="tooltip" title="{{ $token->created_at->format('d-m-Y H:i:s') }}" datetime="{{ $token->created_at->toIso8601String() }}">
                                         {{ $token->created_at->diffForHumans() }}
@@ -61,27 +42,29 @@
                                     <time data-toggle="tooltip" title="{{ $token->expires_at->format('d-m-Y H:i:s') }}" datetime="{{ $token->expires_at->toIso8601String() }}">
                                         {{ $token->expires_at->diffForHumans() }}
                                     </time>
-                                </small>
-                                <br>
-                                <a href="{{ route('api.tokens.delete', [$token->id]) }}" data-confirm="true" data-method="post" class="btn btn-xs btn-outline-danger inline-block mt-1">
-                                    <i class="fal fa-fw fa-trash-alt"></i> Disable token
+                                </p>
+                            </div>
+                            <div>
+                                <a href="{{ route('api.tokens.delete', [$token->id]) }}"
+                                   data-confirm="true"
+                                   data-method="post"
+                                   data-title="Disable token"
+                                   data-toggle="tooltip"
+                                   class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
+                                >
+                                    <i class="fa fa-fw fa-trash-alt text-sm"></i>
                                 </a>
-                            </li>
-                        @endforeach
-                    </ul>
-                @else
-                    <div class="card-body pt-0">
-                        <div class="alert alert-info mb-0 mt-0">
-                            <i class="fad fa-fw fa-exclamation-circle"></i> You don't have any active personal access tokens.
+                            </div>
                         </div>
-                    </div>
-                @endif
-                <div class="card-footer {{ $user->personalAccessTokens->isNotEmpty() ? 'border-top-0' : '' }}">
-                    <a href="{{ route('api.tokens.create') }}" class="btn btn-sm btn-outline-success float-right">
-                        <i class="fal fa-fa fa-plus"></i> Create new token
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+
+        <x-slot name="footer">
+            <x-tw::button :href="route('api.tokens.create')" icon="fa-plus">
+                Create new token
+            </x-tw::button>
+        </x-slot>
+    </x-tw::panel>
 @endsection

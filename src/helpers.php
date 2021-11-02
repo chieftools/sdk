@@ -288,3 +288,40 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
         ]),
     ]));
 }
+
+/**
+ * Replace the Vapor asset domain with a custom asset domain.
+ *
+ * This should only be called from the `config/app.php` file.
+ *
+ * @param string|null $assetUrl
+ *
+ * @return string|null
+ *
+ * @noinspection LaravelFunctionsInspection
+ */
+function replace_custom_asset_domain(?string $assetUrl): ?string
+{
+    if ($assetUrl === null) {
+        return $assetUrl;
+    }
+
+    $plainDomain  = env('VAPOR_ASSET_DOMAIN');
+    $customDomain = env('VAPOR_CUSTOM_ASSET_DOMAIN');
+
+    if ($plainDomain === null || $customDomain === null) {
+        return $assetUrl;
+    }
+
+    return str_replace($plainDomain, $customDomain, $assetUrl);
+}
+
+/**
+ * Check if we are currently running on Laravel Vapor.
+ *
+ * @return bool
+ */
+function is_running_on_vapor(): bool
+{
+    return isset($_SERVER['VAPOR_ARTIFACT_NAME']);
+}

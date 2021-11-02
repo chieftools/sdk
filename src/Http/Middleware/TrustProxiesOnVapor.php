@@ -10,16 +10,11 @@ class TrustProxiesOnVapor extends TrustProxies
 {
     protected function setTrustedProxyIpAddresses(Request $request): void
     {
-        if ($this->isRunningInVapor()) {
+        if (is_running_on_vapor()) {
             $this->proxies = ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3'];
             $this->headers = SymfonyRequest::HEADER_X_FORWARDED_FOR;
         }
 
         parent::setTrustedProxyIpAddresses($request);
-    }
-
-    private function isRunningInVapor(): bool
-    {
-        return isset($_SERVER['VAPOR_ARTIFACT_NAME']);
     }
 }

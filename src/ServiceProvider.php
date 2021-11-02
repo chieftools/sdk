@@ -27,20 +27,22 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadRoutes();
 
-        $this->loadEvents();
-
-        $this->loadPassport();
-
         $this->loadViewsFrom(__DIR__ . '/../views/chief', 'chief');
         $this->loadViewsFrom(__DIR__ . '/../views/tailwind', 'tw');
 
-        $this->loadMiddleware();
+        $this->configureEvents();
 
-        $this->loadGraphQLSubscriptions();
+        $this->configureGraphQL();
 
-        $this->loadSocialiteIntegration();
+        $this->configurePassport();
 
-        $this->app->singleton(CreatesContext::class, ContextFactory::class);
+        $this->configureMiddleware();
+
+        $this->configureSocialiteIntegration();
+
+        if (is_running_on_vapor()) {
+            $this->ensureMixAndAssetUrlsAreConfigured();
+        }
 
         if ($this->app->runningInConsole()) {
             $this->publishStaticFiles();
@@ -87,13 +89,13 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
-    private function loadEvents(): void
+    private function configureEvents(): void
     {
         Event::listen(AuthEvents\Login::class, Listeners\Auth\Login::class);
         Event::listen(AuthEvents\Authenticated::class, Listeners\Auth\Authenticated::class);
     }
 
-    private function loadPassport(): void
+    private function configurePassport(): void
     {
         Passport::routes(static function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
@@ -126,7 +128,7 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
-    private function loadMiddleware(): void
+    private function configureMiddleware(): void
     {
         $this->app->router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $this->app->router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
@@ -146,16 +148,16 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadMigrationsFrom(static::basePath('database/migrations'));
     }
 
-    private function loadGraphQLSubscriptions(): void
+    private function configureGraphQL(): void
     {
-        if (!config('chief.graphql.subscriptions.enabled')) {
-            return;
-        }
+        $this->app->singleton(CreatesContext::class, ContextFactory::class);
 
-        Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
+        if (config('chief.graphql.subscriptions.enabled')) {
+            Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
+        }
     }
 
-    private function loadSocialiteIntegration(): void
+    private function configureSocialiteIntegration(): void
     {
         if (!$this->app['config']['services.chief']) {
             return;
@@ -181,6 +183,14 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->app->booting(function () {
             $this->app->register(SubscriptionServiceProvider::class);
         });
+    }
+
+    private function ensureMixAndAssetUrlsAreConfigured(): void
+    {
+        config([
+            'app.mix_url'   => replace_custom_asset_domain($_ENV['MIX_URL'] ?? '/'),
+            'app.asset_url' => replace_custom_asset_domain($_ENV['ASSET_URL'] ?? '/'),
+        ]);
     }
 
     public static function basePath(string $path): string

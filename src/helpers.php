@@ -315,3 +315,13 @@ function replace_custom_asset_domain(?string $assetUrl): ?string
 
     return str_replace($plainDomain, $customDomain, $assetUrl);
 }
+
+/**
+ * Check if we are currently running on Laravel Vapor.
+ *
+ * @return bool
+ */
+function is_running_on_vapor(): bool
+{
+    return isset($_SERVER['VAPOR_ARTIFACT_NAME']);
+}

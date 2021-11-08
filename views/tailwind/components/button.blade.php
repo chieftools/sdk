@@ -16,7 +16,7 @@
         'lg' => 'px-6 py-3 rounded-md ',
         default => 'px-4 py-2 rounded-md ',
     };
-    $classes .= match($size) {
+    $classes .= $textClass = match($size) {
         'xs' => 'text-xs ',
         'md', 'lg' => 'text-base ',
         default => 'text-sm ',

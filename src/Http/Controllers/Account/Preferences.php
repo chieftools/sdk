@@ -4,10 +4,11 @@ namespace IronGate\Chief\Http\Controllers\Account;
 
 use Illuminate\Http\Request;
 use IronGate\Chief\Entities\User;
+use Illuminate\Contracts\View\View;
 
 class Preferences
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): View
     {
         return view('chief::account.preferences', [
             'user'       => $request->user(),
@@ -20,15 +21,14 @@ class Preferences
         /** @var \IronGate\Chief\Entities\User $user */
         $user = $request->user();
 
-        // Extract the preference key from the identity
-        [$_, $preference] = explode(':', $request->get('identity'));
+        [, $preference] = explode(':', $request->input('identity'));
 
-        // Set the preference value
-        $user->setPreference($preference, $request->get('state') === '1');
-
-        // Persist the changes
+        $user->setPreference($preference, $request->input('state') === true);
         $user->save();
 
-        return ['status' => 'OK!'];
+        return [
+            'status' => 'OK!',
+            'state'  => (bool)$user->getPreference($preference),
+        ];
     }
 }

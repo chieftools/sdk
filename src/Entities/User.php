@@ -2,6 +2,7 @@
 
 namespace IronGate\Chief\Entities;
 
+use RuntimeException;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Collection;
 use Laravel\Passport\HasApiTokens;
@@ -11,6 +12,7 @@ use IronGate\Chief\Concerns\UsesUUID;
 use IronGate\Chief\Concerns\Observable;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -33,10 +35,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 {
     use Authenticatable, Authorizable, HasApiTokens, UsesUUID, Observable;
 
-    public $incrementing = false;
-
     protected $table    = 'users';
-    protected $keyType  = 'string';
     protected $fillable = [
         'name',
         'email',
@@ -103,8 +102,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
-    /** @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder */
-    public function personalAccessTokens()
+    public function personalAccessTokens(): HasMany
     {
         /** @var \Illuminate\Database\Eloquent\Model $clientModel */
         $clientModel = app(Passport::clientModel());
@@ -129,7 +127,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         return array_get($this->preferences, $preference, $default ?? $template[3]);
     }
-    public function setPreference($preference, $value)
+    public function setPreference($preference, $value): void
     {
         if (config("chief.preferences.{$preference}", false) === false) {
             throw new RuntimeException("Preference '{$preference}' does not exist.");

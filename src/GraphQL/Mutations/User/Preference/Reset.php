@@ -19,7 +19,7 @@ class Reset extends Mutation
     {
         $preferences = collect($this->user()::getPreferences());
 
-        [$name, $description, $_, $default] = $preferences->get($key = $this->input('key'));
+        [$name, $description, , $default] = $preferences->get($key = $this->input('key'));
 
         $this->user()->setPreference($key, null);
         $this->user()->save();

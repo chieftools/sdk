@@ -1,6 +1,7 @@
 <?php
 
 use IronGate\Chief\Http\Controllers;
+use Illuminate\Support\Facades\Route;
 
 Route::group(config('chief.routes.api'), function () {
     Route::match(['get', 'post'], 'graphql', Controllers\API\GraphQL::class)->middleware([

@@ -20,7 +20,7 @@ class Set extends Mutation
     {
         $preferences = collect($this->user()::getPreferences());
 
-        [$name, $description, $_, $default] = $preferences->get($key = $this->input('key'));
+        [$name, $description, , $default] = $preferences->get($key = $this->input('key'));
 
         $this->user()->setPreference($key, $this->input('value'));
         $this->user()->save();

@@ -3,14 +3,13 @@
 namespace IronGate\Chief\Concerns;
 
 use Ramsey\Uuid\Uuid;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
 trait UsesUUID
 {
     public static function bootUsesUUID(): void
     {
-        self::creating(function (Model $model) {
+        self::creating(function (self $model) {
             if (empty($model->getAttribute($model->getUuidColumnName()))) {
                 $model->{$model->getUuidColumnName()} = Uuid::uuid4()->toString();
             }
@@ -33,7 +32,7 @@ trait UsesUUID
      *
      * @return static|null
      */
-    public static function findByUuid(string $uuid)
+    public static function findByUuid(string $uuid): ?static
     {
         return (new static)->query()->uuid($uuid)->first();
     }
@@ -45,7 +44,7 @@ trait UsesUUID
      *
      * @return static
      */
-    public static function findOrFailByUuid(string $uuid)
+    public static function findOrFailByUuid(string $uuid): static
     {
         return (new static)->query()->uuid($uuid)->firstOrFail();
     }

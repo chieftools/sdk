@@ -27,7 +27,8 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadRoutes();
 
-        $this->loadViewsFrom(static::basePath('views'), 'chief');
+        $this->loadViewsFrom(__DIR__ . '/../views/chief', 'chief');
+        $this->loadViewsFrom(__DIR__ . '/../views/tailwind', 'tw');
 
         $this->configureEvents();
 
@@ -67,9 +68,8 @@ class ServiceProvider extends IlluminateServiceProvider
         });
 
         $this->app->singleton(Certainty\RemoteFetch::class, static function () {
-            $fetch = new Certainty\RemoteFetch(storage_path('framework/cache'));
-
-            return $fetch->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
+            return (new Certainty\RemoteFetch(storage_path('framework/cache')))
+                ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
         });
     }
 

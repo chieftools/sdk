@@ -1,6 +1,5 @@
 <?php
 
-use GraphQL\Error\Debug;
 use GraphQL\Error\DebugFlag;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\DisableIntrospection;
@@ -66,10 +65,9 @@ return [
     */
 
     'cache' => [
-        'enable' => env('LIGHTHOUSE_CACHE_ENABLE', !env('APP_DEBUG', false)),
-        'store'  => env('LIGHTHOUSE_CACHE_STORE'),
-        'key'    => env('LIGHTHOUSE_CACHE_KEY', 'lighthouse-schema:' . str_replace('.', '_', config('app.version'))),
-        'ttl'    => env('LIGHTHOUSE_CACHE_TTL', 60 * 60 * 24 * 14),
+        'enable'  => env('LIGHTHOUSE_CACHE_ENABLE', !env('APP_DEBUG', false)),
+        'version' => env('LIGHTHOUSE_CACHE_VERSION', 2),
+        'path'    => env('LIGHTHOUSE_CACHE_PATH', base_path('bootstrap/cache/lighthouse-schema.php')),
     ],
 
     /*
@@ -126,7 +124,7 @@ return [
          * Allow clients to query paginated lists without specifying the amount of items.
          * Setting this to `null` means clients have to explicitly ask for the count.
          */
-        'default_count' => null,
+        'default_count' => 10,
 
         /*
          * Limit the maximum amount of items that clients can request from paginated lists.
@@ -284,7 +282,7 @@ return [
          * Determines the queue to use for broadcasting queue jobs.
          */
 
-        'broadcasts_queue_name' => env('LIGHTHOUSE_BROADCASTS_QUEUE_NAME', null),
+        'broadcasts_queue_name' => env('LIGHTHOUSE_BROADCASTS_QUEUE_NAME'),
 
         /*
          * Default subscription storage.

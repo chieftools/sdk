@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Get active state based on whitelist.
@@ -200,7 +201,7 @@ function latest_ca_bundle_file_path(): string
         return $fetch->getLatestBundle()->getFilePath();
     }, null, false);
 
-    return $certaintyPath ?? resource_path('files/cacert-2019-08-28.pem');
+    return $certaintyPath ?? resource_path('files/cacert-2021-10-26.pem');
 }
 
 /**

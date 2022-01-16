@@ -5,12 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateOauthPersonalAccessClientEntity extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
         app(ClientRepository::class)->createPersonalAccessClient(
             null, config('app.title'), config('app.url')

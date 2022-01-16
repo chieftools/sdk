@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: "/"
+    schedule:
+      day: "tuesday"
+      time: "14:00"
+      interval: weekly
+      timezone: Europe/Amsterdam
+    open-pull-requests-limit: 15
+    labels:
+      - ":link: dependencies"
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      day: "tuesday"
+      time: "14:00"
+      interval: weekly
+      timezone: Europe/Amsterdam
+    open-pull-requests-limit: 15
+    labels:
+      - ":link: dependencies"

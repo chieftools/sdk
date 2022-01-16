@@ -21,7 +21,7 @@ class Preferences
         /** @var \IronGate\Chief\Entities\User $user */
         $user = $request->user();
 
-        [$_, $preference] = explode(':', $request->input('identity'));
+        [, $preference] = explode(':', $request->input('identity'));
 
         $user->setPreference($preference, $request->input('state') === true);
         $user->save();

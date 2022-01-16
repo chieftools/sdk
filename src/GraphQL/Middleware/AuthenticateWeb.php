@@ -2,6 +2,7 @@
 
 namespace IronGate\Chief\GraphQL\Middleware;
 
+use RuntimeException;
 use Nuwave\Lighthouse\Support\Http\Middleware\AttemptAuthentication;
 
 class AuthenticateWeb extends AttemptAuthentication

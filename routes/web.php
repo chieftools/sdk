@@ -1,6 +1,7 @@
 <?php
 
 use IronGate\Chief\Http\Controllers;
+use Illuminate\Support\Facades\Route;
 use IronGate\Chief\Http\Middleware\AuthenticateChief;
 
 Route::group(config('chief.routes.web'), function () {

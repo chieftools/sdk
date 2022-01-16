@@ -9,18 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HealthCheck extends Job implements ShouldQueue
 {
-    /**
-     * Handle the job.
-     *
-     * @param \GuzzleHttp\Client $client
-     */
-    public function handle(Client $client)
+    public function handle(Client $client): void
     {
         try {
-            retry(3, function () use ($client) {
+            retry(3, static function () use ($client) {
                 $client->get(config('chief.queue.monitor'));
             }, 10);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // We try again later if we cannot reach the monitor!
         }
     }

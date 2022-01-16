@@ -68,9 +68,8 @@ class ServiceProvider extends IlluminateServiceProvider
         });
 
         $this->app->singleton(Certainty\RemoteFetch::class, static function () {
-            $fetch = new Certainty\RemoteFetch(storage_path('framework/cache'));
-
-            return $fetch->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
+            return (new Certainty\RemoteFetch(storage_path('framework/cache')))
+                ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
         });
     }
 

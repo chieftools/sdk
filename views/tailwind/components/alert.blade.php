@@ -38,6 +38,7 @@
                     {{ $slot }}
                 </p>
             </div>
+            {{ $actions ?? '' }}
         </div>
         @if($closable)
             <div class="ml-auto pl-3">

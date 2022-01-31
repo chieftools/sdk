@@ -131,7 +131,6 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->app->router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $this->app->router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
-        $this->app->router->aliasMiddleware('sentry.context', Middleware\SentryContext::class);
     }
 
     private function publishStaticFiles(): void

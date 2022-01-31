@@ -60,11 +60,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'two_factor_secret',
     ];
     protected $casts    = [
-        'is_admin'    => 'bool',
-        'preferences' => 'array',
-    ];
-    protected $dates    = [
-        'last_login',
+        'is_admin'          => 'bool',
+        'last_login'        => 'datetime',
+        'preferences'       => 'array',
+        'is_email_verified' => 'bool',
     ];
 
     // Getters

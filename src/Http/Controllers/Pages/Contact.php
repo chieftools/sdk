@@ -8,6 +8,6 @@ class Contact
 {
     public function __invoke(): RedirectResponse
     {
-        return redirect()->away(chief_site_url('contact'));
+        return redirect()->away(chief_site_url('contact'), 301);
     }
 }

@@ -3,6 +3,7 @@
 namespace IronGate\Chief;
 
 use ParagonIE\Certainty;
+use Illuminate\View\Factory;
 use Laravel\Passport\Passport;
 use Illuminate\Mail\MailManager;
 use IronGate\Chief\Http\Middleware;
@@ -27,8 +28,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadRoutes();
 
-        $this->loadViewsFrom(__DIR__ . '/../views/chief', 'chief');
-        $this->loadViewsFrom(__DIR__ . '/../views/tailwind', 'tw');
+        $this->configureViews();
 
         $this->configureEvents();
 
@@ -86,6 +86,12 @@ class ServiceProvider extends IlluminateServiceProvider
         if (config('chief.routes.web-api')) {
             $this->loadRoutesFrom(static::basePath('routes/web-api.php'));
         }
+    }
+
+    private function configureViews(): void
+    {
+        $this->loadViewsFrom(__DIR__ . '/../views/chief', 'chief');
+        $this->loadViewsFrom(__DIR__ . '/../views/tailwind', 'tw');
     }
 
     private function configureEvents(): void

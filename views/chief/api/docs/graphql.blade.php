@@ -32,15 +32,15 @@
     <x-tw::panel icon="fa-key" title="Authorization">
         <div class="prose-sm prose-brand max-w-none">
             <p>
-                Authorization is handled through <a href="https://oauth.net/2/" target="_blank" rel="noreferrer">OAuth 2.0</a>, you can <a href="{{ route('api.tokens') }}">generate</a> personal access tokens to use the API for your own account. If you are interested in authenticating {{ config('app.name') }} users directly from your application using a OAuth 2.0 application <a href="{{ route('chief.contact') }}">let us know</a>!
+                Authorization is handled through <a href="https://oauth.net/2/" target="_blank" rel="noreferrer" class="font-medium text-brand-600 hover:text-brand-500">OAuth 2.0</a>, you can <a href="{{ route('api.tokens') }}" class="font-medium text-brand-600 hover:text-brand-500">generate</a> personal access tokens to use the API for your own account. If you are interested in authenticating {{ config('app.name') }} users directly from your application using a OAuth 2.0 application <a href="{{ route('chief.contact') }}">let us know</a>!
             </p>
             <p>
-                If you want to play around with the API from your own tooling and/or application you can <a href="{{ route('api.tokens') }}">generate</a> a personal access token and pass it using the <code>Authorization</code> header.
+                If you want to play around with the API from your own tooling and/or application you can <a href="{{ route('api.tokens') }}" class="font-medium text-brand-600 hover:text-brand-500">generate</a> a personal access token and pass it using the <code>Authorization</code> header.
             </p>
-            <pre class="mt-0"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
-curl -X "POST" "<span class="text-primary">{{ route('api') }}</span>" \
+            <pre class="p-0 my-0"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
+curl -X "POST" "<span class="text-brand">{{ route('api') }}</span>" \
      -H 'Accept: application/json' \
-     -H 'Authorization: Bearer <span class="text-primary">&lt;personal access token&gt;</span>' \
+     -H 'Authorization: Bearer <span class="text-brand">&lt;personal access token&gt;</span>' \
      -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
      --data-urlencode "query={viewer{name}}"</code></pre>
         </div>

@@ -4,6 +4,8 @@ return [
 
     'id' => null,
 
+    'icon' => 'fa-bug',
+
     'auth' => [
 
         'model' => IronGate\Chief\Entities\User::class,

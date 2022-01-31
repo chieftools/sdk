@@ -11,6 +11,7 @@ use IronGate\Chief\Concerns\UsesUUID;
 use IronGate\Chief\Concerns\Observable;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -24,6 +25,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string              $chief_id
  * @property string              $password
  * @property bool                $is_admin
+ * @property string              $avatar_url
  * @property \Carbon\Carbon|null $last_login
  * @property \Carbon\Carbon      $created_at
  * @property \Carbon\Carbon      $updated_at
@@ -65,14 +67,30 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'is_email_verified' => 'bool',
     ];
 
-    // Getters
-    public function __toString()
+    public function __toString(): string
     {
         return $this->name;
     }
-    public function getTimezoneAttribute()
+
+    // Attributes
+    public function timezone(): Attribute
     {
-        return array_get($this->attributes, 'timezone') ?? config('app.timezone');
+        return new Attribute(
+            get: static fn (?string $value) => $value ?? config('app.timezone'),
+            set: static function (?string $value) {
+                if (empty($value) || !array_key_exists($value, timezones())) {
+                    return config('app.timezone');
+                }
+
+                return $value;
+            },
+        );
+    }
+    public function avatarUrl(): Attribute
+    {
+        return new Attribute(
+            get: fn () => 'https://secure.gravatar.com/avatar/' . md5($this->email) . '?s=256&d=mm',
+        );
     }
 
     // Setters
@@ -87,16 +105,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         if (!empty($value)) {
             $this->attributes['password'] = Hash::make($value);
         }
-    }
-    public function setTimezoneAttribute($value): void
-    {
-        $timezones = timezones();
-
-        if (empty($value) || !array_key_exists($value, $timezones)) {
-            $value = config('app.timezone');
-        }
-
-        $this->attributes['timezone'] = $value;
     }
 
     // Relations

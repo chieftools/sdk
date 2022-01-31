@@ -11,6 +11,7 @@ use IronGate\Chief\Concerns\UsesUUID;
 use IronGate\Chief\Concerns\Observable;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -33,10 +34,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 {
     use Authenticatable, Authorizable, HasApiTokens, UsesUUID, Observable;
 
-    public $incrementing = false;
-
     protected $table    = 'users';
-    protected $keyType  = 'string';
     protected $fillable = [
         'name',
         'email',
@@ -61,11 +59,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'two_factor_secret',
     ];
     protected $casts    = [
-        'is_admin'    => 'bool',
-        'preferences' => 'array',
-    ];
-    protected $dates    = [
-        'last_login',
+        'is_admin'          => 'bool',
+        'last_login'        => 'datetime',
+        'preferences'       => 'array',
+        'is_email_verified' => 'bool',
     ];
 
     // Getters
@@ -103,8 +100,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
-    /** @return \Illuminate\Database\Eloquent\Relations\HasMany|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder */
-    public function personalAccessTokens()
+    public function personalAccessTokens(): HasMany
     {
         /** @var \Illuminate\Database\Eloquent\Model $clientModel */
         $clientModel = app(Passport::clientModel());

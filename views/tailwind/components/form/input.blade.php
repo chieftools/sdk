@@ -6,6 +6,7 @@
     'label' => false,
     'value' => null,
     'options' => [],
+    'checked' => false,
     'disabled' => false,
     'required' => false,
     'readonly' => false,
@@ -40,12 +41,36 @@
 @endphp
 
 <div class="{{ $class }}">
-    @if($label)
+    @if($label && $type !== 'checkbox')
         <label for="{{ $name }}" class="block text-sm font-medium {{ $labelClass }}">{{ $label }}{{ $required ? '*' : '' }}</label>
     @endif
     <div class="mt-1 flex">
         <div class="relative flex items-stretch flex-grow focus-within:z-10">
-            @if($type === 'textarea')
+            @if($type === 'checkbox')
+                <div class="flex items-start">
+                    <div class="h-5 flex items-center">
+                        <input type="checkbox"
+                               name="{{ $name }}"
+                               value="0"
+                               class="hidden"
+                               checked>
+                        <input id="{{ $name }}"
+                               type="checkbox"
+                               name="{{ $name }}"
+                               value="{{ $value ?? '1' }}"
+                               class="h-4 w-4 text-brand-600 border-gray-300 focus:ring-brand-500 rounded {{ $inputClass }}"
+                               {{ $checked ? 'checked' : '' }}
+                               {{ $disabled ? 'disabled' : '' }}
+                               {{ $required ? 'required' : '' }}
+                               {{ $readonly ? 'readonly' : '' }}
+                               {{ $autofocus ? 'autofocus' : '' }}
+                               {{ $autocomplete ? "autocomplete='{$autocomplete}'" : '' }}>
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
+                    </div>
+                </div>
+            @elseif($type === 'textarea')
                 <textarea id="{{ $name }}"
                           name="{{ $name }}"
                           rows="4"

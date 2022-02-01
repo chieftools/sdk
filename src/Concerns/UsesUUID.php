@@ -39,6 +39,13 @@ trait UsesUUID
         });
     }
 
+    public function scopeUuids(Builder $query, array $uuid): void
+    {
+        $query->where(function (Builder $query) use ($uuid) {
+            $query->whereIn($this->getUUIDAttributeName(), $uuid);
+        });
+    }
+
     public function getUUIDAttributeName(): string
     {
         return $this->getKeyName();

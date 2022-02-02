@@ -3,7 +3,6 @@
 namespace IronGate\Chief;
 
 use ParagonIE\Certainty;
-use Illuminate\View\Factory;
 use Laravel\Passport\Passport;
 use Illuminate\Mail\MailManager;
 use IronGate\Chief\Http\Middleware;

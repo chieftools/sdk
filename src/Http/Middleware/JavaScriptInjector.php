@@ -10,6 +10,8 @@ class JavaScriptInjector
 {
     public function handle(Request $request, Closure $next): mixed
     {
+        $sentryDsn = config('chief.analytics.sentry.public_dsn');
+
         /** @noinspection PhpMethodParametersCountMismatchInspection */
         JavaScript::put([
             'ENV'            => app()->environment(),
@@ -18,8 +20,8 @@ class JavaScriptInjector
             'HOME'           => url()->to('/'),
             'DEBUG'          => config('app.debug'),
             'SENTRY'         => [
-                'DSN'                => config('sentry.public_dsn'),
-                'TRACES_SAMPLE_RATE' => config('sentry.public_dsn') !== null ? config('sentry.traces_sample_rate', 0) : 0,
+                'DSN'                => $sentryDsn,
+                'TRACES_SAMPLE_RATE' => $sentryDsn !== null ? config('sentry.traces_sample_rate', 0) : 0,
             ],
             'VERSION'        => config('app.version'),
             'VERSION_STRING' => config('app.versionString') . ' (' . config('app.version') . ')',

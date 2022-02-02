@@ -103,6 +103,12 @@ return [
 
         ],
 
+        'sentry' => [
+
+            'public_dsn' => env('APP_DEBUG', false) ? null : env('SENTRY_PUBLIC_DSN', env('SENTRY_LARAVEL_DSN')),
+
+        ],
+
     ],
 
     'chronicle' => [

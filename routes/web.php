@@ -16,7 +16,7 @@ Route::group(config('chief.routes.web'), function () {
         Route::get('login', Controllers\Auth\Login::class)->middleware('guest')->name('login');
         Route::get('login/callback', Controllers\Auth\Callback::class)->middleware('guest')->name('callback');
 
-        Route::get('logout', Controllers\Auth\Logout::class)->middleware('auth')->name('logout');
+        Route::post('logout', Controllers\Auth\Logout::class)->middleware('auth')->name('logout');
     });
 
     Route::group([

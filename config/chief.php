@@ -93,6 +93,18 @@ return [
 
     ],
 
+    'analytics' => [
+
+        'fathom' => [
+
+            'site' => env('ANALYTICS_FATHOM_SITE'),
+
+            'domain' => env('ANALYTICS_FATHOM_DOMAIN', 'catfish.assets.chief.app'),
+
+        ],
+
+    ],
+
     'chronicle' => [
 
         'url' => 'https://chronicle.devdomein.nl/chronicle/replica/LogbDtnCLxxdWsrtUQKAueytA7igS2p9Y_ZUz8L-QbZ2/',

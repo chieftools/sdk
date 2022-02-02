@@ -56,6 +56,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
+        $this->mergeConfigFrom(static::basePath('config/javascript.php'), 'javascript');
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
 
         $this->registerGraphQLSubscriptions();

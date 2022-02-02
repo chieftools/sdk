@@ -30,8 +30,7 @@
 
         @stack('head.style')
         @stack('head.script')
-
-        @include('layout.partial.jsvars')
+        @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
         <div id="app" class="{{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen bg-gray-100' }} border-t-4 border-brand">

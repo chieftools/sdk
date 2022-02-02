@@ -18,8 +18,8 @@ class JavaScriptInjector
             'HOME'           => url()->to('/'),
             'DEBUG'          => config('app.debug'),
             'SENTRY'         => [
-                'DSN'                => config('sentry.dsn'),
-                'TRACES_SAMPLE_RATE' => config('sentry.dsn') !== null ? config('sentry.traces_sample_rate', 0) : 0,
+                'DSN'                => config('sentry.public_dsn'),
+                'TRACES_SAMPLE_RATE' => config('sentry.public_dsn') !== null ? config('sentry.traces_sample_rate', 0) : 0,
             ],
             'VERSION'        => config('app.version'),
             'VERSION_STRING' => config('app.versionString') . ' (' . config('app.version') . ')',

@@ -44,9 +44,9 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         if ($this->app->runningInConsole()) {
-            $this->publishStaticFiles();
-
             $this->loadCommands();
+
+            $this->publishStaticFiles();
         }
     }
 

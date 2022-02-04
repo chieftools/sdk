@@ -3,16 +3,17 @@
 namespace IronGate\Chief\Jobs\Queue;
 
 use Exception;
-use GuzzleHttp\Client;
 use IronGate\Chief\Jobs\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HealthCheck extends Job implements ShouldQueue
 {
-    public function handle(Client $client): void
+    public function handle(): void
     {
+        $client = http(timeout: 3);
+
         try {
-            retry(3, fn () => $client->get(config('chief.queue.monitor')), 10);
+            retry(3, static fn () => $client->get(config('chief.queue.monitor')), 100);
         } catch (Exception) {
             // We try again later if we cannot reach the monitor!
         }

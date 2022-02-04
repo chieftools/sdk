@@ -1,1 +1,1 @@
-@includeWhen(config('app.analytics.fathom.site') !== null, 'chief::partial.analytics.fathom')
+@includeWhen(config('chief.analytics.fathom.site') !== null, 'chief::partial.analytics.fathom')

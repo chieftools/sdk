@@ -9,7 +9,7 @@ class QueueHealthCheck extends Command
 {
     protected $hidden = true;
 
-    protected $signature   = 'queue:health-check';
+    protected $signature   = 'chief:queue:health-check';
     protected $description = 'Dispatch a queue job to validate it\'s processing by pinging a health check URL.';
 
     public function handle(): int

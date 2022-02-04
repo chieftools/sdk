@@ -44,9 +44,9 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         if ($this->app->runningInConsole()) {
-            $this->publishStaticFiles();
-
             $this->loadCommands();
+
+            $this->publishStaticFiles();
         }
     }
 
@@ -121,14 +121,11 @@ class ServiceProvider extends IlluminateServiceProvider
         ]);
 
         if (!empty(config('chief.queue.monitor'))) {
-            $this->app->booted(function () {
-                /** @var \Illuminate\Console\Scheduling\Schedule $schedule */
-                $schedule = $this->app->make(Schedule::class);
-
+            $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
                 $schedule->command(Commands\QueueHealthCheck::class)
-                         ->runInBackground()
-                         ->withoutOverlapping()
-                         ->everyMinute();
+                         ->everyMinute()
+                         ->onOneServer()
+                         ->runInBackground();
             });
         }
     }

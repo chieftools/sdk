@@ -234,11 +234,9 @@ function dispatch_subscription(string $subscription, $root, ?bool $shouldQueue =
  *
  * @throws \Exception
  */
-function dispatch_vapor($job): void
+function dispatch_vapor(mixed $job): void
 {
-    retry(10, static function () use ($job) {
-        dispatch($job);
-    }, 200);
+    retry(10, static fn () => dispatch($job), 200);
 }
 
 /**

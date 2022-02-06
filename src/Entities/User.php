@@ -5,6 +5,7 @@ namespace IronGate\Chief\Entities;
 use RuntimeException;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Collection;
+use IronGate\Chief\Helpers\Avatar;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
@@ -90,7 +91,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     public function avatarUrl(): Attribute
     {
         return new Attribute(
-            get: fn () => 'https://secure.gravatar.com/avatar/' . md5($this->email) . '?s=256&d=mm',
+            get: fn () => Avatar::of($this)->url(),
         );
     }
 

@@ -50,6 +50,7 @@
                             </div>
                             <div>
                                 <a href="{{ route('api.tokens.delete', [$token->id]) }}"
+                                   title="Delete"
                                    data-confirm="true"
                                    data-method="post"
                                    data-title="Delete {{ $token->name }} token?"

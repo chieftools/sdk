@@ -10,7 +10,7 @@
         "guzzlehttp/guzzle": "^7.4",
         "haydenpierce/class-finder": "^0.4",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^8.79",
+        "laravel/framework": "^8.79 || ^9.0",
         "laravel/helpers": "^1.5",
         "laravel/passport": "^10.3",
         "laravel/socialite": "^5.3",

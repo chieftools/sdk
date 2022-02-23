@@ -10,18 +10,18 @@
         "guzzlehttp/guzzle": "^7.4",
         "haydenpierce/class-finder": "^0.4",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^8.79",
+        "laravel/framework": "^9.2",
         "laravel/helpers": "^1.5",
         "laravel/passport": "^10.3",
-        "laravel/socialite": "^5.3",
-        "mll-lab/graphql-php-scalars": "^5.3",
-        "nuwave/lighthouse": "^5.35",
+        "laravel/socialite": "^5.5",
+        "mll-lab/graphql-php-scalars": "^5.4",
+        "nuwave/lighthouse": "^5.40",
         "paragonie/certainty": "^2.8",
         "ramsey/uuid": "^4.2",
-        "sentry/sentry-laravel": "^2.10"
+        "sentry/sentry-laravel": "^2.11"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "3.5.*"
+        "friendsofphp/php-cs-fixer": "3.6.*"
     },
     "autoload": {
         "psr-4": {

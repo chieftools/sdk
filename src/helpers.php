@@ -211,7 +211,7 @@ function latest_ca_bundle_file_path(): string
  * @param mixed     $root
  * @param bool|null $shouldQueue
  */
-function dispatch_subscription(string $subscription, $root, ?bool $shouldQueue = null): void
+function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQueue = null): void
 {
     if (!config('chief.graphql.subscriptions.enabled')) {
         return;
@@ -222,7 +222,7 @@ function dispatch_subscription(string $subscription, $root, ?bool $shouldQueue =
         $subscription = lcfirst(class_basename($subscription));
     }
 
-    logger()->debug("Dispatching subscription:{$subscription}");
+    logger()?->debug("Dispatching subscription:{$subscription}");
 
     Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);
 }

@@ -6,7 +6,7 @@ use Closure;
 
 class SelectTimezone
 {
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next): mixed
     {
         sync_user_timezone();
 

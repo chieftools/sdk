@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class AuthenticateChief
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (empty(config('services.chief.webhook_secret'))) {
             throw new RuntimeException('Missing a Chief webhook secret, not accepting any webhook calls!');

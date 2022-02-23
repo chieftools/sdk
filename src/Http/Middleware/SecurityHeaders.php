@@ -8,9 +8,8 @@ use Illuminate\Http\Response;
 
 class SecurityHeaders
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
-        /** @var \Illuminate\Http\Response $response */
         $response = $next($request);
 
         // Make sure we're dealing with what we think we are dealing with

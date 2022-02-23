@@ -4,12 +4,12 @@ namespace IronGate\Chief;
 
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
-use Illuminate\Mail\MailManager;
 use IronGate\Chief\Http\Middleware;
 use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events as AuthEvents;
+use Illuminate\Mail\Events as MailEvents;
 use Illuminate\Support\Facades\Broadcast;
 use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
@@ -18,7 +18,6 @@ use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use IronGate\Chief\Support\Mail\PreventAutoRespondersTransportPlugin;
 use IronGate\Chief\Broadcasting\Channels\LighthouseSubscriptionChannel;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -61,12 +60,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->registerGraphQLSubscriptions();
 
-        $this->app->extend('mail.manager', function (MailManager $manager) {
-            $manager->getSwiftMailer()->registerPlugin(new PreventAutoRespondersTransportPlugin);
-
-            return $manager;
-        });
-
         $this->app->singleton(Certainty\RemoteFetch::class, static function () {
             return (new Certainty\RemoteFetch(storage_path('framework/cache')))
                 ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
@@ -98,6 +91,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Event::listen(AuthEvents\Login::class, Listeners\Auth\Login::class);
         Event::listen(AuthEvents\Authenticated::class, Listeners\Auth\Authenticated::class);
+        Event::listen(MailEvents\MessageSending::class, Listeners\Mail\PreventAutoResponders::class);
     }
 
     private function configurePassport(): void
@@ -160,19 +154,14 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureSocialiteIntegration(): void
     {
-        if (!$this->app['config']['services.chief']) {
-            return;
-        }
-
         /** @var \Laravel\Socialite\SocialiteManager $socialite */
+        /** @noinspection PhpUnhandledExceptionInspection */
         $socialite = $this->app->make(Socialite::class);
 
-        $socialite->extend('chief', static function ($app) use ($socialite) {
-            return $socialite->buildProvider(
-                ChiefProvider::class,
-                $app['config']['services.chief']
-            );
-        });
+        $socialite->extend(
+            'chief',
+            static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief'))
+        );
     }
 
     private function registerGraphQLSubscriptions(): void
@@ -181,9 +170,9 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        $this->app->booting(function () {
-            $this->app->register(SubscriptionServiceProvider::class);
-        });
+        $this->app->booting(
+            fn () => $this->app->register(SubscriptionServiceProvider::class)
+        );
     }
 
     private function ensureMixAndAssetUrlsAreConfigured(): void
@@ -194,7 +183,7 @@ class ServiceProvider extends IlluminateServiceProvider
         ]);
     }
 
-    public static function basePath(string $path): string
+    private static function basePath(string $path): string
     {
         return __DIR__ . '/../' . ltrim($path, '/');
     }

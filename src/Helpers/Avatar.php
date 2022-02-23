@@ -16,7 +16,7 @@ final class Avatar
     }
 
     private function __construct(
-        private User $user,
+        private readonly User $user,
     ) {
     }
 

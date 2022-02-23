@@ -2,23 +2,26 @@
 
 namespace IronGate\Chief\Webhook\Handlers;
 
-class AccountUpdated
+class AccountUpdated extends BaseHandler
 {
-    public function __invoke(array $webhookData)
+    public function __invoke(array $payload): ?array
     {
-        /** @var \IronGate\Chief\Entities\User|null $user */
-        $user = config('chief.auth.model')::query()->where('chief_id', '=', array_get($webhookData, 'user.id'))->first();
+        $user = $this->getUserFromPayload($payload);
 
-        if ($user !== null) {
-            $user->fill([
-                'name'     => array_get($webhookData, 'data.name'),
-                'email'    => array_get($webhookData, 'data.email'),
-                'timezone' => array_get($webhookData, 'data.timezone'),
-            ]);
-
-            $user->is_admin = ((bool)array_get($webhookData, 'data.is_admin', false)) === true;
-
-            $user->save();
+        if ($user === null) {
+            return null;
         }
+
+        $user->fill([
+            'name'     => array_get($payload, 'data.name'),
+            'email'    => array_get($payload, 'data.email'),
+            'timezone' => array_get($payload, 'data.timezone'),
+        ]);
+
+        $user->is_admin = ((bool)array_get($payload, 'data.is_admin', false)) === true;
+
+        $user->save();
+
+        return null;
     }
 }

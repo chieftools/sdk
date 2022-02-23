@@ -11,18 +11,19 @@ use Sentry\Tracing\GuzzleTracingMiddleware;
 class Client extends HttpClient
 {
     /**
-     * Get the base URL for the account chief.
-     *
-     * @return string
+     * Get the URL to the Account Chief application.
      */
-    public static function getBaseUrl(): string
+    public static function getBaseUrl(?string $path = null): string
     {
-        return config('chief.base_url', 'https://account.chief.app');
+        $url = rtrim(config('chief.base_url', 'https://account.chief.app'), '/');
+
+        if (!empty($path)) {
+            $url .= '/' . ltrim($path, '/');
+        }
+
+        return $url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(array $config = [], array $headers = [], int $timeout = 10)
     {
         $stack = HandlerStack::create();
@@ -76,12 +77,17 @@ class Client extends HttpClient
      */
     public function apps(?string $except = null, ?string $group = null, ?bool $authenticated = null): Collection
     {
+        $queryParams = [
+            'except' => $except,
+            'group'  => $group,
+        ];
+
+        if ($authenticated !== null) {
+            $queryParams['authenticated'] = $authenticated ? '1' : '0';
+        }
+
         $response = $this->get('/api/apps', [
-            'query' => array_filter([
-                'except'        => $except,
-                'group'         => $group,
-                'authenticated' => $authenticated === null ? null : ($authenticated ? '1' : '0'),
-            ]),
+            'query' => array_filter($queryParams),
         ]);
 
         if ($response->getStatusCode() !== 200) {

@@ -13,7 +13,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase(Client::getBaseUrl() . '/oauth/authorize', $state);
+        return $this->buildAuthUrlFromBase(Client::getBaseUrl('/oauth/authorize'), $state);
     }
 
     /**
@@ -21,7 +21,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getTokenUrl()
     {
-        return Client::getBaseUrl() . '/oauth/token';
+        return Client::getBaseUrl('/oauth/token');
     }
 
     /**
@@ -55,7 +55,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
      */
     protected function getUserByToken($token)
     {
-        $userUrl = Client::getBaseUrl() . '/api/me';
+        $userUrl = Client::getBaseUrl('/api/me');
 
         $response = $this->getHttpClient()->get($userUrl, [
             'verify'  => config('services.chief.verify', true),

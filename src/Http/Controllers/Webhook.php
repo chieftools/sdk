@@ -2,7 +2,9 @@
 
 namespace IronGate\Chief\Http\Controllers;
 
+use RuntimeException;
 use Illuminate\Http\Request;
+use IronGate\Chief\Webhook\Handlers\Handler;
 
 class Webhook
 {
@@ -12,10 +14,16 @@ class Webhook
 
         $handler = config("chief.webhooks.{$event}");
 
-        if (class_exists($handler)) {
-            $return = (new $handler)($request->json()->all());
+        if ($handler !== null && class_exists($handler)) {
+            $handler = app($handler);
 
-            if (is_array($return)) {
+            if (!$handler instanceof Handler) {
+                throw new RuntimeException('Webhook handlers need to implement the Handler interface.');
+            }
+
+            $return = $handler($request->json()?->all() ?? []);
+
+            if ($return !== null) {
                 return $return;
             }
         }

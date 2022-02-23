@@ -7,7 +7,7 @@ use RuntimeException;
 
 class AutoAuthenticate extends Authenticate
 {
-    public function handle($request, Closure $next, ...$guards)
+    public function handle($request, Closure $next, ...$guards): mixed
     {
         if (!empty($guards)) {
             throw new RuntimeException('Auto authenticator does not take guards parameter.');

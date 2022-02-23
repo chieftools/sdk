@@ -13,6 +13,7 @@ trait Observable
             $method = 'register' . class_basename($trait) . 'Events';
 
             if (method_exists($class, $method)) {
+                /** @noinspection SlowArrayOperationsInLoopInspection */
                 $events = array_merge($events, static::{$method}());
             }
         }

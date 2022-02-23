@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
  */
 class MoveAccessTokenFromURLToHeader
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if ($request->filled('access_token') && empty($request->header('Authorization'))) {
             $request->headers->add([

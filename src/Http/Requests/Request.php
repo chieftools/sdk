@@ -2,6 +2,7 @@
 
 namespace IronGate\Chief\Http\Requests;
 
+use IronGate\Chief\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class Request extends FormRequest
@@ -11,7 +12,7 @@ abstract class Request extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [];
     }
@@ -29,11 +30,11 @@ abstract class Request extends FormRequest
     /**
      * Return the currently autgenticated user.
      *
-     * @param null $guard
+     * @param string|null $guard
      *
      * @return \IronGate\Chief\Entities\User
      */
-    public function user($guard = null)
+    public function user($guard = null): User
     {
         return parent::user($guard);
     }

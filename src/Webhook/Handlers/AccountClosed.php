@@ -2,15 +2,12 @@
 
 namespace IronGate\Chief\Webhook\Handlers;
 
-class AccountClosed
+class AccountClosed extends BaseHandler
 {
-    public function __invoke(array $webhookData)
+    public function __invoke(array $payload): ?array
     {
-        /** @var \IronGate\Chief\Entities\User|null $user */
-        $user = config('chief.auth.model')::query()->where('chief_id', '=', array_get($webhookData, 'data.id'))->first();
+        $this->getUserFromPayload($payload)?->delete();
 
-        if ($user !== null) {
-            $user->delete();
-        }
+        return null;
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class ForceSecure
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (!$request->secure()) {
             return redirect()->secure($request->path());

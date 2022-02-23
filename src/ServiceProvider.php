@@ -154,19 +154,14 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureSocialiteIntegration(): void
     {
-        if (!$this->app['config']['services.chief']) {
-            return;
-        }
-
         /** @var \Laravel\Socialite\SocialiteManager $socialite */
+        /** @noinspection PhpUnhandledExceptionInspection */
         $socialite = $this->app->make(Socialite::class);
 
-        $socialite->extend('chief', static function ($app) use ($socialite) {
-            return $socialite->buildProvider(
-                ChiefProvider::class,
-                $app['config']['services.chief']
-            );
-        });
+        $socialite->extend(
+            'chief',
+            static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief'))
+        );
     }
 
     private function registerGraphQLSubscriptions(): void
@@ -175,9 +170,9 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        $this->app->booting(function () {
-            $this->app->register(SubscriptionServiceProvider::class);
-        });
+        $this->app->booting(
+            fn () => $this->app->register(SubscriptionServiceProvider::class)
+        );
     }
 
     private function ensureMixAndAssetUrlsAreConfigured(): void
@@ -188,7 +183,7 @@ class ServiceProvider extends IlluminateServiceProvider
         ]);
     }
 
-    public static function basePath(string $path): string
+    private static function basePath(string $path): string
     {
         return __DIR__ . '/../' . ltrim($path, '/');
     }

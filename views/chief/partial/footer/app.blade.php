@@ -4,6 +4,6 @@
     </a>
     &mdash;
     <a href="{{ chief_site_url() }}">
-        <i class="fad fa-fw fa-atom-alt"></i> Chief Tools
+        <i class="fad fa-fw fa-toolbox"></i> Chief Tools
     </a>
 </p>

@@ -14,7 +14,7 @@
 
         @stack('head.meta')
 
-        <link rel="preconnect" href="https://static-assets.chief.app">
+        <link rel="preconnect" href="{{ static_asset() }}">
 
         @if(!empty($title))
             <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>
@@ -22,7 +22,8 @@
             <title>{{ config('app.title') }}</title>
         @endif
 
-        <link rel="shortcut icon" type="image/png" href="{{ asset('images/logo-alt-c.png') }}">
+        <link rel="icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.svg') }}" type="image/svg+xml">
+        <link rel="alternate icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.ico') }}" sizes="32x32">
 
         @section('styles')
             <link media="all" type="text/css" rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">

@@ -11,7 +11,7 @@ Base functionality and helpers used for building for Chief Tools.
 
 - (Socialite) authentication through [Account Chief](https://account.chief.app/)
 - [Laravel Passport](https://laravel.com/docs/6.x/passport) for API access
-- [Sentry](https://docs.sentry.io/platforms/php/laravel/) client 
+- [Sentry](https://docs.sentry.io/platforms/php/laravel/) client
 - [Lighthouse GraphQL](https://lighthouse-php.com/) with base schema and scalars
     - Session protected endpoint `/api/graphql/web`
     - Session protected (GraphiQL) playground `/api/playground`
@@ -21,29 +21,9 @@ Base functionality and helpers used for building for Chief Tools.
 - Redirects to Chief Tools homepage for `/contact`, `/privacy`, `/terms`
 - [Chief Tools](https://chief.app/) webhook handler to be notified when a user account is closed or updated
 - Health check queue job pinging `QUEUE_MONITOR_URL` every minute using the default queue (disabled when `QUEUE_MONITOR_URL` is empty or unset)
-- Login event listener to update the `last_login` column on the `users` table 
+- Login event listener to update the `last_login` column on the `users` table
 
 ### Provides
-
-#### Concerns
-
-- `IronGate\Chief\Concerns\Observable`
-<br>For use on a Eloquent model, registers observers automatically on booting of the model
-
-```php
-class Entity extends \Illuminate\Database\Eloquent\Model
-{
-    use \IronGate\Chief\Concerns\Observable;
-
-    public static function onCreated(self $entity): void
-    {
-        // do stuff with `$entity`
-    }
-}
-```
-
-- `IronGate\Chief\Concerns\UsesUUID`
-<br>For use on a Eloquent model, automatically generates a UUIDv4 when creating a model
 
 #### Middleware
 
@@ -58,8 +38,6 @@ class Entity extends \Illuminate\Database\Eloquent\Model
 <br>Move the access token from `access_token` GET paramater to the `Authorization` header
 - `IronGate\Chief\Middleware\SecurityHeaders`
 <br>Adds a default set of security headers, can be configured by setting `chief.response.securityheaders` (array) in the app config
-- `IronGate\Chief\Middleware\SentryContext`
-<br>[Sentry](https://docs.sentry.io/platforms/php/) context middleware which set's the user context
 - `IronGate\Chief\Middleware\TrustProxiesOnVapor`
 <br>Configures `fideloper/proxy` to be used on [Laravel Vapor](https://vapor.laravel.com/)
 

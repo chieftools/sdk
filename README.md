@@ -11,7 +11,7 @@ Base functionality and helpers used for building for Chief Tools.
 
 - (Socialite) authentication through [Account Chief](https://account.chief.app/)
 - [Laravel Passport](https://laravel.com/docs/6.x/passport) for API access
-- [Sentry](https://docs.sentry.io/platforms/php/laravel/) client 
+- [Sentry](https://docs.sentry.io/platforms/php/laravel/) client
 - [Lighthouse GraphQL](https://lighthouse-php.com/) with base schema and scalars
     - Session protected endpoint `/api/graphql/web`
     - Session protected (GraphiQL) playground `/api/playground`
@@ -21,7 +21,7 @@ Base functionality and helpers used for building for Chief Tools.
 - Redirects to Chief Tools homepage for `/contact`, `/privacy`, `/terms`
 - [Chief Tools](https://chief.app/) webhook handler to be notified when a user account is closed or updated
 - Health check queue job pinging `QUEUE_MONITOR_URL` every minute using the default queue (disabled when `QUEUE_MONITOR_URL` is empty or unset)
-- Login event listener to update the `last_login` column on the `users` table 
+- Login event listener to update the `last_login` column on the `users` table
 
 ### Provides
 
@@ -41,9 +41,6 @@ class Entity extends \Illuminate\Database\Eloquent\Model
     }
 }
 ```
-
-- `IronGate\Chief\Concerns\UsesUUID`
-<br>For use on a Eloquent model, automatically generates a UUIDv4 when creating a model
 
 #### Middleware
 

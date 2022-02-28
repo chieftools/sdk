@@ -9,7 +9,6 @@ use IronGate\Chief\Helpers\Avatar;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use IronGate\Chief\Concerns\Observable;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
@@ -36,7 +35,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  */
 class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable, HasApiTokens, UsesUUID, Observable;
+    use Authenticatable, Authorizable, HasApiTokens, UsesUUID;
 
     protected $table    = 'users';
     protected $fillable = [

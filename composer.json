@@ -18,6 +18,7 @@
         "nuwave/lighthouse": "^5.40",
         "paragonie/certainty": "^2.8",
         "sentry/sentry-laravel": "^2.11",
+        "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0"
     },
     "require-dev": {

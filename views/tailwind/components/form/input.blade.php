@@ -122,7 +122,7 @@
         @endif
     </div>
 
-    @if($slot)
+    @if(isset($slot) && $slot instanceof Illuminate\Support\HtmlString && $slot->isNotEmpty())
         <p class="ml-1 mt-1 text-sm text-gray-500">{{ $slot }}</p>
     @endif
 

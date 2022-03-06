@@ -24,7 +24,7 @@
 
 <div {{ $attributes->merge(['class' => "alert-container rounded-md p-4 {$bgColor}"]) }}>
     <div class="flex">
-        <div class="flex-shrink-0">
+        <div class="flex-shrink-0 -mt-[3px]">
             <i class="fa-fw {{ $icon }} {{ $headingColor }}"></i>
         </div>
         <div class="ml-3">

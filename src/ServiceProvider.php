@@ -2,6 +2,7 @@
 
 namespace IronGate\Chief;
 
+use GuzzleHttp;
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
 use IronGate\Chief\Http\Middleware;
@@ -59,6 +60,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
 
         $this->registerGraphQLSubscriptions();
+
+        $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
 
         $this->app->singleton(Certainty\RemoteFetch::class, static function () {
             return (new Certainty\RemoteFetch(storage_path('framework/cache')))

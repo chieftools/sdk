@@ -2,13 +2,13 @@
     <div class="{{ ($fullwidth ?? false) === true ? 'px-4' : 'max-w-7xl px-2 sm:px-6 lg:px-8' }} mx-auto">
         <div class="relative flex justify-between h-14">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <button @click="menuOpen = !menuOpen" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500" aria-controls="mobile-menu" aria-expanded="false">
+                <button x-on:click="menuOpen = !menuOpen" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500" aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
 
-                    <svg class="h-6 w-6" :class="menuOpen ? 'hidden' : 'block'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="h-6 w-6" x-bind:class="menuOpen ? 'hidden' : 'block'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
-                    <svg class="h-6 w-6" :class="menuOpen ? 'block' : 'hidden'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <svg class="h-6 w-6" x-bind:class="menuOpen ? 'block' : 'hidden'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
@@ -41,7 +41,7 @@
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                     <div class="ml-3 relative">
                         <div>
-                            <button @click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                            <button x-on:click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
                             </button>
@@ -49,8 +49,8 @@
 
                         <div x-cloak
                              x-show="userMenuOpen"
-                             @click.away="userMenuOpen = false"
-                             @keydown.escape.stop="userMenuOpen = false"
+                             x-on:click.away="userMenuOpen = false"
+                             x-on:keydown.escape.stop="userMenuOpen = false"
                              x-transition:enter="transition ease-out duration-100"
                              x-transition:enter-start="transform opacity-0 scale-95"
                              x-transition:enter-end="transform opacity-100 scale-100"

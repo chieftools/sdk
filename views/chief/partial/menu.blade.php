@@ -19,7 +19,7 @@
                 </a>
 
                 @unless(empty($menuItems))
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8 sm:ml-auto">
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8 sm:ml-auto main-menu-items">
                         @foreach($menuItems as $item)
                             @php
                                 $itemClass = $item['active'] ?? false
@@ -29,9 +29,15 @@
                                     ? 'text-brand'
                                     : 'text-gray-500 group-hover:text-brand-300';
                             @endphp
-                            <a href="{{ $item['href'] }}" class="group {{ $itemClass }}">
-                                @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
-                            </a>
+                            @if(isset($item['vue']) && $item['vue'])
+                                <router-link v-bind:to="{!! $item['to'] ?? $item['href'] !!}" class="group {{ $itemClass }}">
+                                    @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
+                                </router-link>
+                            @else
+                                <a href="{{ $item['href'] }}" class="group {{ $itemClass }}">
+                                    @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
+                                </a>
+                            @endif
                         @endforeach
                     </div>
                 @endunless

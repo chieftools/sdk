@@ -53,26 +53,28 @@
     </div>
 </div>
 
-@once
-    @push('body.script')
-        <script>
-            (function () {
-                document.querySelectorAll('.alert-close-button').forEach((button) => {
-                    button.addEventListener('click', e => {
-                        e.preventDefault();
+@if($closable)
+    @once
+        @push('body.script')
+            <script>
+                (function () {
+                    document.querySelectorAll('.alert-close-button').forEach((button) => {
+                        button.addEventListener('click', e => {
+                            e.preventDefault();
 
-                        let parent = button.parentNode;
+                            let parent = button.parentNode;
 
-                        while (parent && !parent.classList.contains('alert-container')) {
-                            parent = parent.parentNode;
-                        }
+                            while (parent && !parent.classList.contains('alert-container')) {
+                                parent = parent.parentNode;
+                            }
 
-                        if (parent) {
-                            parent.remove();
-                        }
+                            if (parent) {
+                                parent.remove();
+                            }
+                        });
                     });
-                });
-            })();
-        </script>
-    @endpush
-@endonce
+                })();
+            </script>
+        @endpush
+    @endonce
+@endif

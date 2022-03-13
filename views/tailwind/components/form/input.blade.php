@@ -2,9 +2,12 @@
     'name',
     'type' => 'text',
     'size' => 'regular',
+    'rows' => 4,
+    'mono' => false,
     'class' => 'mb-3 last:mb-0',
     'label' => false,
     'value' => null,
+    'style' => null,
     'options' => [],
     'checked' => false,
     'disabled' => false,
@@ -12,6 +15,7 @@
     'readonly' => false,
     'copyable' => false,
     'autofocus' => false,
+    'placeholder' => null,
     'autocomplete' => null,
 ])
 
@@ -28,6 +32,10 @@
 
     if ($disabled) {
         $inputClass .= ' opacity-50 cursor-not-allowed';
+    }
+
+    if ($mono) {
+        $inputClass .= ' font-mono';
     }
 
     $inputClass .= $copyable
@@ -59,12 +67,14 @@
                                name="{{ $name }}"
                                value="{{ $value ?? '1' }}"
                                class="h-4 w-4 text-brand-600 border-gray-300 focus:ring-brand-500 rounded {{ $inputClass }}"
+                               {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                                {{ $checked ? 'checked' : '' }}
                                {{ $disabled ? 'disabled' : '' }}
                                {{ $required ? 'required' : '' }}
                                {{ $readonly ? 'readonly' : '' }}
                                {{ $autofocus ? 'autofocus' : '' }}
-                               {{ $autocomplete ? "autocomplete='{$autocomplete}'" : '' }}>
+                               {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                        >
                     </div>
                     <div class="ml-3 text-sm">
                         <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
@@ -73,23 +83,27 @@
             @elseif($type === 'textarea')
                 <textarea id="{{ $name }}"
                           name="{{ $name }}"
-                          rows="4"
+                          rows="{{ $rows }}"
                           class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                          {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                           {{ $disabled ? 'disabled' : '' }}
                           {{ $required ? 'required' : '' }}
                           {{ $readonly ? 'readonly' : '' }}
                           {{ $autofocus ? 'autofocus' : '' }}
-                          {{ $autocomplete ? "autocomplete='{$autocomplete}'" : '' }}
+                          {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                          {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                 >{{ old($name, $value) }}</textarea>
             @elseif($type === 'select')
                 <select id="{{ $name }}"
                         name="{{ $name }}"
                         class="mt-1 block w-full bg-white border border-gray-300 shadow-sm py-2 px-3 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                        {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                         {{ $disabled ? 'disabled' : '' }}
                         {{ $required ? 'required' : '' }}
                         {{ $readonly ? 'readonly' : '' }}
                         {{ $autofocus ? 'autofocus' : '' }}
-                        {{ $autocomplete ? "autocomplete='{$autocomplete}'" : '' }}
+                        {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                        {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                 >
                     @foreach($options as $optionValue => $option)
                         <option value="{{ $optionValue }}"{{ $optionValue === old($name, $value) ? ' selected' : '' }}>{{ $option }}</option>
@@ -101,11 +115,14 @@
                        type="{{ $type }}"
                        value="{{ old($name, $value) }}"
                        class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                       {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                        {{ $disabled ? 'disabled' : '' }}
                        {{ $required ? 'required' : '' }}
                        {{ $readonly ? 'readonly' : '' }}
                        {{ $autofocus ? 'autofocus' : '' }}
-                       {{ $autocomplete ? "autocomplete='{$autocomplete}'" : '' }}>
+                       {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                       {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                >
             @endif
 
             @if($hasError)

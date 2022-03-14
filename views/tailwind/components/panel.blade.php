@@ -11,7 +11,7 @@
     @if($title)
         <div class="bg-white py-4 px-5 border-b border-gray-200 sm:px-6">
             <h3 class="inline-block text-lg leading-6 font-medium text-gray-900">
-                @if($icon)<i class="{{ $iconType }} fa-fw {{ $icon }}"></i> @endif{{ $title }}
+                @if($icon)<i class="{{ $iconType }} fa-fw {{ $icon }} text-gray-500"></i> @endif{{ $title }}
             </h3>
 
             {!! $header ?? '' !!}

@@ -3,5 +3,5 @@
 ])
 
 <x-tw::button type="white" :href="$href ?? url()->previous()">
-    Cancel
+    {{ $slot === null || $slot->isEmpty() ? 'Cancel' : $slot }}
 </x-tw::button>

@@ -2,7 +2,7 @@
     @php($title = [$title])
 @endif
 <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}" class="{{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
+<html lang="{{ config('app.locale') }}" class="antialiased {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
     <head>
         <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>

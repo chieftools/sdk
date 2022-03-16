@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
 
 /**
  * Get active state based on whitelist.

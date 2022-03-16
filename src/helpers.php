@@ -89,23 +89,15 @@ function sync_user_timezone(?IronGate\Chief\Entities\User $user = null): void
 
 /**
  * Validate some data.
- *
- * @param string|array $fields
- * @param string|array $rules
- *
- * @return bool
  */
-function validate($fields, $rules): bool
+function validate(mixed $fields, string|array|Illuminate\Contracts\Validation\Rule $rules): bool
 {
     if (!is_array($fields)) {
-        $fields = ['default' => $fields];
+        $fields = ['field' => $fields];
+        $rules  = ['field' => $rules];
     }
 
-    if (!is_array($rules)) {
-        $rules = ['default' => $rules];
-    }
-
-    return Validator::make($fields, $rules)->passes();
+    return Illuminate\Support\Facades\Validator::make($fields, $rules)->passes();
 }
 
 /**

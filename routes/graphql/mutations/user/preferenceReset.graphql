@@ -1,15 +1,15 @@
 extend type Mutation {
-    "Resets a user preference to it's default value."
+    "Reset a preference to it's default value."
     preferenceReset(input: PreferenceResetInput!): PreferenceResetPayload! @guard @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\User\\Preference\\Reset")
 }
 
 input PreferenceResetInput {
-    "The preference key."
+    "The preference key to reset to it's default value."
     key: String!
 }
 
 type PreferenceResetPayload implements MutationPayload {
-    "The preference resetted."
+    "The preference that was reset."
     preference: UserPreference
 
     status: MutationStatus!

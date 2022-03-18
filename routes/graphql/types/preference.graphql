@@ -6,27 +6,27 @@ type UserPreference {
     "Preference name."
     name: String!
 
-    "The category the preference belongs to."
+    "The preference category."
     category: UserPreferenceCategory!
 
-    "Preference description."
+    "The preference description."
     description: String!
 
-    "The current value for this preference."
+    "Current value for this preference."
     value: Boolean!
 
-    "The default value for this preference."
+    "Default value for this preference."
     default: Boolean!
 
-    "Indicates if the user has changed the preference."
+    "Indicates if the user has updated the preference."
     changed: Boolean!
 }
 
 "A user preference category."
 type UserPreferenceCategory {
-    "Category key."
+    "The preference category key."
     key: String!
 
-    "Category name."
+    "The preference category name."
     name: String!
 }

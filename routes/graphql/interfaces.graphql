@@ -1,4 +1,4 @@
-"An object with an identifier."
+"An object with an ID."
 interface Entity {
     "ID of the object."
     id: ID!

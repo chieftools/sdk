@@ -24,11 +24,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        env('APP_DEBUG')
-            ? '*'
-            : config('app.domain'),
-    ],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 

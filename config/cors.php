@@ -16,7 +16,7 @@ return [
     */
 
     'paths' => [
-        # These routes are protected with token (not session) and are therefore CORS safe
+        // These routes are protected with token (not session) and are therefore CORS safe
         'horizon/*',
         'api/graphql',
         'api/graphql/schema',

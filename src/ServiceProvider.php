@@ -54,6 +54,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Passport::ignoreMigrations();
 
+        $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors');
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
         $this->mergeConfigFrom(static::basePath('config/javascript.php'), 'javascript');

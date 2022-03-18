@@ -1,10 +1,9 @@
-#import ./scalars.graphql
-#import ./mutations.graphql
-#import ./interfaces.graphql
+#import scalars.graphql
+#import interfaces.graphql
 
-#import ./types/*.graphql
-#import ./queries/*.graphql
-#import ./mutations/user/*.graphql
+#import types/*.graphql
+#import queries/*.graphql
+#import mutations/*.graphql
 
 "All queries"
 type Query {

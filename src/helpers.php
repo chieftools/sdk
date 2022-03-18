@@ -333,3 +333,39 @@ function static_asset(?string $path = null): string
 
     return $url;
 }
+
+/**
+ * Encode an array specially to be parsed by JS.
+ *
+ * @param array $data
+ *
+ * @return string
+ */
+function js_json_encode(array $data): string
+{
+    return str_replace(["\u0022", "\u0027"], ['\\\\"', "\\'"], json_encode($data, JSON_HEX_QUOT | JSON_HEX_APOS | JSON_THROW_ON_ERROR));
+}
+
+/**
+ * Executed the $with closure while the paginator current page resolver is set to $resolver.
+ *
+ * @param \Closure $with
+ * @param \Closure $resolver
+ *
+ * @return mixed
+ */
+function with_custom_pagination_resolver(Closure $with, Closure $resolver): mixed
+{
+    $resolverProperty = (new ReflectionClass(Illuminate\Pagination\Paginator::class))->getProperty('currentPageResolver');
+    $resolverProperty->setAccessible(true);
+
+    $currentResolver = $resolverProperty->getValue();
+
+    Illuminate\Pagination\Paginator::currentPageResolver($resolver);
+
+    $return = $with();
+
+    Illuminate\Pagination\Paginator::currentPageResolver($currentResolver);
+
+    return $return;
+}

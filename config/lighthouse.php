@@ -89,8 +89,11 @@ return [
         'interfaces'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Interfaces",
         'unions'        => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Unions",
         'scalars'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Scalars",
-        'directives'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
         'validators'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Validators",
+        'directives'    => [
+            'IronGate\\Chief\\GraphQL\\Directives',
+            "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
+        ],
     ],
 
     /*

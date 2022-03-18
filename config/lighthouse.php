@@ -78,9 +78,9 @@ return [
     */
 
     'query_cache' => [
-        'enable' => env('LIGHTHOUSE_QUERY_CACHE_ENABLE', false),
+        'enable' => env('LIGHTHOUSE_QUERY_CACHE_ENABLE', !env('APP_DEBUG', false)),
         'store'  => env('LIGHTHOUSE_QUERY_CACHE_STORE'),
-        'ttl'    => env('LIGHTHOUSE_QUERY_CACHE_TTL', 24 * 60 * 60),
+        'ttl'    => env('LIGHTHOUSE_QUERY_CACHE_TTL', 24 * 60 * 60), // in seconds
     ],
 
     /*

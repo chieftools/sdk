@@ -3,8 +3,6 @@
 use GraphQL\Error\DebugFlag;
 use GraphQL\Validator\Rules\QueryComplexity;
 use GraphQL\Validator\Rules\DisableIntrospection;
-use Nuwave\Lighthouse\Execution\ExtensionErrorHandler;
-use Nuwave\Lighthouse\Execution\ReportingErrorHandler;
 
 $appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
 
@@ -68,6 +66,21 @@ return [
         'enable'  => env('LIGHTHOUSE_CACHE_ENABLE', !env('APP_DEBUG', false)),
         'version' => env('LIGHTHOUSE_CACHE_VERSION', 2),
         'path'    => env('LIGHTHOUSE_CACHE_PATH', base_path('bootstrap/cache/lighthouse-schema.php')),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Query Cache
+    |--------------------------------------------------------------------------
+    |
+    | Caches the result of parsing incoming query strings to boost performance on subsequent requests.
+    |
+    */
+
+    'query_cache' => [
+        'enable' => env('LIGHTHOUSE_QUERY_CACHE_ENABLE', false),
+        'store'  => env('LIGHTHOUSE_QUERY_CACHE_STORE'),
+        'ttl'    => env('LIGHTHOUSE_QUERY_CACHE_TTL', 24 * 60 * 60),
     ],
 
     /*
@@ -178,8 +191,11 @@ return [
     */
 
     'error_handlers' => [
-        ExtensionErrorHandler::class,
-        ReportingErrorHandler::class,
+        Nuwave\Lighthouse\Execution\AuthenticationErrorHandler::class,
+        Nuwave\Lighthouse\Execution\AuthorizationErrorHandler::class,
+        Nuwave\Lighthouse\Execution\ValidationErrorHandler::class,
+        Nuwave\Lighthouse\Execution\ExtensionErrorHandler::class,
+        Nuwave\Lighthouse\Execution\ReportingErrorHandler::class,
     ],
 
     /*
@@ -216,22 +232,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Batched Queries
+    | Persisted Queries
     |--------------------------------------------------------------------------
     |
-    | GraphQL query batching means sending multiple queries to the server in one request,
-    | You may set this flag to either process or deny batched queries.
+    | Lighthouse supports Automatic Persisted Queries (APQ), compatible with the
+    | [Apollo implementation](https://www.apollographql.com/docs/apollo-server/performance/apq).
+    | You may set this flag to either process or deny these queries.
     |
     */
 
-    'batched_queries' => true,
+    'persisted_queries' => false,
 
     /*
     |--------------------------------------------------------------------------
     | Transactional Mutations
     |--------------------------------------------------------------------------
     |
-    | If set to true, mutations such as @create or @update will be
+    | If set to true, built-in directives that mutate models will be
     | wrapped in a transaction to ensure atomicity.
     |
     */
@@ -262,6 +279,52 @@ return [
     */
 
     'batchload_relations' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Shortcut Foreign Key Selection
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, Lighthouse will shortcut queries where the client selects only the
+    | foreign key pointing to a related model. Only works if the related model's primary
+    | key field is called exactly `id` for every type in your schema.
+    |
+    */
+
+    'shortcut_foreign_key_selection' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Non-Null Pagination Results
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, the generated result type of paginated lists will be marked
+    | as non-nullable. This is generally more convenient for clients, but will
+    | cause validation errors to bubble further up in the result.
+    |
+    | This setting will be removed and always behave as if it were true in v6.
+    |
+    */
+
+    'non_null_pagination_results' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Unbox BenSampo\Enum\Enum instances
+    |--------------------------------------------------------------------------
+    |
+    | If set to true, Lighthouse will extract the internal $value from instances of
+    | BenSampo\Enum\Enum before passing it to ArgBuilderDirective::handleBuilder().
+    |
+    | This setting will be removed and always behave as if it were false in v6.
+    |
+    | It is only here to preserve compatibility, e.g. when expecting the internal
+    | value to be passed to a scope when using @scope, but not needed due to Laravel
+    | calling the Enum's __toString() method automagically when used in a query.
+    |
+    */
+
+    'unbox_bensampo_enum_enum_instances' => false,
 
     /*
     |--------------------------------------------------------------------------

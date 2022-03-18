@@ -333,3 +333,16 @@ function static_asset(?string $path = null): string
 
     return $url;
 }
+
+/**
+ * Encode an array specially to be parsed by JS.
+ *
+ * @param array $data
+ *
+ * @return string
+ */
+function js_json_encode(array $data): string
+{
+    return str_replace(["\u0022", "\u0027"], ['\\\\"', "\\'"], json_encode($data, JSON_HEX_QUOT | JSON_HEX_APOS | JSON_THROW_ON_ERROR));
+}
+

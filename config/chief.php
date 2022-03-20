@@ -76,9 +76,9 @@ return [
 
         'securityheaders' => [
 
-            'Feature-Policy'            => "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'",
             'Referrer-Policy'           => 'strict-origin-when-cross-origin',
             'X-Frame-Options'           => 'SAMEORIGIN',
+            'Permissions-Policy'        => 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()',
             'X-Content-Type-Options'    => 'nosniff',
             'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload',
 

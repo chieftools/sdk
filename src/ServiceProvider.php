@@ -17,6 +17,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Chief\Socialite\ChiefProvider;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
+use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use IronGate\Chief\Broadcasting\Channels\LighthouseSubscriptionChannel;
@@ -52,13 +53,9 @@ class ServiceProvider extends IlluminateServiceProvider
 
     public function register(): void
     {
-        Passport::ignoreMigrations();
+        $this->loadConfig();
 
-        $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors');
-        $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
-        $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
-        $this->mergeConfigFrom(static::basePath('config/javascript.php'), 'javascript');
-        $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
+        Passport::ignoreMigrations();
 
         $this->registerGraphQLSubscriptions();
 
@@ -68,6 +65,23 @@ class ServiceProvider extends IlluminateServiceProvider
             return (new Certainty\RemoteFetch(storage_path('framework/cache')))
                 ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
         });
+    }
+
+    private function loadConfig(): void
+    {
+        // This is a micro optimization because `mergeConfigFrom` does this check itself
+        // but we do it once instead of for every `mergeConfigFrom` call. Since we do
+        // quite a few `mergeConfigFrom` calls we do this check once saving cycles.
+        if ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached()) {
+            return;
+        }
+
+        $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors');
+        $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
+        $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
+        $this->mergeConfigFrom(static::basePath('config/session.php'), 'session');
+        $this->mergeConfigFrom(static::basePath('config/javascript.php'), 'javascript');
+        $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
     }
 
     private function loadRoutes(): void
@@ -82,6 +96,22 @@ class ServiceProvider extends IlluminateServiceProvider
 
         if (config('chief.routes.web-api')) {
             $this->loadRoutesFrom(static::basePath('routes/web-api.php'));
+        }
+    }
+
+    private function loadCommands(): void
+    {
+        $this->commands([
+            Commands\QueueHealthCheck::class,
+        ]);
+
+        if (!empty(config('chief.queue.monitor'))) {
+            $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
+                $schedule->command(Commands\QueueHealthCheck::class)
+                         ->everyMinute()
+                         ->onOneServer()
+                         ->runInBackground();
+            });
         }
     }
 
@@ -110,22 +140,6 @@ class ServiceProvider extends IlluminateServiceProvider
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));
         Passport::personalAccessTokensExpireIn(now()->addYears(20));
-    }
-
-    private function loadCommands(): void
-    {
-        $this->commands([
-            Commands\QueueHealthCheck::class,
-        ]);
-
-        if (!empty(config('chief.queue.monitor'))) {
-            $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
-                $schedule->command(Commands\QueueHealthCheck::class)
-                         ->everyMinute()
-                         ->onOneServer()
-                         ->runInBackground();
-            });
-        }
     }
 
     private function configureMiddleware(): void

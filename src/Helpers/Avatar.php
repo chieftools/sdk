@@ -2,7 +2,6 @@
 
 namespace IronGate\Chief\Helpers;
 
-use Illuminate\Support\Str;
 use IronGate\Chief\Entities\User;
 
 final class Avatar
@@ -12,28 +11,28 @@ final class Avatar
 
     public static function of(User $user): self
     {
-        return new self($user);
+        return new self($user->name, $user->email, $user->avatarHash);
     }
 
-    private function __construct(
-        private readonly User $user,
+    public function __construct(
+        private readonly string $name,
+        private readonly string $email,
+        private readonly ?string $avatarHash = null,
     ) {
     }
 
     public function url(): string
     {
-        $avatarHash = $this->user->avatarHash ?? null;
-
-        if ($avatarHash === null) {
+        if ($this->avatarHash === null) {
             return sprintf('%s/%d/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash());
         }
 
-        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash(), $avatarHash);
+        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash(), $this->avatarHash);
     }
 
     private function nameHash(): string
     {
-        $nameParts = explode(' ', $this->user->name);
+        $nameParts = explode(' ', $this->name);
 
         $firstPart = array_shift($nameParts)[0];
         $lastPart  = count($nameParts) > 0 ? array_pop($nameParts) : '';
@@ -47,7 +46,7 @@ final class Avatar
         }
 
         // Make sure we have no more than 2 characters (1 or 2 chars is supported)
-        $initials = Str::of($initials)->substr(0, 2);
+        $initials = str($initials)->substr(0, 2);
 
         // Default to empty if the initials contain non-alpha characters
         if (!$initials->match('/^[[:alpha:]]*$/') || $initials->length() === 0) {
@@ -60,6 +59,6 @@ final class Avatar
 
     private function gravatarHash(): string
     {
-        return md5(strtolower(trim($this->user->email)));
+        return md5(strtolower(trim($this->email)));
     }
 }

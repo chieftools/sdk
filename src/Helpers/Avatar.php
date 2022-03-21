@@ -2,7 +2,6 @@
 
 namespace IronGate\Chief\Helpers;
 
-use Illuminate\Support\Str;
 use IronGate\Chief\Entities\User;
 
 final class Avatar
@@ -16,9 +15,9 @@ final class Avatar
     }
 
     public function __construct(
-        private string $name,
-        private string $email,
-        private ?string $avatarHash = null,
+        private readonly string $name,
+        private readonly string $email,
+        private readonly ?string $avatarHash = null,
     ) {
     }
 
@@ -47,7 +46,7 @@ final class Avatar
         }
 
         // Make sure we have no more than 2 characters (1 or 2 chars is supported)
-        $initials = Str::of($initials)->substr(0, 2);
+        $initials = str($initials)->substr(0, 2);
 
         // Default to empty if the initials contain non-alpha characters
         if (!$initials->match('/^[[:alpha:]]*$/') || $initials->length() === 0) {

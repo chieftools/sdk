@@ -14,7 +14,7 @@
 
         @stack('head.meta')
 
-        <link rel="preconnect" href="{{ static_asset() }}">
+        <link rel="preconnect" href="{{ static_asset() }}" crossorigin="anonymous">
 
         @if(!empty($title))
             <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>

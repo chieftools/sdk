@@ -22,7 +22,7 @@
         "stayallive/laravel-eloquent-uuid": "^1.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "3.7.*"
+        "friendsofphp/php-cs-fixer": "3.7.* || 3.8.*"
     },
     "autoload": {
         "psr-4": {

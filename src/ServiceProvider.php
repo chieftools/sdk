@@ -9,12 +9,16 @@ use IronGate\Chief\Http\Middleware;
 use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
+use Laravel\Passport\TokenRepository;
+use Laravel\Passport\ClientRepository;
 use Illuminate\Auth\Events as AuthEvents;
 use Illuminate\Mail\Events as MailEvents;
 use Illuminate\Support\Facades\Broadcast;
 use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Chief\Socialite\ChiefProvider;
+use IronGate\Chief\Passport\MemoizedTokenRepository;
+use IronGate\Chief\Passport\MemoizedClientRepository;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
@@ -54,8 +58,6 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register(): void
     {
         $this->loadConfig();
-
-        Passport::ignoreMigrations();
 
         $this->registerGraphQLSubscriptions();
 
@@ -130,6 +132,16 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
+        $this->app->singleton(TokenRepository::class, MemoizedTokenRepository::class);
+        $this->app->extend(ClientRepository::class, static function (ClientRepository $repository) {
+            return new MemoizedClientRepository(
+                $repository->getPersonalAccessClientId(),
+                $repository->getPersonalAccessClientSecret(),
+            );
+        });
+
+        Passport::ignoreMigrations();
+
         Passport::routes(static function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
             $routes->forAuthorization();

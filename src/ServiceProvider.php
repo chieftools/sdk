@@ -55,8 +55,6 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadConfig();
 
-        Passport::ignoreMigrations();
-
         $this->registerGraphQLSubscriptions();
 
         $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
@@ -130,6 +128,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
+        Passport::ignoreMigrations();
+
         Passport::routes(static function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
             $routes->forAuthorization();

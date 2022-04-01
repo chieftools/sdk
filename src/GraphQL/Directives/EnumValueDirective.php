@@ -4,9 +4,9 @@ namespace IronGate\Chief\GraphQL\Directives;
 
 use Closure;
 use GraphQL\Type\Definition\ResolveInfo;
-use Simulise\Support\GraphQL\GraphQLContext;
 use Nuwave\Lighthouse\Schema\Values\FieldValue;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
+use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Nuwave\Lighthouse\Support\Contracts\FieldMiddleware;
 
 class EnumValueDirective extends BaseDirective implements FieldMiddleware

@@ -8,6 +8,8 @@ use Illuminate\Http\Response;
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
 use Laragraph\Utils\RequestParser;
+use GraphQL\Type\Definition\UnionType;
+use GraphQL\Type\Definition\InterfaceType;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;

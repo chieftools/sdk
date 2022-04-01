@@ -8,9 +8,10 @@ use Illuminate\Http\Response;
 use GraphQL\Type\Introspection;
 use GraphQL\Utils\SchemaPrinter;
 use Laragraph\Utils\RequestParser;
+use GraphQL\Type\Definition\UnionType;
+use GraphQL\Type\Definition\InterfaceType;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
-use GraphQL\Validator\Rules\DisableIntrospection;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Support\Contracts\CreatesResponse;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
@@ -29,19 +30,10 @@ class GraphQL extends GraphQLController
     ): SymfonyResponse {
         sync_user_timezone();
 
-        $localEnvironment = app()->environment('local');
-
-        // Introspection is only allowed for authenticated requests or when on a local environment
-        config([
-            'lighthouse.security.disable_introspection' => auth()->check() || $localEnvironment
-                ? DisableIntrospection::DISABLED
-                : DisableIntrospection::ENABLED,
-        ]);
-
         // If we are in a local environment we print the schema and possible types configuration
         // on every request it's a bit wasteful but the impact is not that big and it saves
         // setting up git hooks and all that horrible jazz. For apollo and GitHub diffs.
-        if ($localEnvironment) {
+        if (app()->environment('local')) {
             $schema = app(SchemaBuilder::class)->schema();
 
             $fragmentTypes = /** @lang JavaScript */
@@ -84,6 +76,20 @@ class GraphQL extends GraphQLController
             'Content-Type'        => 'text/plain',
             'Content-Disposition' => "inline; filename=\"{$appId}-schema.graphql\"",
         ]);
+    }
+
+    public function discovery(): array
+    {
+        $name  = config('app.name');
+        $appId = config('chief.id');
+
+        return [
+            'title'          => $name,
+            'description'    => "The {$name} GraphQL API.",
+            'favicon_url'    => static_asset("icons/{$appId}_favicon.svg"),
+            'logo_light_url' => static_asset("icons/{$appId}.svg"),
+            'logo_dark_url'  => static_asset("icons/{$appId}_white.svg"),
+        ];
     }
 
     private function extractFragmentTypesJSON(SChema $schema): string

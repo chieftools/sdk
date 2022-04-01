@@ -78,6 +78,20 @@ class GraphQL extends GraphQLController
         ]);
     }
 
+    public function discovery(): array
+    {
+        $name  = config('app.name');
+        $appId = config('chief.id');
+
+        return [
+            'title'          => $name,
+            'description'    => "The {$name} GraphQL API.",
+            'favicon_url'    => static_asset("icons/{$appId}_favicon.svg"),
+            'logo_light_url' => static_asset("icons/{$appId}.svg"),
+            'logo_dark_url'  => static_asset("icons/{$appId}_white.svg"),
+        ];
+    }
+
     private function extractFragmentTypesJSON(SChema $schema): string
     {
         $possibleTypes = [];

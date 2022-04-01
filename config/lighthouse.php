@@ -122,7 +122,7 @@ return [
     'security' => [
         'max_query_complexity'  => QueryComplexity::DISABLED,
         'max_query_depth'       => 12,
-        'disable_introspection' => DisableIntrospection::ENABLED,
+        'disable_introspection' => DisableIntrospection::DISABLED,
     ],
 
     /*

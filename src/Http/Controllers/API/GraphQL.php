@@ -10,7 +10,6 @@ use GraphQL\Utils\SchemaPrinter;
 use Laragraph\Utils\RequestParser;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
-use GraphQL\Validator\Rules\DisableIntrospection;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Support\Contracts\CreatesResponse;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
@@ -29,19 +28,10 @@ class GraphQL extends GraphQLController
     ): SymfonyResponse {
         sync_user_timezone();
 
-        $localEnvironment = app()->environment('local');
-
-        // Introspection is only allowed for authenticated requests or when on a local environment
-        config([
-            'lighthouse.security.disable_introspection' => auth()->check() || $localEnvironment
-                ? DisableIntrospection::DISABLED
-                : DisableIntrospection::ENABLED,
-        ]);
-
         // If we are in a local environment we print the schema and possible types configuration
         // on every request it's a bit wasteful but the impact is not that big and it saves
         // setting up git hooks and all that horrible jazz. For apollo and GitHub diffs.
-        if ($localEnvironment) {
+        if (app()->environment('local')) {
             $schema = app(SchemaBuilder::class)->schema();
 
             $fragmentTypes = /** @lang JavaScript */

@@ -369,3 +369,23 @@ function with_custom_pagination_resolver(Closure $with, Closure $resolver): mixe
 
     return $return;
 }
+
+/**
+ * Convert enum to it's value.
+ *
+ * @param \UnitEnum|null $enum
+ *
+ * @return string|int|null
+ */
+function enum_value(?UnitEnum $enum): string|int|null
+{
+    if ($enum === null) {
+        return null;
+    }
+
+    if ($enum instanceof BackedEnum) {
+        return $enum->value;
+    }
+
+    return $enum->name;
+}

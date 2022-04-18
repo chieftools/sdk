@@ -16,9 +16,9 @@ final class Avatar
     }
 
     public function __construct(
-        private readonly string $name,
-        private readonly string $email,
-        private readonly ?string $avatarHash = null,
+        private string $name,
+        private string $email,
+        private ?string $avatarHash = null,
     ) {
     }
 

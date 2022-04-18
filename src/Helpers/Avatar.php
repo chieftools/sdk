@@ -32,21 +32,26 @@ final class Avatar
 
     private function nameHash(): string
     {
+        $initials = '';
+
         $nameParts = explode(' ', $this->name);
 
-        $firstPart = array_shift($nameParts)[0];
-        $lastPart  = count($nameParts) > 0 ? array_pop($nameParts) : '';
+        if (!empty($nameParts)) {
+            $firstPart = str(array_shift($nameParts));
 
-        $initials = $firstPart[0];
+            $initials = (string)$firstPart->substr(0, 1);
 
-        if (!empty($lastPart)) {
-            $initials .= $lastPart[0];
-        } elseif (strlen($firstPart) >= 2) {
-            $initials .= $firstPart[1];
+            $lastPart = str(count($nameParts) > 0 ? array_pop($nameParts) : '');
+
+            if ($lastPart->isNotEmpty()) {
+                $initials .= $lastPart->substr(0, 1);
+            } elseif ($firstPart->length() >= 2) {
+                $initials .= $firstPart->substr(1, 1);
+            }
         }
 
-        // Make sure we have no more than 2 characters (1 or 2 chars is supported)
-        $initials = str($initials)->substr(0, 2);
+        // Make sure we have no more than 2 characters (1 or 2 chars is supported) and they are ASCII
+        $initials = str($initials)->substr(0, 2)->ascii();
 
         // Default to empty if the initials contain non-alpha characters
         if (!$initials->match('/^[[:alpha:]]*$/') || $initials->length() === 0) {

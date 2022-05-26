@@ -4,7 +4,7 @@
     </x-tw::alert>
 @endif
 
-@if(Session::has('message'))
+@if(session()->has('message'))
     <x-tw::alert class="{{ $class ?? '' }}" :type="session('message.type', 'info')" :closable="true">
         @lang(session('message.text'), session('message.data', []))
     </x-tw::alert>

@@ -3,19 +3,23 @@
 namespace IronGate\Chief\GraphQL\Resolvers;
 
 use IronGate\Chief\Entities\User;
+use IronGate\Chief\GraphQL\QueryResolver;
 
-class UserPreferences
+/**
+ * @extends QueryResolver<User>
+ */
+class UserPreferences extends QueryResolver
 {
-    public function __invoke(?User $root, array $args): ?array
+    public function execute(): ?array
     {
-        if ($root === null) {
+        if ($this->root === null) {
             return null;
         }
 
         $settings = collect();
 
         foreach (User::getPreferences() as $key => [$name, $description, $icon, $default, $categoryKey]) {
-            $value       = $root->getPreference($key, -1);
+            $value       = $this->root->getPreference($key, -1);
             $changed     = $value !== -1;
             $category    = config("chief.preference_categories.{$categoryKey}");
             $description = strip_tags($description);

@@ -7,12 +7,23 @@
 
 "All queries"
 type Query {
+    """
+    Playing a game or just testing?
+
+    This field always returns the string "pong".
+    """
+    ping: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Queries\\Ping")
+
     "Get the app version."
     version: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Queries\\Version")
 }
 
 "All mutations"
 type Mutation {
-    "Playing a game or just testing?"
-    ping: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\Ping")
+    """
+    Playing a game or just testing?
+
+    This mutation always returns the string "pong" in it's response field.
+    """
+    ping: PingPayload! @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\Ping")
 }

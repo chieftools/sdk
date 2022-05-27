@@ -1,0 +1,21 @@
+extend type Query {
+    "Authenticate to a broadcasting channel for a specified socket connection."
+    authenticateBroadcastChannel(input: AuthenticateBroadcastChannelInput!): BroadcastChannelAuth @guard @field(resolver: "IronGate\\Chief\\GraphQL\\Resolvers\\AuthenticateBroadcastChannel")
+}
+
+input AuthenticateBroadcastChannelInput {
+    "The channel name to authenticate."
+    channel: String!
+
+    "The socket ID the client is connected as."
+    socketId: String!
+}
+
+"Data required to authenticate with a broadcasting channel."
+type BroadcastChannelAuth {
+    "The authentication token."
+    token: String!
+
+    "Channel data for presence channels."
+    data: String
+}

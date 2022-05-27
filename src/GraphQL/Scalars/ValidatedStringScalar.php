@@ -4,27 +4,19 @@ namespace IronGate\Chief\GraphQL\Scalars;
 
 use GraphQL\Error\Error;
 use GraphQL\Utils\Utils;
-use Illuminate\Validation\Rule;
+use GraphQL\Type\Definition\ScalarType;
+use GraphQL\Language\AST\StringValueNode;
+use Illuminate\Contracts\Validation\Rule;
 
-abstract class ValidatedStringScalar extends Str
+abstract class ValidatedStringScalar extends ScalarType
 {
-    /**
-     * Either a single validation rule or array of rules.
-     *
-     * @var string|array
-     */
-    protected static $validationRule;
+    protected static array $validationRules;
 
-    /**
-     * Retrieve the validation rule or rules.
-     *
-     * @return array
-     */
-    private static function getValidationRules(): array
+    public static function getValidationRules(): array
     {
         $rules = [];
 
-        foreach ((array)static::$validationRule as $validationRule) {
+        foreach (static::$validationRules as $validationRule) {
             // Allow for defining a validation rule class name
             if (class_exists($validationRule)) {
                 $rule = new $validationRule;
@@ -40,33 +32,32 @@ abstract class ValidatedStringScalar extends Str
         return $rules;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function serialize($value)
+    {
+        return $value;
+    }
+
     public function parseValue($value)
     {
         foreach (static::getValidationRules() as $validationRule) {
             if (validate($value, $validationRule)) {
-                return parent::parseValue($value);
+                return $value;
             }
         }
 
         throw new Error('Cannot represent following value as a ' . class_basename($this) . ': ' . Utils::printSafeJson($value));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function parseLiteral($valueNode, ?array $variables = null)
     {
-        $return = parent::parseLiteral($valueNode, $variables);
-
-        foreach (static::getValidationRules() as $validationRule) {
-            if (validate($valueNode->value, $validationRule)) {
-                return $return;
-            }
+        if (!$valueNode instanceof StringValueNode) {
+            throw new Error('Query error: Can only parse strings got: ' . $valueNode->kind, [$valueNode]);
         }
 
-        throw new Error('Not a valid ' . class_basename($this), [$valueNode]);
+        if (!validate($valueNode->value, static::getValidationRules())) {
+            throw new Error('Not a valid ' . class_basename($this), [$valueNode]);
+        }
+
+        return $this->parseValue($valueNode->value);
     }
 }

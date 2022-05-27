@@ -8,10 +8,10 @@ use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Context implements GraphQLContext
 {
-    private ?User $user;
+    private readonly ?User $user;
 
     public function __construct(
-        private Request $request
+        private readonly Request $request
     ) {
         $this->user = $request->user(config('lighthouse.guard'));
     }

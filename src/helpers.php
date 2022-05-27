@@ -389,3 +389,37 @@ function enum_value(?UnitEnum $enum): string|int|null
 
     return $enum->name;
 }
+
+/**
+ * Capture an exception to Sentry if the client is registered.
+ *
+ * @param \Throwable    $throwable
+ * @param callable|null $contextCallback
+ *
+ * @phpstan-param callable(Sentry\State\Scope $scope): void|null $contextCallback
+ *
+ * @return string|null
+ */
+function capture_exception_to_sentry(Throwable $throwable, ?callable $contextCallback = null): ?string
+{
+    if (app()->bound('sentry')) {
+        /** @var \Sentry\State\Hub $sentry */
+        $sentry = app('sentry');
+
+        $eventId = null;
+
+        $sentry->withScope(function (Sentry\State\Scope $scope) use (&$eventId, $contextCallback, $sentry, $throwable) {
+            if ($contextCallback !== null) {
+                $contextCallback($scope);
+            }
+
+            $eventId = $sentry->captureException($throwable);
+        });
+
+        if ($eventId instanceof Sentry\EventId) {
+            return (string)$eventId;
+        }
+    }
+
+    return null;
+}

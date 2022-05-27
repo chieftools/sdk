@@ -33,11 +33,18 @@ class JavaScriptInjector
 
             /** @noinspection PhpMethodParametersCountMismatchInspection */
             JavaScript::put([
-                'USER' => [
+                'USER'     => [
                     'id'       => $user->id,
                     'name'     => $user->name,
                     'email'    => $user->email,
                     'chief_id' => $user->chief_id,
+                ],
+                'REALTIME' => [
+                    'AUTH'    => url()->to('broadcasting/auth'),
+                    'HOST'    => config('services.websockets.host'),
+                    'APPID'   => config('services.websockets.key'),
+                    'WSPORT'  => config('services.websockets.port'),
+                    'ENABLED' => config('services.websockets.enabled'),
                 ],
             ]);
         }

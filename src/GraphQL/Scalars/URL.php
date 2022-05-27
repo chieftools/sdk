@@ -4,5 +4,5 @@ namespace IronGate\Chief\GraphQL\Scalars;
 
 class URL extends ValidatedStringScalar
 {
-    protected static $validationRule = 'url';
+    protected static array $validationRules = ['url'];
 }

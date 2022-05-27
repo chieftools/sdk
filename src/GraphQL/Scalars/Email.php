@@ -4,5 +4,5 @@ namespace IronGate\Chief\GraphQL\Scalars;
 
 class Email extends ValidatedStringScalar
 {
-    protected static $validationRule = 'email';
+    protected static array $validationRules = ['email'];
 }

@@ -4,5 +4,5 @@ namespace IronGate\Chief\GraphQL\Scalars;
 
 class IP extends ValidatedStringScalar
 {
-    protected static $validationRule = ['ipv4', 'ipv6'];
+    protected static array $validationRules = ['ipv4', 'ipv6'];
 }

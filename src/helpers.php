@@ -423,3 +423,24 @@ function capture_exception_to_sentry(Throwable $throwable, ?callable $contextCal
 
     return null;
 }
+
+/**
+ * Access a private/protected class property from an object instance.
+ *
+ * @param object $object
+ * @param string $propertyName
+ *
+ * @throws \ReflectionException
+ *
+ * @return mixed
+ */
+function __access_class_property(object $object, string $propertyName): mixed
+{
+    $reflection = new ReflectionClass($object);
+
+    $property = $reflection->getProperty($propertyName);
+
+    $property->setAccessible(true);
+
+    return $property->getValue($object);
+}

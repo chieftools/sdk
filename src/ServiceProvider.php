@@ -3,22 +3,27 @@
 namespace IronGate\Chief;
 
 use GuzzleHttp;
+use Pusher\Pusher;
+use RuntimeException;
 use ParagonIE\Certainty;
 use Laravel\Passport\Passport;
 use IronGate\Chief\Http\Middleware;
 use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Foundation\Application;
 use Illuminate\Auth\Events as AuthEvents;
 use Illuminate\Mail\Events as MailEvents;
 use Illuminate\Support\Facades\Broadcast;
 use IronGate\Chief\GraphQL\ContextFactory;
 use Illuminate\Console\Scheduling\Schedule;
 use IronGate\Chief\Socialite\ChiefProvider;
+use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use IronGate\Chief\GraphQL\Listeners\BuildExtensionsResponse;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
@@ -128,6 +133,36 @@ class ServiceProvider extends IlluminateServiceProvider
         Event::listen(MailEvents\MessageSending::class, Listeners\Mail\PreventAutoResponders::class);
     }
 
+    private function configureGraphQL(): void
+    {
+        $this->app->singleton(CreatesContext::class, ContextFactory::class);
+
+        if (config('chief.graphql.subscriptions.enabled')) {
+            Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
+
+            Event::listen(LighthouseEvents\BuildExtensionsResponse::class, BuildExtensionsResponse::class);
+
+            $this->app->bind(Pusher::class, static function (Application $app) {
+                // Try the default driver first
+                $driver = $app->make(BroadcastManager::class)->driver();
+
+                if ($driver instanceof PusherBroadcaster) {
+                    return $driver->getPusher();
+                }
+
+                // Try the pusher driver second
+                $driver = $app->make(BroadcastManager::class)->driver('pusher');
+
+                if ($driver instanceof PusherBroadcaster) {
+                    return $driver->getPusher();
+                }
+
+                // Bail if we still can't find a Pusher broadcaster
+                throw new RuntimeException('Cannot resolve Pusher client from non Pusher broadcaster.');
+            });
+        }
+    }
+
     private function configurePassport(): void
     {
         Passport::ignoreMigrations();
@@ -161,17 +196,6 @@ class ServiceProvider extends IlluminateServiceProvider
         ], 'chief-migrations');
 
         $this->loadMigrationsFrom(static::basePath('database/migrations'));
-    }
-
-    private function configureGraphQL(): void
-    {
-        $this->app->singleton(CreatesContext::class, ContextFactory::class);
-
-        if (config('chief.graphql.subscriptions.enabled')) {
-            Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
-
-            Event::listen(LighthouseEvents\BuildExtensionsResponse::class, BuildExtensionsResponse::class);
-        }
     }
 
     private function configureSocialiteIntegration(): void

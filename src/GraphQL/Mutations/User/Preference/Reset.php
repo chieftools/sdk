@@ -15,7 +15,7 @@ class Reset extends Mutation
         ];
     }
 
-    public function mutate(): ?array
+    public function mutate(): array
     {
         $preferences = collect($this->user()::getPreferences());
 

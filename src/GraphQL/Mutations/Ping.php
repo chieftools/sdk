@@ -2,10 +2,12 @@
 
 namespace IronGate\Chief\GraphQL\Mutations;
 
-class Ping
+class Ping extends Mutation
 {
-    public function __invoke(): string
+    public function mutate(): ?array
     {
-        return 'pong';
+        return [
+            'response' => 'pong',
+        ];
     }
 }

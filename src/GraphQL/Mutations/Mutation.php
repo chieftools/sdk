@@ -3,50 +3,28 @@
 namespace IronGate\Chief\GraphQL\Mutations;
 
 use Exception;
-use IronGate\Chief\Entities\User;
-use IronGate\Chief\GraphQL\Context;
-use GraphQL\Type\Definition\ResolveInfo;
+use InvalidArgumentException;
+use IronGate\Chief\GraphQL\QueryResolver;
 use IronGate\Chief\GraphQL\Exceptions\GraphQLErrorResponse;
 
-abstract class Mutation
+abstract class Mutation extends QueryResolver
 {
-    /**
-     * @var mixed
-     */
-    protected $root;
-
-    /**
-     * @var array
-     */
-    protected $args;
-
-    /**
-     * @var \Nuwave\Lighthouse\Schema\Context
-     */
-    protected $context;
-
-    /**
-     * @var \GraphQL\Type\Definition\ResolveInfo
-     */
-    protected $resolveInfo;
-
-    public function user(): User
-    {
-        return $this->context->user();
-    }
+    private static array $errorMap = [
+        404 => 'Not Found',
+    ];
 
     public function rules(): array
     {
         return [];
     }
 
-    public function resolve($root, array $args, Context $context, ResolveInfo $info): array
+    public function before(): void
     {
-        $this->root        = $root;
-        $this->args        = $args;
-        $this->context     = $context;
-        $this->resolveInfo = $info;
+        // Empty on purpose to allow child classes to not have to define it
+    }
 
+    protected function execute(): array
+    {
         $validationRules = $this->rules();
 
         try {
@@ -58,18 +36,49 @@ abstract class Mutation
                 }
             }
 
-            return $this->successResponse($this->mutate());
+            $this->before();
+
+            return $this->successResponse(
+                $this->mutate()
+            );
         } catch (Exception $exception) {
             return $this->resolveErrors($exception);
         }
     }
 
-    public function __invoke($root, array $args, Context $context, ResolveInfo $info): array
+    abstract public function mutate(): array|bool|null;
+
+    protected function abortUnless($test, string $field = 'id', int $status = 404): void
     {
-        return $this->resolve($root, $args, $context, $info);
+        if ($test !== null || $test === true) {
+            return;
+        }
+
+        if (empty(self::$errorMap[$status])) {
+            throw new InvalidArgumentException('Abort status code does not have a message.');
+        }
+
+        $this->errorResponse([
+            $field => trans(self::$errorMap[$status]),
+        ]);
     }
 
-    public function resolveErrors(Exception $exception): array
+    private function successResponse(array|bool|null $response): array
+    {
+        $success = [
+            'status' => [
+                'success' => $response !== false,
+            ],
+        ];
+
+        if ($response === null || $response === true) {
+            return $success;
+        }
+
+        return array_merge($response, $success);
+    }
+
+    private function resolveErrors(Exception $exception): array
     {
         if (!($exception instanceof GraphQLErrorResponse) && config('app.debug')) {
             throw $exception;
@@ -77,8 +86,8 @@ abstract class Mutation
 
         $errorId = null;
 
-        if (!($exception instanceof GraphQLErrorResponse) && app()->bound('sentry')) {
-            $errorId = app('sentry')->captureException($exception);
+        if (!($exception instanceof GraphQLErrorResponse)) {
+            $errorId = capture_exception_to_sentry($exception);
         }
 
         return [
@@ -95,30 +104,5 @@ abstract class Mutation
                 'errorId' => $errorId,
             ],
         ];
-    }
-
-    abstract public function mutate(): ?array;
-
-    protected function input(?string $key = null, $default = null)
-    {
-        return array_get($this->args, $key === null ? 'input' : "input.{$key}", $default);
-    }
-
-    protected function errorResponse(array $errors): array
-    {
-        throw new GraphQLErrorResponse($errors);
-
-        return [];
-    }
-
-    protected function successResponse(?array $response = null): array
-    {
-        $success = [
-            'status' => [
-                'success' => true,
-            ],
-        ];
-
-        return $response === null ? $success : array_merge($response, $success);
     }
 }

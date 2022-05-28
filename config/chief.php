@@ -70,6 +70,8 @@ return [
 
     'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),
 
+    'roadmap_url' => env('CHIEF_ROADMAP_URL', 'https://roadmap.chief.app'),
+
     'response' => [
 
         'securityheaders' => [

@@ -23,7 +23,7 @@
     };
     $classes .= $disabled ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 ';
     $classes .= match($type) {
-        'white' => 'text-gray-700 bg-white hover:bg-gray-50 border border-transparent ',
+        'white' => 'text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:bg-gray-50 ',
         'outline' => 'text-gray-700 bg-white hover:text-white hover:bg-brand-700 border border-brand-600 ',
         default => 'text-white bg-brand-600 hover:bg-brand-700 border border-transparent ',
     };

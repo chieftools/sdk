@@ -5,7 +5,7 @@
         Unauthorized
 
         <x-slot name="expanded">
-            It looks like you are not allowed to access the resource.
+            You are not authorized to access this resource.
         </x-slot>
     </x-chief::errors.message>
 @endsection

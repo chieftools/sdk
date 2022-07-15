@@ -5,7 +5,7 @@
         Forbidden
 
         <x-slot name="expanded">
-            It looks like you are not allowed to access this resource.
+            You are not allowed to access this resource.
         </x-slot>
     </x-chief::errors.message>
 @endsection

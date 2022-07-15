@@ -5,7 +5,7 @@
         Bad request
 
         <x-slot name="expanded">
-            It looks like this request is not understandable by us :(
+            This request is not understandable by us :(
         </x-slot>
     </x-chief::errors.message>
 @endsection

@@ -16,6 +16,7 @@
         "mll-lab/graphql-php-scalars": "^5.4",
         "nuwave/lighthouse": "^5.45.1",
         "paragonie/certainty": "^2.8",
+        "pusher/pusher-php-server": "^7.0",
         "sentry/sentry-laravel": "^2.11",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",

@@ -29,6 +29,11 @@ class RandomToken
         return "{$this->prefix}_{$this->random}{$this->checksum}";
     }
 
+    public function cacheKey(): string
+    {
+        return "chief:{$this->prefix}_token:" . hash('sha256', $this->random);
+    }
+
     public static function generate(string $prefix, int $length = self::DEFAULT_LENGTH): self
     {
         self::validatePrefix($prefix);

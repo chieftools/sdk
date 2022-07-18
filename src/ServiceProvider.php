@@ -6,8 +6,12 @@ use GuzzleHttp;
 use Pusher\Pusher;
 use RuntimeException;
 use ParagonIE\Certainty;
+use IronGate\Chief\API\Client;
 use Laravel\Passport\Passport;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Auth\RequestGuard;
 use IronGate\Chief\Http\Middleware;
+use Illuminate\Support\Facades\Auth;
 use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
@@ -21,6 +25,7 @@ use IronGate\Chief\Socialite\ChiefProvider;
 use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use IronGate\Chief\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
@@ -34,6 +39,8 @@ class ServiceProvider extends IlluminateServiceProvider
     public function boot(): void
     {
         $this->loadRoutes();
+
+        $this->configureAuth();
 
         $this->configureViews();
 
@@ -61,6 +68,8 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register(): void
     {
         $this->loadConfig();
+
+        $this->registerAuth();
 
         $this->registerGraphQLSubscriptions();
 
@@ -118,6 +127,37 @@ class ServiceProvider extends IlluminateServiceProvider
                          ->runInBackground();
             });
         }
+    }
+
+    private function registerAuth(): void
+    {
+        if (app()->configurationIsCached()) {
+            return;
+        }
+
+        config([
+            'auth.guards.ctp' => array_merge([
+                'driver'   => 'chief_remote_pat',
+                'provider' => null,
+            ], config('auth.guards.ctp', [])),
+        ]);
+    }
+
+    private function configureAuth(): void
+    {
+        Auth::resolved(function (AuthManager $auth) {
+            $auth->extend('chief_remote_pat', function (Application $app, string $name, array $config) use ($auth) {
+                $guard = new RequestGuard(
+                    new RemotePersonalAccessTokenGuard($name, new Client, $app->make('cache')),
+                    request(),
+                    $auth->createUserProvider($config['provider'] ?? null)
+                );
+
+                $app->refresh('request', $guard, 'setRequest');
+
+                return $guard;
+            });
+        });
     }
 
     private function configureViews(): void

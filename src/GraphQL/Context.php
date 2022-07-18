@@ -13,7 +13,7 @@ class Context implements GraphQLContext
     public function __construct(
         private readonly Request $request
     ) {
-        $this->user = $request->user(config('lighthouse.guard'));
+        $this->user = $request->user();
     }
 
     public function user(): ?User

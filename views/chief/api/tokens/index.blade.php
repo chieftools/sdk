@@ -1,32 +1,35 @@
 @extends('chief::layout.developer', ['title' => 'Personal access tokens'])
 
 @section('maincontent')
-    @if(session()->has('access_token'))
-        <x-tw::panel icon="fa-key" :title="'New access token: ' . $user->personalAccessTokens->find(session()->get('access_token_id'))->name">
-            <x-tw::alert type="warning" class="mb-3">
-                This token will only be shown once! If you lose it you can disable the token and create a new one.
-            </x-tw::alert>
-
-            <x-tw::form.input name="pat" :readonly="true" :copyable="true" :value="session()->get('access_token')"/>
-        </x-tw::panel>
-    @endif
-
-
     <x-tw::panel icon="fa-key" title="Personal access tokens">
-        <p class="text-sm mb-3">
-            These tokens can be used to access the API authenticated as your account without having to create an OAuth2 client and authorize your account through that client.
-        </p>
+        <x-tw::alert>
+            <x-slot name="heading">
+                Personal access tokens are managed by Chief Tools!
+            </x-slot>
 
-        @if($user->personalAccessTokens->isEmpty())
-            <x-tw::alert type="info">
-                You don't have any active personal access tokens.
+            To manage your personal access tokens visit Chief Tools.
+
+            <x-slot name="actions">
+                <div class="mt-4">
+                    <div class="-my-1.5 flex">
+                        <x-tw::button :href="chief_base_url('/api/tokens')" type="white" size="sm" target="_blank">
+                            <i class="fad fa-fw fa-external-link-square-alt"></i> Chief Tools
+                        </x-tw::button>
+                    </div>
+                </div>
+            </x-slot>
+        </x-tw::alert>
+    </x-tw::panel>
+
+    @if($user->personalAccessTokens->isNotEmpty())
+        <x-tw::panel icon="fa-key" title="Deprecated personal access tokens">
+            <x-tw::alert type="warning">
+                These tokens are legacy tokens and are being phased out, please replace it with a new personal access token!
             </x-tw::alert>
-        @else
-            <hr class="my-5">
 
-            <ul role="list" class="-my-5 divide-y divide-gray-200">
+            <ul role="list" class="-mx-5 -mb-4 divide-y divide-gray-200">
                 @foreach($user->personalAccessTokens as $token)
-                    <li class="py-4">
+                    <li class="py-4 px-5">
                         <div class="flex items-center space-x-4">
                             <div class="flex-1 min-w-0">
                                 <p class="text-sm font-medium text-gray-900 truncate">
@@ -67,12 +70,6 @@
                     </li>
                 @endforeach
             </ul>
-        @endif
-
-        <x-slot name="footer">
-            <x-tw::button :href="route('api.tokens.create')" icon="fa-plus">
-                Create new token
-            </x-tw::button>
-        </x-slot>
-    </x-tw::panel>
+        </x-tw::panel>
+    @endif
 @endsection

@@ -14,6 +14,8 @@ return [
 
         'redirect' => '/dashboard',
 
+        'passport' => env('CHIEF_PASSPORT_ENABLED', true),
+
     ],
 
     'queue' => [

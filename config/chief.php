@@ -4,6 +4,8 @@ return [
 
     'id' => null,
 
+    'secret' => env('CHIEF_SECRET'),
+
     'icon' => 'fa-bug',
 
     'auth' => [

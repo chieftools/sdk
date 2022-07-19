@@ -9,6 +9,7 @@ use IronGate\Chief\Entities\User;
 use Illuminate\Cache\CacheManager;
 use IronGate\Chief\Enums\TokenPrefix;
 use IronGate\Chief\Helpers\RandomToken;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
 use IronGate\Chief\Exceptions\RandomToken\InvalidTokenException;
 
@@ -45,9 +46,15 @@ class RemotePersonalAccessTokenGuard
         $response = $this->cache->get($randomToken->cacheKey());
 
         if ($response === null) {
-            $response = $this->client->validatePAT((string)$randomToken);
+            try {
+                $response = $this->client->validatePAT((string)$randomToken);
+                $timeout  = 60 * 60; // 1 hour (result might change)
+            } catch (ClientException) {
+                $response = false;
+                $timeout  = 60 * 60 * 6; // 6 hours (result will not change)
+            }
 
-            $this->cache->put($randomToken->cacheKey(), $response ?? false, 60 * 5);
+            $this->cache->put($randomToken->cacheKey(), $response ?? false, $timeout);
         }
 
         if (empty($response)) {

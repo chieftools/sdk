@@ -20,6 +20,12 @@ return [
 
     ],
 
+    'guards' => [
+
+        'api' => ['ctp', 'api'],
+
+    ],
+
     'routes' => [
 
         'api' => [
@@ -92,6 +98,7 @@ return [
 
         'account_closed'  => IronGate\Chief\Webhook\Handlers\AccountClosed::class,
         'account_updated' => IronGate\Chief\Webhook\Handlers\AccountUpdated::class,
+        'token_destroyed' => IronGate\Chief\Webhook\Handlers\TokenDestroyed::class,
 
     ],
 

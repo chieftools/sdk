@@ -96,4 +96,30 @@ class Client extends HttpClient
 
         return collect(json_decode($response->getBody()->getContents(), true));
     }
+
+    /**
+     * Validate a PAT with the mothership.
+     *
+     * @param string $pat
+     *
+     * @return array{user_id: string, token_id: string, expires_at: ?int}|null
+     */
+    public function validatePAT(string $pat): ?array
+    {
+        if (empty($pat)) {
+            throw new RuntimeException('The PAT cannot be empty!');
+        }
+
+        $response = $this->get('/api/auth/validate-pat', [
+            'headers' => [
+                'Authorization' => "Bearer {$pat}",
+            ],
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not validate PAT.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
 }

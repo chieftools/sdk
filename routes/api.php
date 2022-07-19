@@ -8,7 +8,7 @@ Route::get('.well-known/graphql.json', [Controllers\API\GraphQL::class, 'discove
 Route::group(config('chief.routes.api'), function () {
     Route::match(['get', 'post'], 'graphql', Controllers\API\GraphQL::class)->middleware([
         Nuwave\Lighthouse\Support\Http\Middleware\AcceptJson::class,
-        Nuwave\Lighthouse\Support\Http\Middleware\AttemptAuthentication::class,
+        Nuwave\Lighthouse\Support\Http\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),
     ])->name('api');
 
     Route::get('graphql/schema', [Controllers\API\GraphQL::class, 'schema'])->name('api.schema');

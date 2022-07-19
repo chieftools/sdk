@@ -205,6 +205,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
+        if (!config('chief.auth.passport')) {
+            return;
+        }
+
         Passport::ignoreMigrations();
 
         Passport::routes(static function (RouteRegistrar $routes) {

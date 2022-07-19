@@ -205,18 +205,18 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
+        Passport::ignoreMigrations();
+
+        Passport::useTokenModel(Entities\Passport\Token::class);
+
         if (!config('chief.auth.passport')) {
             return;
         }
-
-        Passport::ignoreMigrations();
 
         Passport::routes(static function (RouteRegistrar $routes) {
             $routes->forAccessTokens();
             $routes->forAuthorization();
         }, config('chief.routes.passport', []));
-
-        Passport::useTokenModel(Entities\Passport\Token::class);
 
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));

@@ -112,7 +112,9 @@ class Client extends HttpClient
 
         $response = $this->get('/api/auth/validate-pat', [
             'headers' => [
-                'Authorization' => "Bearer {$pat}",
+                'Authorization'  => "Bearer {$pat}",
+                'X-Chief-App'    => config('chief.id'),
+                'X-Chief-Secret' => config('chief.secret'),
             ],
         ]);
 

@@ -116,6 +116,8 @@ class ServiceProvider extends IlluminateServiceProvider
     private function loadCommands(): void
     {
         $this->commands([
+            Commands\SyncTeams::class,
+            Commands\SyncUsers::class,
             Commands\QueueHealthCheck::class,
         ]);
 

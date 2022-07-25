@@ -9,12 +9,14 @@ use IronGate\Chief\Helpers\Avatar;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use IronGate\Chief\Socialite\ChiefTeam;
 use IronGate\Chief\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
@@ -32,6 +34,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property \Carbon\Carbon      $updated_at
  * @property array               $preferences
  * @property string|null         $remember_token
+ * @property int|null            $default_team_id
  */
 class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {
@@ -43,6 +46,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'email',
         'timezone',
         'password',
+        'default_team_id',
     ];
     protected $visible  = [
         'id',
@@ -68,12 +72,11 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'is_email_verified' => 'bool',
     ];
 
+    // Attributes
     public function __toString(): string
     {
         return $this->name;
     }
-
-    // Attributes
     public function timezone(): Attribute
     {
         return new Attribute(
@@ -109,6 +112,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class)->withTimestamps();
+    }
     public function personalAccessTokens(): HasMany
     {
         /** @var \Illuminate\Database\Eloquent\Model $clientModel */
@@ -167,14 +174,22 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     public function updateFromRemote(ChiefUser $remote): void
     {
         $this->chief_id = $remote->getId();
-        $this->is_admin = $remote->isAdmin();
+        $this->is_admin = $remote->is_admin;
+
+        Team::createOrUpdateFromRemotes($remote->teams);
 
         $this->fill([
-            'name'     => $remote->getName(),
-            'email'    => $remote->getEmail(),
-            'timezone' => $remote->getTimezone(),
-            'password' => empty($this->password) ? str_random(64) : null,
+            'name'            => $remote->getName(),
+            'email'           => $remote->getEmail(),
+            'timezone'        => $remote->timezone,
+            'password'        => empty($this->password) ? str_random(64) : null,
+            'default_team_id' => $remote->default_team_id,
         ])->save();
+
+        $this->teams()->sync(array_map(
+            static fn (ChiefTeam $team) => $team->id,
+            $remote->teams,
+        ));
     }
     public static function createFromRemote(ChiefUser $remote): self
     {

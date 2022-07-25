@@ -1,10 +1,10 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-                           ->in(__DIR__ . '/src')
                            ->in(__DIR__ . '/config')
-                           ->in(__DIR__ . '/routes')
                            ->in(__DIR__ . '/database')
+                           ->in(__DIR__ . '/routes')
+                           ->in(__DIR__ . '/src')
                            ->name('*.php')
                            ->ignoreDotFiles(true)
                            ->ignoreVCS(true);
@@ -52,6 +52,7 @@ $config
             'comment_type' => 'phpdocs_like',
         ],
         'phpdoc_align'            => [
+            'tags'  => ['param', 'property', 'property-read', 'property-write', 'return', 'throws', 'type', 'var', 'method'],
             'align' => 'vertical',
         ],
         'increment_style'         => [

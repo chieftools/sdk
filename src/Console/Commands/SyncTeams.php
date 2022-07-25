@@ -2,6 +2,7 @@
 
 namespace IronGate\Chief\Console\Commands;
 
+use Exception;
 use IronGate\Chief\API\Client;
 use Illuminate\Console\Command;
 use IronGate\Chief\Entities\Team;
@@ -11,6 +12,7 @@ class SyncTeams extends Command
     protected $signature   = <<<COMMAND
                              chief:account:sync-teams { teams? : The team ID's to sync, seperated by a comma }
                                  { --all : Sync all teams }
+                                 { --beta : Activate the beta plan }
                              COMMAND;
     protected $description = 'Sync team data with the mothership.';
 
@@ -37,6 +39,14 @@ class SyncTeams extends Command
                 }
 
                 $team->updateFromRemote($teamInfo);
+
+                if ($this->option('beta')) {
+                    try {
+                        $mothership->activateBetaPlan($team->slug);
+                    } catch (Exception) {
+                        $this->warn('!> Could not activate beta plan for this team!');
+                    }
+                }
             });
 
         return self::SUCCESS;

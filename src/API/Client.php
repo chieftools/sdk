@@ -201,6 +201,24 @@ class Client extends HttpClient
     }
 
     /**
+     * Instruct the mothership to activate the `beta` plan for the team.
+     *
+     * @param string $teamId
+     *
+     * @return void
+     */
+    public function activateBetaPlan(string $teamId): void
+    {
+        $response = $this->post("/api/team/{$teamId}/billing/plan/beta/activate", [
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not activate beta plan for team.');
+        }
+    }
+
+    /**
      * Authentication headers needed to talk about private things with the mothership.
      *
      * @return array

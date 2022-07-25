@@ -73,12 +73,6 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user): ChiefUser
     {
-        return (new ChiefUser)->setRaw($user)->map([
-            'id'       => $user['id'],
-            'name'     => $user['name'],
-            'email'    => $user['email'],
-            'timezone' => $user['timezone'],
-            'is_admin' => (bool)($user['is_admin'] ?? false),
-        ]);
+        return new ChiefUser($user);
     }
 }

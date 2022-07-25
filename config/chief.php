@@ -100,6 +100,8 @@ return [
 
     'webhooks' => [
 
+        'team_updated'    => IronGate\Chief\Webhook\Handlers\TeamUpdated::class,
+        'team_destroyed'  => IronGate\Chief\Webhook\Handlers\TeamDestroyed::class,
         'account_closed'  => IronGate\Chief\Webhook\Handlers\AccountClosed::class,
         'account_updated' => IronGate\Chief\Webhook\Handlers\AccountUpdated::class,
         'token_destroyed' => IronGate\Chief\Webhook\Handlers\TokenDestroyed::class,

@@ -8,35 +8,41 @@ class ChiefUser extends User
 {
     /**
      * Indicates if the user is an Chief administrator user.
-     *
-     * @var bool
      */
-    public bool $is_admin = false;
+    public readonly bool $is_admin;
 
     /**
      * Indicates the configured timezone for the user.
-     *
-     * @var string|null
      */
-    public ?string $timezone;
+    public readonly ?string $timezone;
 
     /**
-     * Get the admin status of the user.
-     *
-     * @return bool
+     * The ID of the default team for this user.
      */
-    public function isAdmin(): bool
-    {
-        return $this->is_admin;
-    }
+    public readonly ?int $default_team_id;
 
     /**
-     * Get the timezone for the user.
+     * The teams the user is a member of.
      *
-     * @return string|null
+     * @var array<int, \IronGate\Chief\Socialite\ChiefTeam>
      */
-    public function getTimezone(): ?string
+    public readonly array $teams;
+
+    public function __construct(array $user)
     {
-        return $this->timezone;
+        $this->setRaw($user)->map([
+            'id'    => $user['id'],
+            'name'  => $user['name'],
+            'email' => $user['email'],
+        ]);
+
+        $this->teams = array_map(
+            static fn (array $team) => ChiefTeam::fromArray($team),
+            $user['teams'] ?? []
+        );
+
+        $this->timezone        = $user['timezone'];
+        $this->is_admin        = (bool)($user['is_admin'] ?? false);
+        $this->default_team_id = empty($user['default_team_id']) ? null : (int)$user['default_team_id'];
     }
 }

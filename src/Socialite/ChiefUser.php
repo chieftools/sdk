@@ -36,15 +36,13 @@ class ChiefUser extends User
             'email' => $user['email'],
         ]);
 
+        $this->teams = array_map(
+            static fn (array $team) => ChiefTeam::fromArray($team),
+            $user['teams'] ?? []
+        );
+
         $this->timezone        = $user['timezone'];
         $this->is_admin        = (bool)($user['is_admin'] ?? false);
         $this->default_team_id = empty($user['default_team_id']) ? null : (int)$user['default_team_id'];
-
-        $this->teams = array_map(static fn (array $team) => new ChiefTeam(
-            id: $team['id'],
-            slug: $team['slug'],
-            name: $team['name'],
-            limits: $team['limits'],
-        ), $user['teams'] ?? []);
     }
 }

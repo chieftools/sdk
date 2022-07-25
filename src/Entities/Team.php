@@ -51,10 +51,30 @@ class Team extends Entity
         return $this->belongsToMany(User::class)->withTimestamps()->orderBy('created_at');
     }
 
+    // Helpers
+    public function updateFromRemote(ChiefTeam $remote): void
+    {
+        $this->name   = $remote->name;
+        $this->limits = $remote->limits;
+
+        $this->save();
+    }
+
     // Static helpers
     public static function findOrFailBySlug(string $slug): self
     {
         return self::query()->where('slug', '=', $slug)->firstOrFail();
+    }
+    public static function createFromRemote(ChiefTeam $remote): self
+    {
+        $team = new static();
+
+        $team->id   = $remote->id;
+        $team->slug = $remote->slug;
+
+        $team->updateFromRemote($remote);
+
+        return $team;
     }
     public static function createOrUpdateFromRemotes(array $teams): void
     {
@@ -67,20 +87,14 @@ class Team extends Entity
         $existingTeams = self::query()->find($teamIds);
 
         collect($teams)->each(function (ChiefTeam $chiefTeam) use ($existingTeams) {
-            /** @var self $team */
-            $team = $existingTeams->find($chiefTeam->id) ?? (static function () use ($chiefTeam) {
-                $team = new self;
+            /** @var self|null $team */
+            $team = $existingTeams->find($chiefTeam->id);
 
-                $team->id   = $chiefTeam->id;
-                $team->slug = $chiefTeam->slug;
-
-                return $team;
-            })();
-
-            $team->name   = $chiefTeam->name;
-            $team->limits = $chiefTeam->limits;
-
-            $team->save();
+            if ($team === null) {
+                self::createFromRemote($chiefTeam);
+            } else {
+                $team->updateFromRemote($chiefTeam);
+            }
         });
     }
 

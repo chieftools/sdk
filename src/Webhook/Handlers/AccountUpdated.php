@@ -2,6 +2,8 @@
 
 namespace IronGate\Chief\Webhook\Handlers;
 
+use IronGate\Chief\Socialite\ChiefUser;
+
 class AccountUpdated extends BaseHandler
 {
     public function __invoke(array $payload): ?array
@@ -12,15 +14,9 @@ class AccountUpdated extends BaseHandler
             return null;
         }
 
-        $user->fill([
-            'name'     => array_get($payload, 'data.name'),
-            'email'    => array_get($payload, 'data.email'),
-            'timezone' => array_get($payload, 'data.timezone'),
-        ]);
-
-        $user->is_admin = ((bool)array_get($payload, 'data.is_admin', false)) === true;
-
-        $user->save();
+        $user->updateFromRemote(
+            new ChiefUser(array_get($payload, 'data'))
+        );
 
         return null;
     }

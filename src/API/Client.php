@@ -6,6 +6,9 @@ use RuntimeException;
 use GuzzleHttp\HandlerStack;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
+use IronGate\Chief\Socialite\ChiefTeam;
+use IronGate\Chief\Socialite\ChiefUser;
+use GuzzleHttp\Exception\GuzzleException;
 use Sentry\Tracing\GuzzleTracingMiddleware;
 
 class Client extends HttpClient
@@ -98,6 +101,58 @@ class Client extends HttpClient
     }
 
     /**
+     * Retrieve user info from the mothership.
+     *
+     * @param string $uuid
+     *
+     * @return \IronGate\Chief\Socialite\ChiefUser|null
+     */
+    public function user(string $uuid): ?ChiefUser
+    {
+        try {
+            $response = $this->get("/api/user/{$uuid}", [
+                'headers' => $this->internalAuthHeaders(),
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return null;
+            }
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return new ChiefUser($data);
+        } catch (GuzzleException) {
+            return null;
+        }
+    }
+
+    /**
+     * Retrieve team info from the mothership.
+     *
+     * @param string $slug
+     *
+     * @return \IronGate\Chief\Socialite\ChiefTeam|null
+     */
+    public function team(string $slug): ?ChiefTeam
+    {
+        try {
+            $response = $this->get("/api/team/{$slug}", [
+                'headers' => $this->internalAuthHeaders(),
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return null;
+            }
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return ChiefTeam::fromArray($data);
+        } catch (GuzzleException) {
+            return null;
+        }
+    }
+
+    /**
      * Validate a PAT with the mothership.
      *
      * @param string $pat
@@ -112,9 +167,8 @@ class Client extends HttpClient
 
         $response = $this->get('/api/auth/validate-pat', [
             'headers' => [
-                'Authorization'  => "Bearer {$pat}",
-                'X-Chief-App'    => config('chief.id'),
-                'X-Chief-Secret' => config('chief.secret'),
+                'Authorization' => "Bearer {$pat}",
+                ...$this->internalAuthHeaders(),
             ],
         ]);
 
@@ -123,5 +177,57 @@ class Client extends HttpClient
         }
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Report plan usage back to the mothership.
+     *
+     * @param string $teamId
+     * @param string $usageId
+     * @param int    $usage
+     *
+     * @return void
+     */
+    public function reportUsage(string $teamId, string $usageId, int $usage): void
+    {
+        $response = $this->put("/api/team/{$teamId}/billing/plan/usage/{$usageId}", [
+            'json'    => compact('usage'),
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not report usage.');
+        }
+    }
+
+    /**
+     * Instruct the mothership to activate the `beta` plan for the team.
+     *
+     * @param string $teamId
+     *
+     * @return void
+     */
+    public function activateBetaPlan(string $teamId): void
+    {
+        $response = $this->post("/api/team/{$teamId}/billing/plan/beta/activate", [
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not activate beta plan for team.');
+        }
+    }
+
+    /**
+     * Authentication headers needed to talk about private things with the mothership.
+     *
+     * @return array
+     */
+    private function internalAuthHeaders(): array
+    {
+        return [
+            'X-Chief-App'    => config('chief.id'),
+            'X-Chief-Secret' => config('chief.secret'),
+        ];
     }
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace IronGate\Chief\Helpers;
+namespace ChiefTools\SDK\Helpers;
 
 use Tuupola\Base62;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenFormatException;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenLengthException;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenPrefixException;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenChecksumException;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenFormatException;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenLengthException;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenPrefixException;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenChecksumException;
 
 class RandomToken
 {

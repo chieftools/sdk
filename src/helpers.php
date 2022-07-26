@@ -75,9 +75,9 @@ function user_now(): Carbon
 /**
  * Sync the authenticated user timezone to the correct config key.
  *
- * @param \IronGate\Chief\Entities\User|null $user
+ * @param \ChiefTools\SDK\Entities\User|null $user
  */
-function sync_user_timezone(?IronGate\Chief\Entities\User $user = null): void
+function sync_user_timezone(?ChiefTools\SDK\Entities\User $user = null): void
 {
     $user = $user ?? auth()->user();
 
@@ -112,8 +112,8 @@ function validate(mixed $fields, string|array|Illuminate\Contracts\Validation\Ru
 function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illuminate\Support\Collection
 {
     $retriever = function () use ($authenticated) {
-        /** @var \IronGate\Chief\API\Client $api */
-        $api = app(IronGate\Chief\API\Client::class);
+        /** @var \ChiefTools\SDK\API\Client $api */
+        $api = app(ChiefTools\SDK\API\Client::class);
 
         // Retrieve all apps (except the current) that require authentication
         return $api->apps(config('chief.id'), null, $authenticated);

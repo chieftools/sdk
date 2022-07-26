@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Helpers;
+namespace ChiefTools\SDK\Helpers;
 
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 
 final class Avatar
 {

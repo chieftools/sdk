@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Exceptions\RandomToken;
+namespace ChiefTools\SDK\Exceptions\RandomToken;
 
 class InvalidTokenPrefixException extends InvalidTokenException
 {

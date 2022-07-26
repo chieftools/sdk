@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Rules;
+namespace ChiefTools\SDK\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Webhook\Handlers;
+namespace ChiefTools\SDK\Webhook\Handlers;
 
-use IronGate\Chief\Socialite\ChiefTeam;
+use ChiefTools\SDK\Socialite\ChiefTeam;
 
 class TeamUpdated extends BaseHandler
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Http\Controllers\Pages;
+namespace ChiefTools\SDK\Http\Controllers\Pages;
 
 use Illuminate\Http\RedirectResponse;
 

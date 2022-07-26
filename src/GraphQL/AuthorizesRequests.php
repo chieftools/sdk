@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL;
+namespace ChiefTools\SDK\GraphQL;
 
 use Illuminate\Auth\Access\Response;
 use GraphQL\Type\Definition\ResolveInfo;

@@ -1,16 +1,16 @@
 <?php
 
-namespace IronGate\Chief\Listeners\Auth;
+namespace ChiefTools\SDK\Listeners\Auth;
 
 use Sentry\State\Scope;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Auth\Events\Authenticated as AuthenticatedEvent;
 
 class Authenticated
 {
     public function handle(AuthenticatedEvent $event): void
     {
-        /** @var \IronGate\Chief\Entities\User $user */
+        /** @var \ChiefTools\SDK\Entities\User $user */
         $user = $event->user;
 
         sync_user_timezone($user);

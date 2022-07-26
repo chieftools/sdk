@@ -1,17 +1,17 @@
 <?php
 
-namespace IronGate\Chief\Auth;
+namespace ChiefTools\SDK\Auth;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use IronGate\Chief\API\Client;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\API\Client;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Cache\CacheManager;
-use IronGate\Chief\Enums\TokenPrefix;
-use IronGate\Chief\Helpers\RandomToken;
+use ChiefTools\SDK\Enums\TokenPrefix;
+use ChiefTools\SDK\Helpers\RandomToken;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenException;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenException;
 
 class RemotePersonalAccessTokenGuard
 {
@@ -67,7 +67,7 @@ class RemotePersonalAccessTokenGuard
             return null;
         }
 
-        /** @var \IronGate\Chief\Entities\User|null $user */
+        /** @var \ChiefTools\SDK\Entities\User|null $user */
         $user = User::query()->where('chief_id', '=', $response['user_id'])->first();
 
         if ($user !== null) {

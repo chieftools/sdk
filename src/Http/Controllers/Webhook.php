@@ -1,10 +1,10 @@
 <?php
 
-namespace IronGate\Chief\Http\Controllers;
+namespace ChiefTools\SDK\Http\Controllers;
 
 use RuntimeException;
 use Illuminate\Http\Request;
-use IronGate\Chief\Webhook\Handlers\Handler;
+use ChiefTools\SDK\Webhook\Handlers\Handler;
 
 class Webhook
 {

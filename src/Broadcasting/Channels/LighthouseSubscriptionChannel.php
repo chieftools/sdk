@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Broadcasting\Channels;
+namespace ChiefTools\SDK\Broadcasting\Channels;
 
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Nuwave\Lighthouse\Subscriptions\Contracts\AuthorizesSubscriptions;
 
 class LighthouseSubscriptionChannel

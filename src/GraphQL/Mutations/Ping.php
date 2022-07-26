@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Mutations;
+namespace ChiefTools\SDK\GraphQL\Mutations;
 
 class Ping extends Mutation
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Exceptions;
+namespace ChiefTools\SDK\GraphQL\Exceptions;
 
 use Exception;
 

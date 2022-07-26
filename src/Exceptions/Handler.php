@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Exceptions;
+namespace ChiefTools\SDK\Exceptions;
 
 use Throwable;
 use Illuminate\Support\Facades\View;

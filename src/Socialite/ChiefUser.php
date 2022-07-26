@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Socialite;
+namespace ChiefTools\SDK\Socialite;
 
 use Laravel\Socialite\Two\User;
 
@@ -24,7 +24,7 @@ class ChiefUser extends User
     /**
      * The teams the user is a member of.
      *
-     * @var array<int, \IronGate\Chief\Socialite\ChiefTeam>
+     * @var array<int, \ChiefTools\SDK\Socialite\ChiefTeam>
      */
     public readonly array $teams;
 

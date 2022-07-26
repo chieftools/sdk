@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Exceptions;
+namespace ChiefTools\SDK\Exceptions;
 
 use Illuminate\Queue\Jobs\Job;
 use Sentry\Tracing\SamplingContext;

@@ -1,16 +1,16 @@
 <?php
 
-namespace IronGate\Chief\GraphQL;
+namespace ChiefTools\SDK\GraphQL;
 
 use RuntimeException;
 use Illuminate\Database;
 use Illuminate\Http\Request;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Support\Collection;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Nuwave\Lighthouse\Exceptions\AuthorizationException;
-use IronGate\Chief\GraphQL\Exceptions\GraphQLErrorResponse;
+use ChiefTools\SDK\GraphQL\Exceptions\GraphQLErrorResponse;
 
 /**
  * @template TRoot

@@ -1,38 +1,38 @@
 <?php
 
-namespace IronGate\Chief;
+namespace ChiefTools\SDK;
 
 use GuzzleHttp;
 use Pusher\Pusher;
 use RuntimeException;
 use ParagonIE\Certainty;
-use IronGate\Chief\API\Client;
+use ChiefTools\SDK\API\Client;
 use Laravel\Passport\Passport;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
-use IronGate\Chief\Http\Middleware;
+use ChiefTools\SDK\Http\Middleware;
+use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
-use IronGate\Chief\Console\Commands;
 use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Auth\Events as AuthEvents;
 use Illuminate\Mail\Events as MailEvents;
 use Illuminate\Support\Facades\Broadcast;
-use IronGate\Chief\GraphQL\ContextFactory;
+use ChiefTools\SDK\GraphQL\ContextFactory;
+use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use IronGate\Chief\Socialite\ChiefProvider;
 use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
-use IronGate\Chief\Auth\RemotePersonalAccessTokenGuard;
+use ChiefTools\SDK\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
-use IronGate\Chief\GraphQL\Listeners\BuildExtensionsResponse;
+use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
-use IronGate\Chief\Broadcasting\Channels\LighthouseSubscriptionChannel;
+use ChiefTools\SDK\Broadcasting\Channels\LighthouseSubscriptionChannel;
 
 class ServiceProvider extends IlluminateServiceProvider
 {

@@ -14,22 +14,22 @@ scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
 
 "A string containing cleaned and sanitized HTML."
-scalar HTML @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\Str")
+scalar HTML @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\Str")
 
 "A valid JSON blob."
 scalar JSON @scalar(class: "MLL\\GraphQLScalars\\JSON")
 
 "A valid e-mail address."
-scalar Email @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\Email")
+scalar Email @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\Email")
 
 "A valid URL."
-scalar URL @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\URL")
+scalar URL @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\URL")
 
 "A valid IPv4 address."
-scalar IPv4 @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\IPv4")
+scalar IPv4 @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\IPv4")
 
 "A valid IPv6 address."
-scalar IPv6 @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\IPv6")
+scalar IPv6 @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\IPv6")
 
 "A valid IP address (can be IPv4 or IPv6)."
-scalar IP @scalar(class: "IronGate\\Chief\\GraphQL\\Scalars\\IP")
+scalar IP @scalar(class: "ChiefTools\\SDK\\GraphQL\\Scalars\\IP")

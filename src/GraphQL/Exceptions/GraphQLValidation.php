@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Exceptions;
+namespace ChiefTools\SDK\GraphQL\Exceptions;
 
 use Illuminate\Validation\Validator;
 use GraphQL\Type\Definition\ResolveInfo;

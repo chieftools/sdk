@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Entities;
+namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
-use IronGate\Chief\Socialite\ChiefTeam;
+use ChiefTools\SDK\Socialite\ChiefTeam;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property      bool                                                                         $is_default
  * @property      \Carbon\Carbon                                                               $created_at
  * @property      \Carbon\Carbon                                                               $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \IronGate\Chief\Entities\User> $users
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\User> $users
  */
 class Team extends Entity
 {
@@ -105,7 +105,7 @@ class Team extends Entity
     }
     public function resolveRouteBinding($value, $field = null): ?self
     {
-        /** @var \IronGate\Chief\Entities\User|null $user */
+        /** @var \ChiefTools\SDK\Entities\User|null $user */
         $user = auth()->user();
 
         if ($user === null) {

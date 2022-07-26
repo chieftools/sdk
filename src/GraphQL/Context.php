@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\GraphQL;
+namespace ChiefTools\SDK\GraphQL;
 
 use Illuminate\Http\Request;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Context implements GraphQLContext

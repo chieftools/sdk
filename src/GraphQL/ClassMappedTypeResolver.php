@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL;
+namespace ChiefTools\SDK\GraphQL;
 
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\ResolveInfo;

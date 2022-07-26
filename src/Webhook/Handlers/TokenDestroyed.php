@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Webhook\Handlers;
+namespace ChiefTools\SDK\Webhook\Handlers;
 
-use IronGate\Chief\Helpers\RandomToken;
-use IronGate\Chief\Exceptions\RandomToken\InvalidTokenException;
+use ChiefTools\SDK\Helpers\RandomToken;
+use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenException;
 
 class TokenDestroyed extends BaseHandler
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Http\Controllers\Auth;
+namespace ChiefTools\SDK\Http\Controllers\Auth;
 
 use RuntimeException;
 use Illuminate\Http\RedirectResponse;

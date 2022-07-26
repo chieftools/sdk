@@ -1,6 +1,6 @@
 <?php
 
-use IronGate\Chief\Http\Controllers;
+use ChiefTools\SDK\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 
 Route::get('.well-known/graphql.json', [Controllers\API\GraphQL::class, 'discovery'])->name('well-known.graphql');

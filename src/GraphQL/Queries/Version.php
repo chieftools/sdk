@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Queries;
+namespace ChiefTools\SDK\GraphQL\Queries;
 
-use IronGate\Chief\GraphQL\QueryResolver;
+use ChiefTools\SDK\GraphQL\QueryResolver;
 
 class Version extends QueryResolver
 {

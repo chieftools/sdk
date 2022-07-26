@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL;
+namespace ChiefTools\SDK\GraphQL;
 
 use Illuminate\Http\Request;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
@@ -12,7 +12,7 @@ class ContextFactory implements CreatesContext
      *
      * @param \Illuminate\Http\Request $request
      *
-     * @return \IronGate\Chief\GraphQL\Context
+     * @return \ChiefTools\SDK\GraphQL\Context
      */
     public function generate(Request $request): Context
     {

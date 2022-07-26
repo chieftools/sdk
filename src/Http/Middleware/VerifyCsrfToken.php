@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Http\Middleware;
+namespace ChiefTools\SDK\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as BaseVerifier;
 

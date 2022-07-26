@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Scalars;
+namespace ChiefTools\SDK\GraphQL\Scalars;
 
 use GraphQL\Error\Error;
 use GraphQL\Type\Definition\ScalarType;

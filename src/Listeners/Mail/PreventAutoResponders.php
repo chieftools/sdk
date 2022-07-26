@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Listeners\Mail;
+namespace ChiefTools\SDK\Listeners\Mail;
 
 use Illuminate\Mail\Events\MessageSending;
 

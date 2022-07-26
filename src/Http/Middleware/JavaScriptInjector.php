@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Http\Middleware;
+namespace ChiefTools\SDK\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
@@ -28,7 +28,7 @@ class JavaScriptInjector
         ]);
 
         if (auth()->check()) {
-            /** @var \IronGate\Chief\Entities\User $user */
+            /** @var \ChiefTools\SDK\Entities\User $user */
             $user = auth()->user();
 
             /** @noinspection PhpMethodParametersCountMismatchInspection */

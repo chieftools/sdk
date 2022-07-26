@@ -12,10 +12,10 @@ type Query {
 
     This field always returns the string "pong".
     """
-    ping: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Queries\\Ping")
+    ping: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Ping")
 
     "Get the app version."
-    version: String! @field(resolver: "IronGate\\Chief\\GraphQL\\Queries\\Version")
+    version: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Version")
 }
 
 "All mutations"
@@ -25,5 +25,5 @@ type Mutation {
 
     This mutation always returns the string "pong" in it's response field.
     """
-    ping: PingPayload! @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\Ping")
+    ping: PingPayload! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\Ping")
 }

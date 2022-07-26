@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Directives;
+namespace ChiefTools\SDK\GraphQL\Directives;
 
 use RuntimeException;
 use GraphQL\Language\AST\StringValueNode;

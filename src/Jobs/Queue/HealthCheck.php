@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Jobs\Queue;
+namespace ChiefTools\SDK\Jobs\Queue;
 
 use Exception;
-use IronGate\Chief\Jobs\Job;
+use ChiefTools\SDK\Jobs\Job;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class HealthCheck extends Job implements ShouldQueue

@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Resolvers;
+namespace ChiefTools\SDK\GraphQL\Resolvers;
 
+use ChiefTools\SDK\GraphQL\QueryResolver;
 use Illuminate\Support\Facades\Broadcast;
-use IronGate\Chief\GraphQL\QueryResolver;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthenticateBroadcastChannel extends QueryResolver

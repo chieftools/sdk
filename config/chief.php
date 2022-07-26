@@ -10,7 +10,7 @@ return [
 
     'auth' => [
 
-        'model' => IronGate\Chief\Entities\User::class,
+        'model' => ChiefTools\SDK\Entities\User::class,
 
         'redirect' => '/dashboard',
 
@@ -100,11 +100,11 @@ return [
 
     'webhooks' => [
 
-        'team_updated'    => IronGate\Chief\Webhook\Handlers\TeamUpdated::class,
-        'team_destroyed'  => IronGate\Chief\Webhook\Handlers\TeamDestroyed::class,
-        'account_closed'  => IronGate\Chief\Webhook\Handlers\AccountClosed::class,
-        'account_updated' => IronGate\Chief\Webhook\Handlers\AccountUpdated::class,
-        'token_destroyed' => IronGate\Chief\Webhook\Handlers\TokenDestroyed::class,
+        'team_updated'    => ChiefTools\SDK\Webhook\Handlers\TeamUpdated::class,
+        'team_destroyed'  => ChiefTools\SDK\Webhook\Handlers\TeamDestroyed::class,
+        'account_closed'  => ChiefTools\SDK\Webhook\Handlers\AccountClosed::class,
+        'account_updated' => ChiefTools\SDK\Webhook\Handlers\AccountUpdated::class,
+        'token_destroyed' => ChiefTools\SDK\Webhook\Handlers\TokenDestroyed::class,
 
     ],
 

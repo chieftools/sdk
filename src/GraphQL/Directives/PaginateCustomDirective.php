@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Directives;
+namespace ChiefTools\SDK\GraphQL\Directives;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Schema\Values\FieldValue;

@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Http\Controllers\Account;
+namespace ChiefTools\SDK\Http\Controllers\Account;
 
 use Illuminate\Http\Request;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Contracts\View\View;
 
 class Preferences
@@ -18,7 +18,7 @@ class Preferences
 
     public function toggle(Request $request): array
     {
-        /** @var \IronGate\Chief\Entities\User $user */
+        /** @var \ChiefTools\SDK\Entities\User $user */
         $user = $request->user();
 
         [, $preference] = explode(':', $request->input('identity'));

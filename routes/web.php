@@ -1,8 +1,8 @@
 <?php
 
-use IronGate\Chief\Http\Controllers;
+use ChiefTools\SDK\Http\Controllers;
 use Illuminate\Support\Facades\Route;
-use IronGate\Chief\Http\Middleware\AuthenticateChief;
+use ChiefTools\SDK\Http\Middleware\AuthenticateChief;
 
 Route::group(config('chief.routes.web'), function () {
     Route::redirect('auth/login', '/login', 301)->name('login');

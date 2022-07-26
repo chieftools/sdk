@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Enums;
+namespace ChiefTools\SDK\Enums;
 
-use IronGate\Chief\Helpers\RandomToken;
+use ChiefTools\SDK\Helpers\RandomToken;
 
 enum TokenPrefix: string
 {

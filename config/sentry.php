@@ -10,7 +10,7 @@ return [
 
     'error_types' => E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED,
 
-    'traces_sampler' => [IronGate\Chief\Exceptions\Sentry::class, 'tracesSampler'],
+    'traces_sampler' => [ChiefTools\SDK\Exceptions\Sentry::class, 'tracesSampler'],
 
     'in_app_exclude' => [
         base_path('vendor'),
@@ -18,16 +18,16 @@ return [
     ],
 
     'in_app_include' => [
-        base_path('vendor/irongate'),
+        base_path('vendor/chieftools'),
     ],
 
     'send_default_pii' => false,
 
     'class_serializers' => [
-        Illuminate\Queue\Jobs\Job::class          => [IronGate\Chief\Exceptions\Sentry::class, 'serializeJob'],
-        Illuminate\Database\Eloquent\Model::class => [IronGate\Chief\Exceptions\Sentry::class, 'serializeEloquentModel'],
+        Illuminate\Queue\Jobs\Job::class          => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeJob'],
+        Illuminate\Database\Eloquent\Model::class => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeEloquentModel'],
     ],
 
-    'controllers_base_namespace' => "IronGate\\{$appNamespace}\\Http\\Controllers",
+    'controllers_base_namespace' => "ChiefTools\\{$appNamespace}\\Http\\Controllers",
 
 ];

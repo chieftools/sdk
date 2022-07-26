@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Console\Commands;
+namespace ChiefTools\SDK\Console\Commands;
 
 use Illuminate\Console\Command;
-use IronGate\Chief\Jobs\Queue\HealthCheck;
+use ChiefTools\SDK\Jobs\Queue\HealthCheck;
 
 class QueueHealthCheck extends Command
 {

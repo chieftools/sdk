@@ -1,11 +1,11 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Mutations;
+namespace ChiefTools\SDK\GraphQL\Mutations;
 
 use Exception;
 use InvalidArgumentException;
-use IronGate\Chief\GraphQL\QueryResolver;
-use IronGate\Chief\GraphQL\Exceptions\GraphQLErrorResponse;
+use ChiefTools\SDK\GraphQL\QueryResolver;
+use ChiefTools\SDK\GraphQL\Exceptions\GraphQLErrorResponse;
 
 abstract class Mutation extends QueryResolver
 {

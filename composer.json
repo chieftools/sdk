@@ -1,5 +1,5 @@
 {
-    "name": "irongate/chief",
+    "name": "chieftools/sdk",
     "description": "Base functionality and helpers used for building for Chief Tools.",
     "homepage": "https://chief.app",
     "license": "MIT",
@@ -27,7 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "IronGate\\Chief\\": "src/"
+            "ChiefTools\\SDK\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -36,7 +36,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "IronGate\\Chief\\ServiceProvider"
+                "ChiefTools\\SDK\\ServiceProvider"
             ]
         }
     },

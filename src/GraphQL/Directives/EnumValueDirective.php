@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Directives;
+namespace ChiefTools\SDK\GraphQL\Directives;
 
 use Closure;
 use GraphQL\Type\Definition\ResolveInfo;

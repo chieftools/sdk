@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Http\Requests;
+namespace ChiefTools\SDK\Http\Requests;
 
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class Request extends FormRequest
@@ -32,7 +32,7 @@ abstract class Request extends FormRequest
      *
      * @param string|null $guard
      *
-     * @return \IronGate\Chief\Entities\User
+     * @return \ChiefTools\SDK\Entities\User
      */
     public function user($guard = null): User
     {

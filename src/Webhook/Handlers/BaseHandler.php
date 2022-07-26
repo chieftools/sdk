@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Webhook\Handlers;
+namespace ChiefTools\SDK\Webhook\Handlers;
 
-use IronGate\Chief\Entities\Team;
-use IronGate\Chief\Entities\User;
+use ChiefTools\SDK\Entities\Team;
+use ChiefTools\SDK\Entities\User;
 
 abstract class BaseHandler implements Handler
 {

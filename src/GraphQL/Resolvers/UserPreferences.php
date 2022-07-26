@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Resolvers;
+namespace ChiefTools\SDK\GraphQL\Resolvers;
 
-use IronGate\Chief\Entities\User;
-use IronGate\Chief\GraphQL\QueryResolver;
+use ChiefTools\SDK\Entities\User;
+use ChiefTools\SDK\GraphQL\QueryResolver;
 
 /**
  * @extends QueryResolver<User>

@@ -95,17 +95,17 @@ return [
     */
 
     'namespaces' => [
-        'models'        => "IronGate\\{$appNamespace}\\Models",
-        'queries'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Queries",
-        'mutations'     => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Mutations",
-        'subscriptions' => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Subscriptions",
-        'interfaces'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Interfaces",
-        'unions'        => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Unions",
-        'scalars'       => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Scalars",
-        'validators'    => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Validators",
+        'models'        => "ChiefTools\\{$appNamespace}\\Models",
+        'queries'       => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Queries",
+        'mutations'     => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Mutations",
+        'subscriptions' => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Subscriptions",
+        'interfaces'    => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Interfaces",
+        'unions'        => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Unions",
+        'scalars'       => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Scalars",
+        'validators'    => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Validators",
         'directives'    => [
-            'IronGate\\Chief\\GraphQL\\Directives',
-            "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
+            'ChiefTools\\SDK\\GraphQL\\Directives',
+            "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Directives",
         ],
     ],
 
@@ -452,7 +452,7 @@ return [
          * Location of resolver classes when resolving the `_entities` field.
          */
 
-        'entities_resolver_namespace' => "IronGate\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Entities",
+        'entities_resolver_namespace' => "ChiefTools\\{$appNamespace}\\{$prefixNamespace}GraphQL\\Entities",
 
     ],
 ];

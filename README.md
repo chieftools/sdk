@@ -1,49 +1,49 @@
-## Chief Tools base
+## Chief Tools SDK
 
-[![Total Downloads](https://poser.pugx.org/irongate/chief/downloads)](https://packagist.org/packages/irongate/chief)
-[![Monthly Downloads](https://poser.pugx.org/irongate/chief/d/monthly)](https://packagist.org/packages/irongate/chief)
-[![Latest Stable Version](https://poser.pugx.org/irongate/chief/v/stable)](https://packagist.org/packages/irongate/chief)
-[![License](https://poser.pugx.org/irongate/chief/license)](https://packagist.org/packages/irongate/chief)
+[![Total Downloads](https://poser.pugx.org/chieftools/sdk/downloads)](https://packagist.org/packages/chieftools/sdk)
+[![Monthly Downloads](https://poser.pugx.org/chieftools/sdk/d/monthly)](https://packagist.org/packages/chieftools/sdk)
+[![Latest Stable Version](https://poser.pugx.org/chieftools/sdk/v/stable)](https://packagist.org/packages/chieftools/sdk)
+[![License](https://poser.pugx.org/chieftools/sdk/license)](https://packagist.org/packages/chieftools/sdk)
 
 Base functionality and helpers used for building for Chief Tools.
 
 ### Configures
 
-- (Socialite) authentication through [Account Chief](https://account.chief.app/)
-- [Laravel Passport](https://laravel.com/docs/6.x/passport) for API access
-- [Sentry](https://docs.sentry.io/platforms/php/laravel/) client
+- Authentication through [Account Chief](https://account.chief.app/) (powered by [Socialite](https://laravel.com/docs/9.x/socialite))
+- Configured [Sentry](https://docs.sentry.io/platforms/php/laravel/) client
 - [Lighthouse GraphQL](https://lighthouse-php.com/) with base schema and scalars
     - Session protected endpoint `/api/graphql/web`
     - Session protected (GraphiQL) playground `/api/playground`
-    - OAuth (Passport) protected endpoint `/api/graphql`
-- Account pages to show profile information & preferences
-- Basic API documentation & Passport personal access token management
-- Redirects to Chief Tools homepage for `/contact`, `/privacy`, `/terms`
-- [Chief Tools](https://chief.app/) webhook handler to be notified when a user account is closed or updated
-- Health check queue job pinging `QUEUE_MONITOR_URL` every minute using the default queue (disabled when `QUEUE_MONITOR_URL` is empty or unset)
+    - Access token protected endpoint `/api/graphql` (tokens managed by [Account Chief](https://account.chief.app/))
+- Basic API documentation pages for GraphQL endpoint
+- Account pages to show profile information and preferences
+- Team pages to show team information, preferences and billing
+- Redirects to Chief Tools for `/contact`, `/privacy`, `/terms`
+- [Account Chief](https://account.chief.app/) webhook handler to be notified when user, team or tokens change
 - Login event listener to update the `last_login` column on the `users` table
+- Health check queue job pinging `QUEUE_MONITOR_URL` every minute using the default queue (disabled when `QUEUE_MONITOR_URL` is empty or unset)
 
 ### Provides
 
 #### Middleware
 
-- `IronGate\Chief\Middleware\AuthenticateChief`
+- `ChiefTools\SDK\Middleware\AuthenticateChief`
 <br>Validates a request comes from [Chief Tools](https://chief.app/)
 <br>Requires `services.chief.webhook_secret` configuration to be set to a random string
-- `IronGate\Chief\Middleware\AutoAuthenticate`
+- `ChiefTools\SDK\Middleware\AutoAuthenticate`
 <br>Uses both the `api` and `web` guard and sets the first that is authenticated
-- `IronGate\Chief\Middleware\ForceSecure`
+- `ChiefTools\SDK\Middleware\ForceSecure`
 <br>Make sure the request is over `https://`
-- `IronGate\Chief\Middleware\MoveAccessTokenFromURLToHeader`
+- `ChiefTools\SDK\Middleware\MoveAccessTokenFromURLToHeader`
 <br>Move the access token from `access_token` GET paramater to the `Authorization` header
-- `IronGate\Chief\Middleware\SecurityHeaders`
+- `ChiefTools\SDK\Middleware\SecurityHeaders`
 <br>Adds a default set of security headers, can be configured by setting `chief.response.securityheaders` (array) in the app config
-- `IronGate\Chief\Middleware\TrustProxiesOnVapor`
+- `ChiefTools\SDK\Middleware\TrustProxiesOnVapor`
 <br>Configures `fideloper/proxy` to be used on [Laravel Vapor](https://vapor.laravel.com/)
 
 #### Validation rules
 
-- `IronGate\Chief\Rules\UUID`
+- `ChiefTools\SDK\Rules\UUID`
 <br>Valites the input value is a UUIDv4
 
 #### Helpers
@@ -53,7 +53,7 @@ Base functionality and helpers used for building for Chief Tools.
 - `timezones(): array`
 <br>Return an key-value list of all timezones
 - `validate($fields, $rules): bool`
-<br>Validate fields against rules. Example `validate($id, new \IronGate\Chief\Rules\UUID)`
+<br>Validate fields against rules. Example `validate($id, new \ChiefTools\SDK\Rules\UUID)`
 - `latest_ca_bundle_file_path(): string`
 <br>Get the path to the most up-to-date CA bundle file, uses [Certainty](https://github.com/paragonie/certainty) under the hood
 
@@ -62,7 +62,7 @@ Base functionality and helpers used for building for Chief Tools.
 Start with requiring the package:
 
 ```bash
-composer require irongate/chief
+composer require chieftools/sdk
 ```
 
 Publish the configuration files and optionally the migrations:
@@ -103,13 +103,13 @@ That's all, you should be able to authenticate against Account Chief.
 You will need to create a `routes/graphql/schema.graphql` in your own project with the following contents:
 
 ```graphql
-#import ../../vendor/irongate/chief/routes/graphql/schema.graphql
+#import ../../vendor/chieftools/sdk/routes/graphql/schema.graphql
 ```
 
 Anything you want to add the the schema you can do thereafter, for example:
 
 ```graphql
-#import ../../vendor/irongate/chief/routes/graphql/schema.graphql
+#import ../../vendor/chieftools/sdk/routes/graphql/schema.graphql
 
 #import ./types/*.graphql
 #import ./queries/*.graphql

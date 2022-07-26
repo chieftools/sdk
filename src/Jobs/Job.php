@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Jobs;
+namespace ChiefTools\SDK\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;

@@ -1,13 +1,13 @@
 <?php
 
-namespace IronGate\Chief\API;
+namespace ChiefTools\SDK\API;
 
 use RuntimeException;
 use GuzzleHttp\HandlerStack;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
-use IronGate\Chief\Socialite\ChiefTeam;
-use IronGate\Chief\Socialite\ChiefUser;
+use ChiefTools\SDK\Socialite\ChiefTeam;
+use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
 use Sentry\Tracing\GuzzleTracingMiddleware;
 
@@ -105,7 +105,7 @@ class Client extends HttpClient
      *
      * @param string $uuid
      *
-     * @return \IronGate\Chief\Socialite\ChiefUser|null
+     * @return \ChiefTools\SDK\Socialite\ChiefUser|null
      */
     public function user(string $uuid): ?ChiefUser
     {
@@ -131,7 +131,7 @@ class Client extends HttpClient
      *
      * @param string $slug
      *
-     * @return \IronGate\Chief\Socialite\ChiefTeam|null
+     * @return \ChiefTools\SDK\Socialite\ChiefTeam|null
      */
     public function team(string $slug): ?ChiefTeam
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Scalars;
+namespace ChiefTools\SDK\GraphQL\Scalars;
 
 class IPv4 extends ValidatedStringScalar
 {

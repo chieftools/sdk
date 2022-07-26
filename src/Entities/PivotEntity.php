@@ -1,9 +1,9 @@
 <?php
 
-namespace IronGate\Chief\Entities;
+namespace ChiefTools\SDK\Entities;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use IronGate\Chief\Concerns\EloquentUserTimezones;
+use ChiefTools\SDK\Concerns\EloquentUserTimezones;
 
 class PivotEntity extends Pivot
 {

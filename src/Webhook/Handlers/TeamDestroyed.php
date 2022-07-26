@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Webhook\Handlers;
+namespace ChiefTools\SDK\Webhook\Handlers;
 
 class TeamDestroyed extends BaseHandler
 {

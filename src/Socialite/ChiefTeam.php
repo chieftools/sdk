@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Socialite;
+namespace ChiefTools\SDK\Socialite;
 
 class ChiefTeam
 {

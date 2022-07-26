@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Concerns;
+namespace ChiefTools\SDK\Concerns;
 
 use Illuminate\Support\Carbon;
 

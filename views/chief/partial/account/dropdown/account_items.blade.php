@@ -11,7 +11,7 @@
         Profile
     </x-chief::account.dropdown-link>
 
-    @if(IronGate\Chief\Entities\User::hasPreferences())
+    @if(ChiefTools\SDK\Entities\User::hasPreferences())
         <x-chief::account.dropdown-link :href="route('account.preferences')" icon="fa-cog">
             Preferences
         </x-chief::account.dropdown-link>

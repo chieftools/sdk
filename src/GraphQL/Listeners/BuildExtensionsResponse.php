@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\GraphQL\Listeners;
+namespace ChiefTools\SDK\GraphQL\Listeners;
 
 use Pusher\Pusher;
 use Nuwave\Lighthouse\Execution\ExtensionsResponse;

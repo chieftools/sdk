@@ -1,6 +1,6 @@
 extend type Mutation {
     "Set a preference value."
-    preferenceSet(input: PreferenceSetInput!): PreferenceSetPayload! @guard @field(resolver: "IronGate\\Chief\\GraphQL\\Mutations\\User\\Preference\\Set")
+    preferenceSet(input: PreferenceSetInput!): PreferenceSetPayload! @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\User\\Preference\\Set")
 }
 
 input PreferenceSetInput {

@@ -1,11 +1,11 @@
 <?php
 
-namespace IronGate\Chief\Console\Commands;
+namespace ChiefTools\SDK\Console\Commands;
 
 use Exception;
-use IronGate\Chief\API\Client;
+use ChiefTools\SDK\API\Client;
 use Illuminate\Console\Command;
-use IronGate\Chief\Entities\Team;
+use ChiefTools\SDK\Entities\Team;
 
 class SyncTeams extends Command
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace IronGate\Chief\Webhook\Handlers;
+namespace ChiefTools\SDK\Webhook\Handlers;
 
-use IronGate\Chief\Socialite\ChiefUser;
+use ChiefTools\SDK\Socialite\ChiefUser;
 
 class AccountUpdated extends BaseHandler
 {

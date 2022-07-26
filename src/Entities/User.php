@@ -1,16 +1,16 @@
 <?php
 
-namespace IronGate\Chief\Entities;
+namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
 use Laravel\Passport\Passport;
+use ChiefTools\SDK\Helpers\Avatar;
 use Illuminate\Support\Collection;
-use IronGate\Chief\Helpers\Avatar;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
-use IronGate\Chief\Socialite\ChiefTeam;
-use IronGate\Chief\Socialite\ChiefUser;
+use ChiefTools\SDK\Socialite\ChiefTeam;
+use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;

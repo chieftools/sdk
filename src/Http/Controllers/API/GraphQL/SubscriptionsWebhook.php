@@ -1,6 +1,6 @@
 <?php
 
-namespace IronGate\Chief\Http\Controllers\API\GraphQL;
+namespace ChiefTools\SDK\Http\Controllers\API\GraphQL;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

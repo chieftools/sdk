@@ -118,6 +118,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function personalAccessTokens(): HasMany
     {
+        if (!config('chief.auth.passport')) {
+            throw new RuntimeException('Passport is not active!');
+        }
+
         /** @var \Illuminate\Database\Eloquent\Model $clientModel */
         $clientModel = app(Passport::clientModel());
 

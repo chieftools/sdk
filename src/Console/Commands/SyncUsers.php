@@ -5,6 +5,7 @@ namespace ChiefTools\SDK\Console\Commands;
 use ChiefTools\SDK\API\Client;
 use Illuminate\Console\Command;
 use ChiefTools\SDK\Entities\User;
+use Illuminate\Database\Eloquent\Builder;
 
 class SyncUsers extends Command
 {
@@ -25,6 +26,9 @@ class SyncUsers extends Command
         }
 
         User::query()
+            ->when(count($userIds) > 0, function (Builder $query) use ($userIds) {
+                $query->whereIn('id', $userIds);
+            })
             ->whereNotNull('chief_id')
             ->each(function (User $user) use ($mothership) {
                 $this->info("=> Syncing user:{$user->chief_id} '{$user}' ({$user->email})");

@@ -1,5 +1,5 @@
 <p class="mb-8 text-center text-base text-gray-400">
-    <a href="/" class="text">
+    <a href="{{ home() }}" class="text">
         <i class="fad fa-fw {{ config('chief.icon') }} text-brand"></i> {{ config('app.name') }}
     </a>
     &mdash;

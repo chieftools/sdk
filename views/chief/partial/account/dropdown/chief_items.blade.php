@@ -9,7 +9,7 @@
         @endforeach
 
         @if($_chief_apps->count() > 6)
-            <x-chief::account.dropdown-link :href="config('chief.base_url') . '/'" icon="fa-toolbox" iconType="fad" target="_blank">
+            <x-chief::account.dropdown-link :href="chief_base_url()" icon="fa-toolbox" iconType="fad" target="_blank">
                 All apps & tools
             </x-chief::account.dropdown-link>
         @endif

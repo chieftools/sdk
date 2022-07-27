@@ -227,6 +227,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureMiddleware(): void
     {
+        $this->app->router->aliasMiddleware('team', Middleware\Team::class);
         $this->app->router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $this->app->router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
     }

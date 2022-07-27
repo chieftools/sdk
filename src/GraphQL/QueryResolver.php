@@ -5,6 +5,7 @@ namespace ChiefTools\SDK\GraphQL;
 use RuntimeException;
 use Illuminate\Database;
 use Illuminate\Http\Request;
+use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Support\Collection;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -90,6 +91,11 @@ abstract class QueryResolver
     protected function user(): User
     {
         return $this->context->user();
+    }
+
+    protected function team(): Team
+    {
+        return $this->context->team();
     }
 
     protected function guest(): bool

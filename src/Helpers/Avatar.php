@@ -9,9 +9,16 @@ final class Avatar
     private const PROXY_BASE    = 'https://avatar.assets.chief.app';
     private const PROXY_VERSION = 1;
 
+    private const NAME_IMAGE_BASE = 'https://static.assets.chief.app/avatar';
+
     public static function of(User $user): self
     {
         return new self($user->name, $user->email, $user->avatarHash);
+    }
+
+    public static function ofName(string $name): string
+    {
+        return sprintf('%s/%s.jpg', self::NAME_IMAGE_BASE, self::nameHash($name));
     }
 
     public function __construct(
@@ -24,17 +31,22 @@ final class Avatar
     public function url(): string
     {
         if ($this->avatarHash === null) {
-            return sprintf('%s/%d/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash());
+            return sprintf('%s/%d/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, self::gravatarHash($this->email), self::nameHash($this->name));
         }
 
-        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash(), $this->avatarHash);
+        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, self::gravatarHash($this->email), self::nameHash($this->name), $this->avatarHash);
     }
 
-    private function nameHash(): string
+    private static function gravatarHash(string $email): string
+    {
+        return md5(strtolower(trim($email)));
+    }
+
+    private static function nameHash(string $name): string
     {
         $initials = '';
 
-        $nameParts = explode(' ', $this->name);
+        $nameParts = explode(' ', $name);
 
         if (!empty($nameParts)) {
             $firstPart = str(array_shift($nameParts));
@@ -60,10 +72,5 @@ final class Avatar
 
         // We use a little part of the SHA1 hash of the intials as the name hash
         return substr(sha1($initials), 0, 8);
-    }
-
-    private function gravatarHash(): string
-    {
-        return md5(strtolower(trim($this->email)));
     }
 }

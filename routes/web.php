@@ -41,6 +41,16 @@ Route::group(config('chief.routes.web'), function () {
     });
 
     Route::group([
+        'as'         => 'team.',
+        'prefix'     => 'team',
+        'middleware' => 'auth',
+    ], function () {
+        Route::view('profile', 'chief::account.profile')->name('profile');
+
+        Route::get('team/{slug}/switch', Controllers\Team\SwitchActive::class)->name('switch');
+    });
+
+    Route::group([
         'as'         => 'api.',
         'prefix'     => 'api',
         'middleware' => 'auth',

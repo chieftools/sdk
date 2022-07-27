@@ -9,14 +9,13 @@ use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property      int                                                                          $id
- * @property      string                                                                       $slug
- * @property      string                                                                       $name
- * @property      array                                                                        $limits
- * @property      bool                                                                         $is_default
- * @property      \Carbon\Carbon                                                               $created_at
- * @property      \Carbon\Carbon                                                               $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\User> $users
+ * @property int            $id
+ * @property string         $slug
+ * @property string         $name
+ * @property array          $limits
+ * @property bool           $is_default
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
  */
 class Team extends Entity
 {

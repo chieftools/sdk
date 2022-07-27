@@ -22,22 +22,20 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 /**
- * @property      string                                                                       $id
- * @property      string                                                                       $name
- * @property      string                                                                       $email
- * @property      string                                                                       $timezone
- * @property      string                                                                       $chief_id
- * @property      string                                                                       $password
- * @property      bool                                                                         $is_admin
- * @property      string                                                                       $avatar_url
- * @property      \Carbon\Carbon|null                                                          $last_login
- * @property      \Carbon\Carbon                                                               $created_at
- * @property      \Carbon\Carbon                                                               $updated_at
- * @property      array                                                                        $preferences
- * @property      string|null                                                                  $remember_token
- * @property      int|null                                                                     $default_team_id
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\Team> $teams
- * @property-read \ChiefTools\SDK\Entities\Team|null                                           $defaultTeam
+ * @property string              $id
+ * @property string              $name
+ * @property string              $email
+ * @property string              $timezone
+ * @property string              $chief_id
+ * @property string              $password
+ * @property bool                $is_admin
+ * @property string              $avatar_url
+ * @property \Carbon\Carbon|null $last_login
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
+ * @property array               $preferences
+ * @property string|null         $remember_token
+ * @property int|null            $default_team_id
  */
 class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {

@@ -16,25 +16,28 @@ use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 /**
- * @property string              $id
- * @property string              $name
- * @property string              $email
- * @property string              $timezone
- * @property string              $chief_id
- * @property string              $password
- * @property bool                $is_admin
- * @property string              $avatar_url
- * @property \Carbon\Carbon|null $last_login
- * @property \Carbon\Carbon      $created_at
- * @property \Carbon\Carbon      $updated_at
- * @property array               $preferences
- * @property string|null         $remember_token
- * @property int|null            $default_team_id
+ * @property      string                                                                       $id
+ * @property      string                                                                       $name
+ * @property      string                                                                       $email
+ * @property      string                                                                       $timezone
+ * @property      string                                                                       $chief_id
+ * @property      string                                                                       $password
+ * @property      bool                                                                         $is_admin
+ * @property      string                                                                       $avatar_url
+ * @property      \Carbon\Carbon|null                                                          $last_login
+ * @property      \Carbon\Carbon                                                               $created_at
+ * @property      \Carbon\Carbon                                                               $updated_at
+ * @property      array                                                                        $preferences
+ * @property      string|null                                                                  $remember_token
+ * @property      int|null                                                                     $default_team_id
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\Team> $teams
+ * @property-read \ChiefTools\SDK\Entities\Team|null                                           $defaultTeam
  */
 class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {
@@ -116,6 +119,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return $this->belongsToMany(Team::class)->withTimestamps();
     }
+    public function defaultTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'default_team_id');
+    }
     public function personalAccessTokens(): HasMany
     {
         if (!config('chief.auth.passport')) {
@@ -134,6 +141,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
                     ->where($clientModel->qualifyColumn('personal_access_client'), '=', 1)
                     ->where($tokenModel->qualifyColumn('revoked'), '=', false)
                     ->orderBy($tokenModel->qualifyColumn('created_at'), 'desc');
+    }
+
+    // Team helpers
+    public function defaultOrFirstTeam(): Team
+    {
+        return $this->defaultTeam ?? $this->teams->first();
     }
 
     // Preference helpers

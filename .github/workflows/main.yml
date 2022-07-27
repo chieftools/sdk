@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup PHP cache
-        uses: shivammathur/cache-extensions@1.7.1
+        uses: shivammathur/cache-extensions@1.8.0
         id: php-ext-cache
         with:
           php-version: '8.1'
@@ -29,7 +29,7 @@ jobs:
           key: ${{ steps.php-ext-cache.outputs.key }}
           restore-keys: ${{ steps.php-ext-cache.outputs.key }}
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.18.1
+        uses: shivammathur/setup-php@2.21.0
         with:
           php-version: '8.1'
           extensions: zip
@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup PHP cache
-        uses: shivammathur/cache-extensions@1.7.1
+        uses: shivammathur/cache-extensions@1.8.0
         id: php-ext-cache
         with:
           php-version: '8.1'
@@ -70,7 +70,7 @@ jobs:
           key: ${{ steps.php-ext-cache.outputs.key }}
           restore-keys: ${{ steps.php-ext-cache.outputs.key }}
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.18.1
+        uses: shivammathur/setup-php@2.21.0
         with:
           php-version: '8.1'
           extensions: zip

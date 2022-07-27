@@ -21,7 +21,7 @@
         </x-tw::alert>
     </x-tw::panel>
 
-    @if($user->personalAccessTokens->isNotEmpty())
+    @if(config('chief.auth.passport') && $user->personalAccessTokens->isNotEmpty())
         <x-tw::panel icon="fa-key" title="Deprecated personal access tokens">
             <x-tw::alert type="warning">
                 These tokens are legacy tokens and are being phased out, please replace it with a new personal access token!

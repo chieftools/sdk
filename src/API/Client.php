@@ -10,6 +10,7 @@ use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
 use Sentry\Tracing\GuzzleTracingMiddleware;
+use ChiefTools\SDK\Jobs\Reporting\ReportUsage;
 
 class Client extends HttpClient
 {
@@ -182,15 +183,15 @@ class Client extends HttpClient
     /**
      * Report plan usage back to the mothership.
      *
-     * @param string $teamId
+     * @param string $teamSlug
      * @param string $usageId
      * @param int    $usage
      *
      * @return void
      */
-    public function reportUsage(string $teamId, string $usageId, int $usage): void
+    public function reportUsage(string $teamSlug, string $usageId, int $usage): void
     {
-        $response = $this->put("/api/team/{$teamId}/billing/plan/usage/{$usageId}", [
+        $response = $this->put("/api/team/{$teamSlug}/billing/plan/usage/{$usageId}", [
             'json'    => compact('usage'),
             'headers' => $this->internalAuthHeaders(),
         ]);
@@ -201,15 +202,29 @@ class Client extends HttpClient
     }
 
     /**
-     * Instruct the mothership to activate the `beta` plan for the team.
+     * Report plan usage back to the mothership through a async job.
      *
-     * @param string $teamId
+     * @param string $teamSlug
+     * @param string $usageId
+     * @param int    $usage
      *
      * @return void
      */
-    public function activateBetaPlan(string $teamId): void
+    public static function reportUsageAsync(string $teamSlug, string $usageId, int $usage): void
     {
-        $response = $this->post("/api/team/{$teamId}/billing/plan/beta/activate", [
+        dispatch(new ReportUsage($teamSlug, $usageId, $usage));
+    }
+
+    /**
+     * Instruct the mothership to activate the `beta` plan for the team.
+     *
+     * @param string $teamSlug
+     *
+     * @return void
+     */
+    public function activateBetaPlan(string $teamSlug): void
+    {
+        $response = $this->post("/api/team/{$teamSlug}/billing/plan/beta/activate", [
             'headers' => $this->internalAuthHeaders(),
         ]);
 

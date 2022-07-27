@@ -18,6 +18,8 @@ return [
 
     ],
 
+    'teams' => true,
+
     'queue' => [
 
         'monitor' => env('QUEUE_MONITOR_URL'),

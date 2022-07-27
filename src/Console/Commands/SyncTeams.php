@@ -6,6 +6,7 @@ use Exception;
 use ChiefTools\SDK\API\Client;
 use Illuminate\Console\Command;
 use ChiefTools\SDK\Entities\Team;
+use Illuminate\Database\Eloquent\Builder;
 
 class SyncTeams extends Command
 {
@@ -27,6 +28,9 @@ class SyncTeams extends Command
         }
 
         Team::query()
+            ->when(count($teamIds) > 0, function (Builder $query) use ($teamIds) {
+                $query->whereIn('id', $teamIds);
+            })
             ->each(function (Team $team) use ($mothership) {
                 $this->info("=> Syncing team:{$team->id} '{$team}' ({$team->slug})");
 

@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
+use ChiefTools\SDK\Helpers\Avatar;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -33,6 +34,12 @@ class Team extends Entity
     {
         return new Attribute(
             set: static fn ($value) => trim($value),
+        );
+    }
+    public function avatarUrl(): Attribute
+    {
+        return new Attribute(
+            get: fn () => Avatar::ofName($this->name),
         );
     }
     public function isDefault(): Attribute

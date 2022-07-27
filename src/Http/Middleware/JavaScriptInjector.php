@@ -39,6 +39,9 @@ class JavaScriptInjector
                     'email'    => $user->email,
                     'chief_id' => $user->chief_id,
                 ],
+                'TEAM'     => [
+                    'slug' => $user->team?->slug,
+                ],
                 'REALTIME' => [
                     'AUTH'    => url()->to('broadcasting/auth'),
                     'HOST'    => config('services.websockets.host'),

@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Carbon;
 
+function home(): string
+{
+    $resolver = config('chief.home_route_resolver');
+
+    return (new $resolver)(request());
+}
+
 /**
  * Get active state based on whitelist.
  * Used to indicate active menu's.

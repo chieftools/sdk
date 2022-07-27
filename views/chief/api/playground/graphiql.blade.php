@@ -1,4 +1,4 @@
-@extends('chief::layout.html', ['title' => 'Playground - API'])
+@extendsfirst(['layout.html', 'chief::layout.html'], ['title' => 'Playground - API'])
 
 @push('head.meta')
     <meta name="robots" content="noindex, nofollow">
@@ -134,6 +134,7 @@
                     headers:     {
                         'Accept':       'application/json',
                         'Content-Type': 'application/json',
+                        'X-Chief-Team': window.TEAM.slug,
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     },
                     body:        JSON.stringify(graphQLParams),

@@ -154,4 +154,6 @@ return [
 
     ],
 
+    'home_route_resolver' => ChiefTools\SDK\Helpers\HomeRouteResolver::class,
+
 ];

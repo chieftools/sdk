@@ -1,4 +1,4 @@
-<nav class="bg-white shadow" x-data="{ menuOpen: false, userMenuOpen: false }">
+<nav class="bg-white shadow" x-data="{ menuOpen: false, userMenuOpen: false, teamMenuOpen: false }">
     <div class="{{ ($fullwidth ?? false) === true ? 'px-4' : 'max-w-7xl px-2 sm:px-6 lg:px-8' }} mx-auto">
         <div class="relative flex justify-between h-14">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -14,7 +14,7 @@
                 </button>
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <a href="{{ $logoRedirect ?? '/' }}" class="flex shrink-0 items-center text">
+                <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
                     <i class="fad fa-fw {{ config('chief.icon') }} text-brand text-3xl sm:text-2xl"></i><span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
                 </a>
 
@@ -44,7 +44,36 @@
             </div>
 
             @auth
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <div class="absolute inset-y-0 right-10 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                    <div class="ml-3 relative">
+                        <div>
+                            <button x-on:click="teamMenuOpen = !teamMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="team-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <span class="sr-only">Open team menu</span>
+                                <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
+                            </button>
+                        </div>
+
+                        <div x-cloak
+                             x-show="teamMenuOpen"
+                             x-on:click.away="teamMenuOpen = false"
+                             x-on:keydown.escape.stop="teamMenuOpen = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none z-20"
+                             role="menu"
+                             aria-orientation="vertical"
+                             aria-labelledby="menu-button"
+                             tabindex="-1">
+                            @include('chief::partial.team.dropdown_items')
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-0 sm:pr-0">
                     <div class="ml-3 relative">
                         <div>
                             <button x-on:click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">

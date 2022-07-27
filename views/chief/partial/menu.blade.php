@@ -75,7 +75,7 @@
                     </div>
                 @endif
 
-                <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-0 sm:pr-0">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto {{ config('chief.teams') ? 'sm:ml-0' : 'sm:ml-6' }} sm:pr-0">
                     <div class="ml-3 relative">
                         <div>
                             <button x-on:click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">

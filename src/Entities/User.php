@@ -26,6 +26,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string                             $id
  * @property string                             $name
  * @property string                             $email
+ * @property string|null                        $avatar_hash
  * @property \ChiefTools\SDK\Entities\Team|null $team
  * @property string                             $timezone
  * @property string                             $chief_id
@@ -209,11 +210,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         Team::createOrUpdateFromRemotes($remote->teams);
 
-        $this->fill([
+        $this->forceFill([
             'name'            => $remote->getName(),
             'email'           => $remote->getEmail(),
             'timezone'        => $remote->timezone,
             'password'        => empty($this->password) ? str_random(64) : null,
+            'avatar_hash'     => $remote->avatar_hash,
             'default_team_id' => $remote->default_team_id,
         ])->save();
 

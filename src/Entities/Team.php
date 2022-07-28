@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int            $id
  * @property string         $slug
  * @property string         $name
+ * @property string|null    $gravatar_email
+ * @property string|null    $avatar_hash
  * @property array          $limits
  * @property bool           $is_default
  * @property \Carbon\Carbon $created_at
@@ -20,9 +22,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Team extends Entity
 {
-    protected $table = 'teams';
-    protected $casts = [
+    protected $table    = 'teams';
+    protected $casts    = [
         'limits' => AsArrayObject::class,
+    ];
+    protected $fillable = [
+        'name',
+        'gravatar_email',
     ];
 
     // Attributes
@@ -39,7 +45,7 @@ class Team extends Entity
     public function avatarUrl(): Attribute
     {
         return new Attribute(
-            get: fn () => Avatar::ofName($this->name),
+            get: fn () => Avatar::ofTeam($this)->url(),
         );
     }
     public function isDefault(): Attribute
@@ -47,6 +53,16 @@ class Team extends Entity
         return new Attribute(
             get: function () {
                 return auth()->user()?->default_team_id === $this->id;
+            },
+        );
+    }
+    public function gravatarEmail(): Attribute
+    {
+        return new Attribute(
+            set: static function ($value) {
+                $email = $value === null ? null : strtolower(trim($value));
+
+                return empty($email) ? null : $email;
             },
         );
     }
@@ -60,8 +76,10 @@ class Team extends Entity
     // Helpers
     public function updateFromRemote(ChiefTeam $remote): void
     {
-        $this->name   = $remote->name;
-        $this->limits = $remote->limits;
+        $this->name           = $remote->name;
+        $this->limits         = $remote->limits;
+        $this->avatar_hash    = $remote->avatarHash;
+        $this->gravatar_email = $remote->gravatarEmail;
 
         $this->save();
     }
@@ -69,11 +87,11 @@ class Team extends Entity
     // Static helpers
     public static function findOrFailBySlug(string $slug): self
     {
-        return self::query()->where('slug', '=', $slug)->firstOrFail();
+        return static::query()->where('slug', '=', $slug)->firstOrFail();
     }
     public static function createFromRemote(ChiefTeam $remote): self
     {
-        $team = new static();
+        $team = new static;
 
         $team->id   = $remote->id;
         $team->slug = $remote->slug;
@@ -90,14 +108,14 @@ class Team extends Entity
             return;
         }
 
-        $existingTeams = self::query()->find($teamIds);
+        $existingTeams = static::query()->find($teamIds);
 
         collect($teams)->each(function (ChiefTeam $chiefTeam) use ($existingTeams) {
             /** @var self|null $team */
             $team = $existingTeams->find($chiefTeam->id);
 
             if ($team === null) {
-                self::createFromRemote($chiefTeam);
+                static::createFromRemote($chiefTeam);
             } else {
                 $team->updateFromRemote($chiefTeam);
             }
@@ -109,7 +127,7 @@ class Team extends Entity
     {
         return 'slug';
     }
-    public function resolveRouteBinding($value, $field = null): ?self
+    public function resolveRouteBinding($value, $field = null): ?static
     {
         /** @var \ChiefTools\SDK\Entities\User|null $user */
         $user = auth()->user();

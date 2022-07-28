@@ -22,6 +22,11 @@ class ChiefUser extends User
     public readonly ?int $default_team_id;
 
     /**
+     * The avatar hash for this user.
+     */
+    public readonly ?string $avatar_hash;
+
+    /**
      * The teams the user is a member of.
      *
      * @var array<int, \ChiefTools\SDK\Socialite\ChiefTeam>
@@ -43,6 +48,7 @@ class ChiefUser extends User
 
         $this->timezone        = $user['timezone'];
         $this->is_admin        = (bool)($user['is_admin'] ?? false);
+        $this->avatar_hash     = $user['avatar_hash'];
         $this->default_team_id = empty($user['default_team_id']) ? null : (int)$user['default_team_id'];
     }
 }

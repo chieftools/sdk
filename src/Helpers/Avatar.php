@@ -2,51 +2,50 @@
 
 namespace ChiefTools\SDK\Helpers;
 
+use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 
 final class Avatar
 {
-    private const PROXY_BASE    = 'https://avatar.assets.chief.app';
-    private const PROXY_VERSION = 1;
-
-    private const NAME_IMAGE_BASE = 'https://static.assets.chief.app/avatar';
+    private const PROXY_BASE     = 'https://avatar.assets.chief.app';
+    private const PROXY_VERSION  = 1;
+    private const PROXY_NAMEHASH = 'namehash';
 
     public static function of(User $user): self
     {
-        return new self($user->name, $user->email, $user->avatarHash);
+        return new self($user->name, $user->email, $user->avatar_hash);
     }
 
-    public static function ofName(string $name): string
+    public static function ofTeam(Team $team): self
     {
-        return sprintf('%s/%s.jpg', self::NAME_IMAGE_BASE, self::nameHash($name));
+        return new self($team->name, $team->gravatar_email, $team->avatar_hash);
     }
 
     public function __construct(
-        private readonly string $name,
-        private readonly string $email,
+        private readonly string $name = '',
+        private readonly ?string $email = null,
         private readonly ?string $avatarHash = null,
     ) {
     }
 
     public function url(): string
     {
-        if ($this->avatarHash === null) {
-            return sprintf('%s/%d/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, self::gravatarHash($this->email), self::nameHash($this->name));
+        if ($this->email === null) {
+            return sprintf('%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_NAMEHASH, $this->nameHash());
         }
 
-        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, self::gravatarHash($this->email), self::nameHash($this->name), $this->avatarHash);
+        if ($this->avatarHash === null) {
+            return sprintf('%s/%d/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash());
+        }
+
+        return sprintf('%s/%d/%s/%s/%s.jpg', self::PROXY_BASE, self::PROXY_VERSION, $this->gravatarHash(), $this->nameHash(), $this->avatarHash);
     }
 
-    private static function gravatarHash(string $email): string
-    {
-        return md5(strtolower(trim($email)));
-    }
-
-    private static function nameHash(string $name): string
+    private function nameHash(): string
     {
         $initials = '';
 
-        $nameParts = explode(' ', $name);
+        $nameParts = explode(' ', $this->name);
 
         if (!empty($nameParts)) {
             $firstPart = str(array_shift($nameParts));
@@ -72,5 +71,10 @@ final class Avatar
 
         // We use a little part of the SHA1 hash of the intials as the name hash
         return substr(sha1($initials), 0, 8);
+    }
+
+    private function gravatarHash(): string
+    {
+        return md5(strtolower(trim($this->email)));
     }
 }

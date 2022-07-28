@@ -85,11 +85,11 @@ class Team extends Entity
     }
 
     // Static helpers
-    public static function findOrFailBySlug(string $slug): self
+    public static function findOrFailBySlug(string $slug): static
     {
         return static::query()->where('slug', '=', $slug)->firstOrFail();
     }
-    public static function createFromRemote(ChiefTeam $remote): self
+    public static function createFromRemote(ChiefTeam $remote): static
     {
         $team = new static;
 

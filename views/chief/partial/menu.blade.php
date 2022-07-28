@@ -52,6 +52,7 @@
                                     <span class="sr-only">Open team menu</span>
                                     <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
                                 </button>
+                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">T</div>
                             </div>
 
                             <div x-cloak
@@ -76,12 +77,15 @@
                 @endif
 
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto {{ config('chief.teams') ? 'sm:ml-0' : 'sm:ml-6' }} sm:pr-0">
-                    <div class="ml-3 relative">
+                    <div class="{{ config('chief.teams') ? 'ml-4' : 'ml-3' }} relative">
                         <div>
                             <button x-on:click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
                             </button>
+                            @if(config('chief.teams'))
+                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">P</div>
+                            @endif
                         </div>
 
                         <div x-cloak

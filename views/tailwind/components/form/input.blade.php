@@ -17,6 +17,7 @@
     'autofocus' => false,
     'placeholder' => null,
     'autocomplete' => null,
+    'withoutUnchecked' => false,
 ])
 
 @php
@@ -57,11 +58,13 @@
             @if($type === 'checkbox')
                 <div class="flex items-start">
                     <div class="h-5 flex items-center">
-                        <input type="checkbox"
-                               name="{{ $name }}"
-                               value="0"
-                               class="hidden"
-                               checked>
+                        @unless($withoutUnchecked)
+                            <input type="checkbox"
+                                   name="{{ $name }}"
+                                   value="0"
+                                   class="hidden"
+                                   checked>
+                        @endunless
                         <input id="{{ $name }}"
                                type="checkbox"
                                name="{{ $name }}"

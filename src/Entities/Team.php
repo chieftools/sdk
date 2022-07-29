@@ -130,14 +130,12 @@ class Team extends Entity
     {
         return static::query()->where('slug', '=', $slug)->firstOrFail();
     }
-    public static function createFromRemote(ChiefTeam $remote): static
+    private static function newFromRemote(ChiefTeam $remote): static
     {
         $team = new static;
 
         $team->id   = $remote->id;
         $team->slug = $remote->slug;
-
-        $team->updateFromRemote($remote);
 
         return $team;
     }
@@ -152,14 +150,13 @@ class Team extends Entity
         $existingTeams = static::query()->find($teamIds);
 
         collect($teams)->each(function (ChiefTeam $chiefTeam) use ($existingTeams) {
-            /** @var self|null $team */
-            $team = $existingTeams->find($chiefTeam->id);
+            /** @var \ChiefTools\SDK\Entities\Team $team */
+            $team = $existingTeams->findOr(
+                $chiefTeam->id,
+                static fn () => static::newFromRemote($chiefTeam)
+            );
 
-            if ($team === null) {
-                static::createFromRemote($chiefTeam);
-            } else {
-                $team->updateFromRemote($chiefTeam);
-            }
+            $team->updateFromRemote($chiefTeam);
 
             Chief::dispatchAfterTeamUpdateJob($team);
         });

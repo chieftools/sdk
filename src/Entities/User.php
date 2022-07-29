@@ -243,14 +243,18 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public static function createOrUpdateFromRemote(ChiefUser $remote): self
     {
-        /** @var \ChiefTools\SDK\Entities\User $local */
+        /** @var \ChiefTools\SDK\Entities\User|null $local */
         $local = self::query()
                      ->where('chief_id', '=', $remote->getId())
                      ->orWhere(function (Builder $query) use ($remote) {
                          $query->whereNull('chief_id')
                                ->where('email', '=', $remote->getEmail());
                      })
-                     ->firstOr(static fn () => self::createFromRemote($remote));
+                     ->first();
+
+        if ($local === null) {
+            $local = self::createFromRemote($remote);
+        }
 
         $local->updateFromRemote($remote);
 

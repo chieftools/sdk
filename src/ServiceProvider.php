@@ -248,12 +248,14 @@ class ServiceProvider extends IlluminateServiceProvider
                 : [],
         ], 'chief-migrations');
 
-        $this->loadMigrationsFrom([
-            static::basePath('database/migrations'),
-            ...config('chief.auth.passport')
-                ? [static::basePath('database/passport-migrations')]
-                : [],
-        ]);
+        if (Chief::runsMigrations()) {
+            $this->loadMigrationsFrom([
+                static::basePath('database/migrations'),
+                ...config('chief.auth.passport')
+                    ? [static::basePath('database/passport-migrations')]
+                    : [],
+            ]);
+        }
     }
 
     private function configureSocialiteIntegration(): void

@@ -33,6 +33,7 @@ class Team extends Entity
     ];
     protected $fillable = [
         'name',
+        'timezone',
         'gravatar_email',
     ];
 

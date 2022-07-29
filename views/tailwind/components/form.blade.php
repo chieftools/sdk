@@ -4,7 +4,7 @@
     'method' => 'post',
 ])
 
-<form action="{{ $action }}" method="{{ $method }}" class="{{ $class }}">
+<form action="{{ $action }}" method="{{ strtolower($method) === 'get' ? 'get' : 'post' }}" class="{{ $class }}">
     {{ $slot }}
     @method($method)
     @csrf

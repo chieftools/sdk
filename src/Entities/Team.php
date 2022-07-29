@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
+use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Helpers\Avatar;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -10,21 +11,23 @@ use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * @property int            $id
- * @property string         $slug
- * @property string         $name
- * @property string|null    $gravatar_email
- * @property string|null    $avatar_hash
- * @property array          $limits
- * @property bool           $is_default
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property int                 $id
+ * @property string              $slug
+ * @property string              $name
+ * @property string|null         $gravatar_email
+ * @property string|null         $avatar_hash
+ * @property array               $limits
+ * @property bool                $is_default
+ * @property \Carbon\Carbon|null $last_activity_at
+ * @property \Carbon\Carbon      $created_at
+ * @property \Carbon\Carbon      $updated_at
  */
 class Team extends Entity
 {
     protected $table    = 'teams';
     protected $casts    = [
-        'limits' => AsArrayObject::class,
+        'limits'           => AsArrayObject::class,
+        'last_activity_at' => 'datetime',
     ];
     protected $fillable = [
         'name',
@@ -82,6 +85,27 @@ class Team extends Entity
         $this->gravatar_email = $remote->gravatarEmail;
 
         $this->save();
+    }
+    public function maybeUpdateLastActivity(): void
+    {
+        if (!$this->shouldUpdateLastActivity()) {
+            return;
+        }
+
+        $this->last_activity_at = now();
+        $this->saveQuietly();
+
+        dispatch(function () {
+            app(Client::class)->reportActivity($this);
+        })->afterResponse();
+    }
+    public function shouldUpdateLastActivity(): bool
+    {
+        if ($this->last_activity_at === null) {
+            return true;
+        }
+
+        return $this->last_activity_at->diffInHours() >= 1;
     }
 
     // Static helpers

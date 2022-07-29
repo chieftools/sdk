@@ -2,8 +2,10 @@
 
 namespace ChiefTools\SDK\API;
 
+use Exception;
 use RuntimeException;
 use GuzzleHttp\HandlerStack;
+use ChiefTools\SDK\Entities\Team;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
 use ChiefTools\SDK\Socialite\ChiefTeam;
@@ -230,6 +232,24 @@ class Client extends HttpClient
 
         if ($response->getStatusCode() !== 204) {
             throw new RuntimeException('Could not activate beta plan for team.');
+        }
+    }
+
+    /**
+     * Report that there was activity on the team back to the mothership.
+     *
+     * @param \ChiefTools\SDK\Entities\Team $team
+     *
+     * @return void
+     */
+    public function reportActivity(Team $team): void
+    {
+        try {
+            $this->post("/api/team/{$team->slug}/activity", [
+                'headers' => $this->internalAuthHeaders(),
+            ]);
+        } catch (Exception) {
+            // We don't really care if this fails, there will be next attempts
         }
     }
 

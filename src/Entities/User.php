@@ -85,7 +85,17 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return Attribute::make(
             get: function () {
-                $fromRequest = request()->route('team') ?? request()->header('x-chief-team') ?? session('chief_team_slug') ?? null;
+                $request = request();
+
+                $fromRequest = $request->attributes->get('team_hint') ??
+                               $request->route('team_hint') ??
+                               $request->header('x-chief-team') ??
+                               session('chief_team_slug') ??
+                               null;
+
+                if ($fromRequest === null) {
+                    return $this->defaultOrFirstTeam();
+                }
 
                 if ($fromRequest instanceof Team) {
                     return $fromRequest;

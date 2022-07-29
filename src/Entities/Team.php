@@ -150,11 +150,12 @@ class Team extends Entity
         $existingTeams = static::query()->find($teamIds);
 
         collect($teams)->each(function (ChiefTeam $chiefTeam) use ($existingTeams) {
-            /** @var \ChiefTools\SDK\Entities\Team $team */
-            $team = $existingTeams->findOr(
-                $chiefTeam->id,
-                static fn () => static::newFromRemote($chiefTeam)
-            );
+            /** @var \ChiefTools\SDK\Entities\Team|null $team */
+            $team = $existingTeams->find($chiefTeam->id);
+
+            if ($team === null) {
+                $team = static::newFromRemote($chiefTeam);
+            }
 
             $team->updateFromRemote($chiefTeam);
 

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|null         $gravatar_email
  * @property string|null         $avatar_hash
  * @property array               $limits
+ * @property string              $timezone
  * @property bool                $is_default
  * @property \Carbon\Carbon|null $last_activity_at
  * @property \Carbon\Carbon      $created_at
@@ -44,6 +45,19 @@ class Team extends Entity
     {
         return new Attribute(
             set: static fn ($value) => trim($value),
+        );
+    }
+    public function timezone(): Attribute
+    {
+        return new Attribute(
+            get: static fn (?string $value) => $value ?? config('app.timezone'),
+            set: static function (?string $value) {
+                if (empty($value) || !array_key_exists($value, timezones())) {
+                    return config('app.timezone');
+                }
+
+                return $value;
+            },
         );
     }
     public function avatarUrl(): Attribute
@@ -82,6 +96,7 @@ class Team extends Entity
     {
         $this->name           = $remote->name;
         $this->limits         = $remote->limits;
+        $this->timezone       = $remote->timezone;
         $this->avatar_hash    = $remote->avatarHash;
         $this->gravatar_email = $remote->gravatarEmail;
 

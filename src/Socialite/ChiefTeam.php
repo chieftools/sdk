@@ -12,6 +12,7 @@ class ChiefTeam
         public readonly string $slug,
         public readonly string $name,
         public readonly array $limits,
+        public readonly string $timezone,
         public readonly ?string $avatarHash,
         public readonly ?string $gravatarEmail,
     ) {
@@ -24,6 +25,7 @@ class ChiefTeam
             slug: $team['slug'],
             name: $team['name'],
             limits: $team['limits'],
+            timezone: $team['timezone'],
             avatarHash: $team['avatar_hash'],
             gravatarEmail: $team['gravatar_email'],
         );

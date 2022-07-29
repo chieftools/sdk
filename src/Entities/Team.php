@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
+use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Helpers\Avatar;
 use ChiefTools\SDK\Socialite\ChiefTeam;
@@ -143,6 +144,8 @@ class Team extends Entity
             } else {
                 $team->updateFromRemote($chiefTeam);
             }
+
+            Chief::dispatchAfterTeamUpdateJob($team);
         });
     }
 

@@ -259,6 +259,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             $local->updateFromRemote($remote);
         }
 
+        Chief::dispatchAfterUserUpdateJob($local);
+
         return $local;
     }
 }

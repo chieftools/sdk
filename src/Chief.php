@@ -3,12 +3,17 @@
 namespace ChiefTools\SDK;
 
 use ChiefTools\SDK\Entities\Team;
+use ChiefTools\SDK\Entities\User;
 
-class Chief
+final class Chief
 {
     private static bool $runsMigrations = true;
 
     private static string $teamModel = Team::class;
+
+    private static ?string $afterUserUpdateJob = null;
+
+    private static ?string $afterTeamUpdateJob = null;
 
     public static function useTeamModel(string $teamModel): void
     {
@@ -28,5 +33,33 @@ class Chief
     public static function runsMigrations(): bool
     {
         return self::$runsMigrations;
+    }
+
+    public static function registerAfterUserUpdateJob(string $jobClass): void
+    {
+        self::$afterUserUpdateJob = $jobClass;
+    }
+
+    public static function dispatchAfterUserUpdateJob(User $user): void
+    {
+        if (self::$afterUserUpdateJob === null) {
+            return;
+        }
+
+        dispatch(new self::$afterUserUpdateJob($user));
+    }
+
+    public static function registerAfterTeamUpdateJob(string $jobClass): void
+    {
+        self::$afterTeamUpdateJob = $jobClass;
+    }
+
+    public static function dispatchAfterTeamUpdateJob(Team $team): void
+    {
+        if (self::$afterTeamUpdateJob === null) {
+            return;
+        }
+
+        dispatch(new self::$afterTeamUpdateJob($team));
     }
 }

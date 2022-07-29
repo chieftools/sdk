@@ -215,7 +215,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     // Auth helpers
     public function updateFromRemote(ChiefUser $remote): void
     {
-        $this->chief_id = $remote->getId();
         $this->is_admin = $remote->is_admin;
 
         Team::createOrUpdateFromRemotes($remote->teams);
@@ -234,30 +233,26 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             $remote->teams,
         ));
     }
-    public static function createFromRemote(ChiefUser $remote): self
+    private static function createFromRemote(ChiefUser $remote): self
     {
         $user = new static();
 
-        $user->updateFromRemote($remote);
+        $user->chief_id = $remote->getId();
 
         return $user;
     }
     public static function createOrUpdateFromRemote(ChiefUser $remote): self
     {
-        /** @var self|null $local */
+        /** @var \ChiefTools\SDK\Entities\User $local */
         $local = self::query()
                      ->where('chief_id', '=', $remote->getId())
                      ->orWhere(function (Builder $query) use ($remote) {
                          $query->whereNull('chief_id')
                                ->where('email', '=', $remote->getEmail());
                      })
-                     ->first();
+                     ->firstOr(static fn () => self::createFromRemote($remote));
 
-        if ($local === null) {
-            $local = self::createFromRemote($remote);
-        } else {
-            $local->updateFromRemote($remote);
-        }
+        $local->updateFromRemote($remote);
 
         Chief::dispatchAfterUserUpdateJob($local);
 

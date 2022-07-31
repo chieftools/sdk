@@ -76,6 +76,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'is_email_verified' => 'bool',
     ];
 
+    private ?Team $memoizedCurrentTeam;
+
     // Attributes
     public function __toString(): string
     {
@@ -84,26 +86,9 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     public function team(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                $request = request();
-
-                $fromRequest = $request->attributes->get('team_hint') ??
-                               $request->route('team_hint') ??
-                               $request->header('x-chief-team') ??
-                               session('chief_team_slug') ??
-                               null;
-
-                if ($fromRequest === null) {
-                    return $this->defaultOrFirstTeam();
-                }
-
-                if ($fromRequest instanceof Team) {
-                    return $fromRequest;
-                }
-
-                return $this->teams()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
-            },
-        )->shouldCache();
+            get: fn () => $this->currentTeam(),
+            set: fn () => throw new RuntimeException('That is not how you set a team!'),
+        );
     }
     public function timezone(): Attribute
     {
@@ -169,6 +154,41 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Team helpers
+    public function currentTeam(): Team
+    {
+        if (isset($this->memoizedCurrentTeam)) {
+            return $this->memoizedCurrentTeam;
+        }
+
+        $request = request();
+
+        $fromRequest = $request->attributes->get('team_hint') ??
+                       $request->route('team_hint') ??
+                       $request->header('x-chief-team') ??
+                       session('chief_team_hint') ??
+                       null;
+
+        if ($fromRequest === null) {
+            return $this->memoizedCurrentTeam = $this->defaultOrFirstTeam();
+        }
+
+        if ($fromRequest instanceof Team) {
+            return $this->memoizedCurrentTeam = $fromRequest;
+        }
+
+        return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
+    }
+    public function setCurrentTeam(Team $team): void
+    {
+        $this->memoizedCurrentTeam = $team;
+
+        session()->put('chief_team_hint', $team->slug);
+        request()->attributes->set('team_hint', $team);
+    }
+    public function clearCurrentTeam(): void
+    {
+        unset($this->memoizedCurrentTeam);
+    }
     public function defaultOrFirstTeam(): Team
     {
         return $this->defaultTeam ?? $this->teams->first();

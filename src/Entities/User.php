@@ -126,7 +126,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     // Relations
     public function teams(): BelongsToMany
     {
-        return $this->belongsToMany(Chief::teamModel())->withTimestamps();
+        return $this->belongsToMany(Chief::teamModel())
+                    ->orderBy('name')
+                    ->orderBy('id')
+                    ->withTimestamps();
     }
     public function defaultTeam(): BelongsTo
     {

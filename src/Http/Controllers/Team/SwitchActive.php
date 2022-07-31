@@ -8,11 +8,14 @@ class SwitchActive
 {
     public function __invoke(string $teamSlug): RedirectResponse
     {
+        /** @var \ChiefTools\SDK\Entities\User $user */
+        $user = auth()->user();
+
         /** @var \ChiefTools\SDK\Entities\Team $team */
-        $team = auth()->user()->teams()->where('slug', '=', $teamSlug)->firstOrFail();
+        $team = $user->teams()->where('slug', '=', $teamSlug)->firstOrFail();
 
-        session()->put('chief_team_slug', $team->slug);
+        $user->setCurrentTeam($team);
 
-        return redirect()->to(config('chief.auth.redirect'));
+        return redirect()->to(home());
     }
 }

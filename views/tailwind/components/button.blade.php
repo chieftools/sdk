@@ -11,14 +11,15 @@
     $classes = 'inline-flex font-medium shadow-sm ';
 
     $classes .= match($size) {
-        'xs' => 'px-2.5 py-1.5 rounded ',
-        'sm' => 'px-3 py-2 rounded-md leading-4 ',
-        'lg' => 'px-6 py-3 rounded-md ',
-        default => 'px-4 py-2 rounded-md ',
+        'xs' => 'px-2.5 py-1.5 text-xs rounded ',
+        'sm' => 'px-3 py-2 text-sm rounded-md leading-4 ',
+        'lg' => 'px-4 py-2 text-base rounded-md ',
+        'xl' => 'px-6 py-3 text-base rounded-md ',
+        default => 'px-4 py-2 text-sm rounded-md ',
     };
     $classes .= $textClass = match($size) {
         'xs' => 'text-xs ',
-        'md', 'lg' => 'text-base ',
+        'lg', 'xl' => 'text-base ',
         default => 'text-sm ',
     };
     $classes .= $disabled ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 ';
@@ -37,5 +38,7 @@
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes, 'href' => $href]) }}>
-    @if($icon)<i class="{{ $iconType }} fa-fw {{ $icon }} {{ $textClass }}"></i>&nbsp;@endif {{ $slot }}
+    @if($icon)
+        <i class="{{ $iconType }} fa-fw {{ $icon }} mr-1"></i>
+    @endif {{ $slot }}
 </a>

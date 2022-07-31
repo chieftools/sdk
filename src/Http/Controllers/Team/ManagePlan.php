@@ -5,15 +5,14 @@ namespace ChiefTools\SDK\Http\Controllers\Team;
 use ChiefTools\SDK\Entities\Team;
 use Illuminate\Http\RedirectResponse;
 
-class SwitchActive
+class ManagePlan
 {
     public function __invoke(Team $team): RedirectResponse
     {
-        /** @var \ChiefTools\SDK\Entities\User $user */
-        $user = auth()->user();
+        $app = config('chief.id');
 
-        $user->setCurrentTeam($team);
+        abort_if($app === null, 404);
 
-        return redirect()->to(home());
+        return redirect()->away(chief_base_url("team/{$team->slug}/billing/{$app}/plan"));
     }
 }

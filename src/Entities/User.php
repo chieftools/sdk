@@ -182,8 +182,11 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         $this->memoizedCurrentTeam = $team;
 
+        url()->defaults(['team_hint' => $team->slug]);
         session()->put('chief_team_hint', $team->slug);
         request()->attributes->set('team_hint', $team);
+
+        $team->maybeUpdateLastActivity();
     }
     public function clearCurrentTeam(): void
     {

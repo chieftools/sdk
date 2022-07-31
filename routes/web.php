@@ -47,7 +47,9 @@ Route::group(config('chief.routes.web'), function () {
     ], function () {
         Route::view('profile', 'chief::account.profile')->name('profile');
 
-        Route::get('team/{slug}/switch', Controllers\Team\SwitchActive::class)->name('switch');
+        Route::get('team/{team}/switch', Controllers\Team\SwitchActive::class)->name('switch');
+        Route::get('team/{team}/chief/manage', Controllers\Team\Manage::class)->name('chief.manage');
+        Route::get('team/{team}/chief/manage/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
     });
 
     Route::group([

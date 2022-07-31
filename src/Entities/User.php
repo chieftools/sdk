@@ -87,7 +87,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return Attribute::make(
             get: fn () => $this->currentTeam(),
-            set: fn () => throw new RuntimeException('That is not how you set a team!'),
         );
     }
     public function timezone(): Attribute

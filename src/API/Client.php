@@ -205,6 +205,35 @@ class Client extends HttpClient
     }
 
     /**
+     * Report plan usage back to the mothership in bulk.
+     *
+     * @param array<int, \ChiefTools\SDK\API\DTO\TeamUsageReport> $reports
+     *
+     * @return void
+     */
+    public function reportUsageInBulk(array $reports): void
+    {
+        if (count($reports) > 100) {
+            foreach (array_chunk($reports, 100) as $chunk) {
+                $this->reportUsageInBulk($chunk);
+            }
+
+            return;
+        }
+
+        $reports = collect($reports)->toArray();
+
+        $response = $this->put('/api/bulk/team/billing/plan/usage', [
+            'json'    => compact('reports'),
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not report bulk usages.');
+        }
+    }
+
+    /**
      * Report plan usage back to the mothership through a async job.
      *
      * @param string $teamSlug

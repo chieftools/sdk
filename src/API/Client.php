@@ -45,6 +45,7 @@ class Client extends HttpClient
             'timeout'         => $timeout,
             'connect_timeout' => $timeout,
             'headers'         => array_merge($headers, [
+                'Accept'     => 'application/json',
                 'User-Agent' => user_agent(),
             ]),
         ]));
@@ -200,6 +201,35 @@ class Client extends HttpClient
 
         if ($response->getStatusCode() !== 204) {
             throw new RuntimeException('Could not report usage.');
+        }
+    }
+
+    /**
+     * Report plan usage back to the mothership in bulk.
+     *
+     * @param array<int, \ChiefTools\SDK\API\DTO\TeamUsageReport> $reports
+     *
+     * @return void
+     */
+    public function reportUsageInBulk(array $reports): void
+    {
+        if (count($reports) > 100) {
+            foreach (array_chunk($reports, 100) as $chunk) {
+                $this->reportUsageInBulk($chunk);
+            }
+
+            return;
+        }
+
+        $reports = collect($reports)->toArray();
+
+        $response = $this->put('/api/bulk/team/billing/plan/usage', [
+            'json'    => compact('reports'),
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not report bulk usages.');
         }
     }
 

@@ -124,12 +124,18 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\ChiefTools\SDK\Entities\Team> */
     public function teams(): BelongsToMany
     {
-        return $this->belongsToMany(Chief::teamModel())
-                    ->orderBy('name')
-                    ->orderBy('id')
-                    ->withTimestamps();
+        $relation = $this->belongsToMany(Chief::teamModel())->withTimestamps();
+
+        $relation->getQuery()->when($this->default_team_id !== null, function (Builder $query) {
+            $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]);
+        }, function (Builder $query) {
+            $query->orderBy('name');
+        })->orderBy('id');
+
+        return $relation;
     }
     public function defaultTeam(): BelongsTo
     {

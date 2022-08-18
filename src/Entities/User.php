@@ -124,7 +124,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\ChiefTools\SDK\Entities\Team> */
     public function teams(): BelongsToMany
     {
         $relation = $this->belongsToMany(Chief::teamModel())->withTimestamps();

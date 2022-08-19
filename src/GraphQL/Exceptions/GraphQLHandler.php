@@ -37,7 +37,7 @@ class GraphQLHandler implements ErrorHandler
                     $error->getPositions(),
                     $error->getPath(),
                     $error->getPrevious(),
-                    array_merge($error->getExtensions(), compact('eventId'))
+                    array_merge($error->getExtensions(), compact('eventId')),
                 );
             }
         }

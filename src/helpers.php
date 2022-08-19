@@ -265,7 +265,7 @@ function user_agent(): string
         '%s/%s (+%s)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
-        config('chief.app_home') ?? url('/')
+        config('chief.app_home') ?? url('/'),
     );
 }
 

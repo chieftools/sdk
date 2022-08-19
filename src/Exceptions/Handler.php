@@ -25,7 +25,7 @@ class Handler extends ExceptionHandler
                 ->map(fn ($path) => "{$path}/errors")
                 ->push(__DIR__ . '/../../views/chief/errors')
                 ->push(base_path('vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views'))
-                ->all()
+                ->all(),
         );
     }
 }

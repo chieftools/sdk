@@ -20,7 +20,7 @@ class PaginateCustomDirective extends PaginateDirective
                     }, static function ($pageName = 'page') use ($args) {
                         return $args[$pageName] ?? 1;
                     });
-                }
+                },
             );
         }
 

@@ -15,7 +15,7 @@ class TeamUpdated extends BaseHandler
         }
 
         $team->updateFromRemote(
-            ChiefTeam::fromArray(array_get($payload, 'data'))
+            ChiefTeam::fromArray(array_get($payload, 'data')),
         );
 
         return null;

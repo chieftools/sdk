@@ -8,7 +8,7 @@ class CreateOauthPersonalAccessClientEntity extends Migration
     public function up(): void
     {
         app(ClientRepository::class)->createPersonalAccessClient(
-            null, config('app.title'), config('app.url')
+            null, config('app.title'), config('app.url'),
         );
     }
 }

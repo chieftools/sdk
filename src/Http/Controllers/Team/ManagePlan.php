@@ -13,6 +13,6 @@ class ManagePlan
 
         abort_if($app === null, 404);
 
-        return redirect()->away(chief_base_url("team/{$team->slug}/billing/{$app}/plan"));
+        return redirect()->away(chief_base_url("team/{$team->slug}/billing/{$app}"));
     }
 }

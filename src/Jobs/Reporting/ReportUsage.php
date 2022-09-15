@@ -11,7 +11,7 @@ class ReportUsage extends Job implements ShouldQueue
     public function __construct(
         private readonly string $teamSlug,
         private readonly string $usageId,
-        private readonly int $usage
+        private readonly int $usage,
     ) {
     }
 

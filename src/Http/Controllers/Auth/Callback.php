@@ -14,7 +14,7 @@ class Callback
         $remote = Socialite::driver('chief')->stateless()->user();
 
         Auth::guard()->login(
-            config('chief.auth.model')::createOrUpdateFromRemote($remote)
+            config('chief.auth.model')::createOrUpdateFromRemote($remote),
         );
 
         return redirect()->intended(config('chief.auth.redirect'));

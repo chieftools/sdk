@@ -152,7 +152,7 @@ class ServiceProvider extends IlluminateServiceProvider
                 $guard = new RequestGuard(
                     new RemotePersonalAccessTokenGuard($name, new Client, $app->make('cache')),
                     request(),
-                    $auth->createUserProvider($config['provider'] ?? null)
+                    $auth->createUserProvider($config['provider'] ?? null),
                 );
 
                 $app->refresh('request', $guard, 'setRequest');
@@ -266,7 +266,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $socialite->extend(
             'chief',
-            static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief'))
+            static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief')),
         );
     }
 
@@ -277,7 +277,7 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         $this->app->booting(
-            fn () => $this->app->register(SubscriptionServiceProvider::class)
+            fn () => $this->app->register(SubscriptionServiceProvider::class),
         );
     }
 

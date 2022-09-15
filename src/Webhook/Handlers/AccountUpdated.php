@@ -15,7 +15,7 @@ class AccountUpdated extends BaseHandler
         }
 
         $user->updateFromRemote(
-            new ChiefUser(array_get($payload, 'data'))
+            new ChiefUser(array_get($payload, 'data')),
         );
 
         return null;

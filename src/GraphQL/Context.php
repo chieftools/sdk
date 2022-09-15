@@ -13,7 +13,7 @@ class Context implements GraphQLContext
     private readonly ?Team $team;
 
     public function __construct(
-        private readonly Request $request
+        private readonly Request $request,
     ) {
         $this->user = $request->user();
         $this->team = $this->user?->team;

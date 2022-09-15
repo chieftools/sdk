@@ -39,7 +39,7 @@ abstract class Mutation extends QueryResolver
             $this->before();
 
             return $this->successResponse(
-                $this->mutate()
+                $this->mutate(),
             );
         } catch (Exception $exception) {
             return $this->resolveErrors($exception);

@@ -20,7 +20,7 @@ class DelegateDirective extends BaseDirective implements FieldMiddleware
         $fieldValue->setResolver(
             static function ($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo) use ($resolver, $field) {
                 return $resolver($root->{$field}, $args, $context, $resolveInfo);
-            }
+            },
         );
 
         return $next($fieldValue);

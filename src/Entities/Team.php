@@ -177,6 +177,14 @@ class Team extends Entity
             throw new RuntimeException('Team cannot be resolved from route for guests.');
         }
 
-        return $user->teams()->where($field ?? 'slug', '=', $value)->firstOrFail();
+        if ($value === 'default') {
+            return $user->defaultOrFirstTeam();
+        }
+
+        if ($value === 'current') {
+            return auth()->user()->getTeamFromSession();
+        }
+
+        return $user->teams()->where($field ?? 'slug', '=', $value)->first();
     }
 }

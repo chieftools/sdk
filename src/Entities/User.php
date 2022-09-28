@@ -204,6 +204,16 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return $this->defaultTeam ?? $this->teams->first();
     }
+    public function getTeamFromSession(): ?Team
+    {
+        $sessionHint = session('chief_team_hint');
+
+        if ($sessionHint === null) {
+            return null;
+        }
+
+        return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $sessionHint)->first();
+    }
 
     // Preference helpers
     public function getPreference($preference, $default = null)

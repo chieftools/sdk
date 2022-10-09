@@ -4,7 +4,6 @@
     'size' => 'regular',
     'rows' => 4,
     'mono' => false,
-    'class' => 'mb-3 last:mb-0',
     'label' => false,
     'value' => null,
     'style' => null,
@@ -49,7 +48,7 @@
     ][$size];
 @endphp
 
-<div class="{{ $class }}">
+<div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }}>
     @if($label && $type !== 'checkbox')
         <label for="{{ $name }}" class="block text-sm font-medium {{ $labelClass }}">{{ $label }}{{ $required ? '*' : '' }}</label>
     @endif

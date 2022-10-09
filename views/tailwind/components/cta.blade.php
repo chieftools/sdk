@@ -2,7 +2,7 @@
     'svg',
 ])
 
-<x-tw::panel class="text-center shadow rounded prose prose-brand max-w-none">
+<x-tw::panel {{ $attributes->merge(['class' => 'text-center shadow rounded prose prose-brand max-w-none']) }}>
     <div class="text-center mb-3">
         <figure class="hero-svg inline-block">
             {!! $svg !!}

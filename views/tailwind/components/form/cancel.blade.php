@@ -1,7 +1,3 @@
-@props([
-    'href' => null,
-])
-
-<x-tw::button type="white" :href="$href ?? url()->previous()">
+<x-tw::button type="white" {{ $attributes->merge(['href' => url()->previous()]) }}>
     {{ $slot === null || $slot->isEmpty() ? 'Cancel' : $slot }}
 </x-tw::button>

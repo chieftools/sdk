@@ -1,7 +1,7 @@
 @props([
     'breadcrumbs' => [],
 ])
-<header class="py-4">
+<header {{ $attributes->merge(['class' => 'py-4']) }}>
     <div class="mx-auto sm:flex sm:items-center sm:justify-between">
         <div class="flex-1 min-w-0">
             @unless(empty($breadcrumbs))

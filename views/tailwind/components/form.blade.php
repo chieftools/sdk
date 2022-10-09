@@ -1,10 +1,8 @@
 @props([
-    'class' => '',
-    'action' => '',
     'method' => 'post',
 ])
 
-<form action="{{ $action }}" method="{{ strtolower($method) === 'get' ? 'get' : 'post' }}" class="{{ $class }}">
+<form method="{{ strtolower($method) === 'get' ? 'get' : 'post' }}" {{ $attributes }}>
     {{ $slot }}
     @unless(strtolower($method) === 'get')
         @method($method)

@@ -11,13 +11,14 @@
     $classes = 'inline-flex font-medium shadow-sm ';
 
     $classes .= match($size) {
-        'xs' => 'px-2.5 py-1.5 text-xs rounded ',
-        'lg' => 'px-4 py-2 text-base rounded-md ',
-        'xl' => 'px-6 py-3 text-base rounded-md ',
-        default => 'px-3 py-2 text-sm rounded-md leading-4 ',
+        'xxs' => 'px-1.5 py-1 rounded ',
+        'xs' => 'px-2.5 py-1.5 rounded ',
+        'lg' => 'px-4 py-2 rounded-md ',
+        'xl' => 'px-6 py-3 rounded-md ',
+        default => 'px-3 py-2 rounded-md leading-4 ',
     };
     $classes .= $textClass = match($size) {
-        'xs' => 'text-xs ',
+        'xxs', 'xs' => 'text-xs ',
         'lg', 'xl' => 'text-base ',
         default => 'text-sm ',
     };

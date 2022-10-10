@@ -48,104 +48,115 @@
     ][$size];
 @endphp
 
-<div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }}>
-    @if($label && $type !== 'checkbox')
-        <label for="{{ $name }}" class="block text-sm font-medium {{ $labelClass }}">{{ $label }}{{ $required ? '*' : '' }}</label>
-    @endif
-    <div class="mt-1 flex">
-        <div class="relative flex items-stretch flex-grow focus-within:z-10">
-            @if($type === 'checkbox')
-                <div class="flex items-start">
-                    <div class="h-5 flex items-center">
-                        @unless($withoutUnchecked)
-                            <input type="checkbox"
+@if($type === 'hidden')
+    <input id="{{ $name }}"
+           name="{{ $name }}"
+           type="{{ $type }}"
+           value="{{ old($name, $value) }}"
+           {{ $disabled ? 'disabled' : '' }}
+           {{ $required ? 'required' : '' }}
+           {{ $readonly ? 'readonly' : '' }}
+    >
+@else
+    <div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }}>
+        @if($label && $type !== 'checkbox')
+            <label for="{{ $name }}" class="block text-sm font-medium {{ $labelClass }}">{{ $label }}{{ $required ? '*' : '' }}</label>
+        @endif
+        <div class="mt-1 flex">
+            <div class="relative flex items-stretch flex-grow focus-within:z-10">
+                @if($type === 'checkbox')
+                    <div class="flex items-start">
+                        <div class="h-5 flex items-center">
+                            @unless($withoutUnchecked)
+                                <input type="checkbox"
+                                       name="{{ $name }}"
+                                       value="0"
+                                       class="hidden"
+                                       checked>
+                            @endunless
+                            <input id="{{ $name }}"
+                                   type="checkbox"
                                    name="{{ $name }}"
-                                   value="0"
-                                   class="hidden"
-                                   checked>
-                        @endunless
-                        <input id="{{ $name }}"
-                               type="checkbox"
-                               name="{{ $name }}"
-                               value="{{ $value ?? '1' }}"
-                               class="h-4 w-4 text-brand-600 border-gray-300 focus:ring-brand-500 rounded {{ $inputClass }}"
-                               {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
-                               {{ $checked ? 'checked' : '' }}
-                               {{ $disabled ? 'disabled' : '' }}
-                               {{ $required ? 'required' : '' }}
-                               {{ $readonly ? 'readonly' : '' }}
-                               {{ $autofocus ? 'autofocus' : '' }}
-                               {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
-                        >
+                                   value="{{ $value ?? '1' }}"
+                                   class="h-4 w-4 text-brand-600 border-gray-300 focus:ring-brand-500 rounded {{ $inputClass }}"
+                                   {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
+                                   {{ $checked ? 'checked' : '' }}
+                                   {{ $disabled ? 'disabled' : '' }}
+                                   {{ $required ? 'required' : '' }}
+                                   {{ $readonly ? 'readonly' : '' }}
+                                   {{ $autofocus ? 'autofocus' : '' }}
+                                   {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                            >
+                        </div>
+                        <div class="ml-3 text-sm">
+                            <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
+                        </div>
                     </div>
-                    <div class="ml-3 text-sm">
-                        <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
-                    </div>
-                </div>
-            @elseif($type === 'textarea')
-                <textarea id="{{ $name }}"
-                          name="{{ $name }}"
-                          rows="{{ $rows }}"
-                          class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
-                          {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
-                          {{ $disabled ? 'disabled' : '' }}
-                          {{ $required ? 'required' : '' }}
-                          {{ $readonly ? 'readonly' : '' }}
-                          {{ $autofocus ? 'autofocus' : '' }}
-                          {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
-                          {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
-                >{{ old($name, $value) }}</textarea>
-            @elseif($type === 'select')
-                <select id="{{ $name }}"
-                        name="{{ $name }}"
-                        class="mt-1 block w-full bg-white border border-gray-300 shadow-sm py-2 px-3 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
-                        {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
-                        {{ $disabled ? 'disabled' : '' }}
-                        {{ $required ? 'required' : '' }}
-                        {{ $readonly ? 'readonly' : '' }}
-                        {{ $autofocus ? 'autofocus' : '' }}
-                        {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
-                        {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
-                >
-                    @foreach($options as $optionValue => $option)
-                        <option value="{{ $optionValue }}"{{ $optionValue === old($name, $value) ? ' selected' : '' }}>{{ $option }}</option>
-                    @endforeach
-                </select>
-            @else
-                <input id="{{ $name }}"
-                       name="{{ $name }}"
-                       type="{{ $type }}"
-                       value="{{ old($name, $value) }}"
-                       class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
-                       {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
-                       {{ $disabled ? 'disabled' : '' }}
-                       {{ $required ? 'required' : '' }}
-                       {{ $readonly ? 'readonly' : '' }}
-                       {{ $autofocus ? 'autofocus' : '' }}
-                       {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
-                       {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
-                >
-            @endif
+                @elseif($type === 'textarea')
+                    <textarea id="{{ $name }}"
+                              name="{{ $name }}"
+                              rows="{{ $rows }}"
+                              class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                              {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
+                              {{ $disabled ? 'disabled' : '' }}
+                              {{ $required ? 'required' : '' }}
+                              {{ $readonly ? 'readonly' : '' }}
+                              {{ $autofocus ? 'autofocus' : '' }}
+                              {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                              {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                    >{{ old($name, $value) }}</textarea>
+                @elseif($type === 'select')
+                    <select id="{{ $name }}"
+                            name="{{ $name }}"
+                            class="mt-1 block w-full bg-white border border-gray-300 shadow-sm py-2 px-3 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                            {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
+                            {{ $disabled ? 'disabled' : '' }}
+                            {{ $required ? 'required' : '' }}
+                            {{ $readonly ? 'readonly' : '' }}
+                            {{ $autofocus ? 'autofocus' : '' }}
+                            {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                            {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                    >
+                        @foreach($options as $optionValue => $option)
+                            <option value="{{ $optionValue }}"{{ $optionValue === old($name, $value) ? ' selected' : '' }}>{{ $option }}</option>
+                        @endforeach
+                    </select>
+                @else
+                    <input id="{{ $name }}"
+                           name="{{ $name }}"
+                           type="{{ $type }}"
+                           value="{{ old($name, $value) }}"
+                           class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                           {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
+                           {{ $disabled ? 'disabled' : '' }}
+                           {{ $required ? 'required' : '' }}
+                           {{ $readonly ? 'readonly' : '' }}
+                           {{ $autofocus ? 'autofocus' : '' }}
+                           {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
+                           {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                    >
+                @endif
 
-            @if($hasError)
-                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <i class="fa fa-fw fa-exclamation-circle text-red-500"></i>
-                </div>
+                @if($hasError)
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <i class="fa fa-fw fa-exclamation-circle text-red-500"></i>
+                    </div>
+                @endif
+            </div>
+
+            @if($copyable)
+                <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+                    <i class="fal fa-fw fa-copy"></i>
+                </button>
             @endif
         </div>
 
-        @if($copyable)
-            <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
-                <i class="fal fa-fw fa-copy"></i>
-            </button>
+        @if(isset($slot) && $slot instanceof Illuminate\Support\HtmlString && $slot->isNotEmpty())
+            <p class="ml-1 mt-1 text-sm text-gray-500">{{ $slot }}</p>
+        @endif
+
+        @if($hasError)
+            <p class="mt-2 text-sm text-red-600">{{ $errorMessage }}</p>
         @endif
     </div>
-
-    @if(isset($slot) && $slot instanceof Illuminate\Support\HtmlString && $slot->isNotEmpty())
-        <p class="ml-1 mt-1 text-sm text-gray-500">{{ $slot }}</p>
-    @endif
-
-    @if($hasError)
-        <p class="mt-2 text-sm text-red-600">{{ $errorMessage }}</p>
-    @endif
-</div>
+@endif

@@ -12,10 +12,9 @@
 
     $classes .= match($size) {
         'xs' => 'px-2.5 py-1.5 text-xs rounded ',
-        'sm' => 'px-3 py-2 text-sm rounded-md leading-4 ',
         'lg' => 'px-4 py-2 text-base rounded-md ',
         'xl' => 'px-6 py-3 text-base rounded-md ',
-        default => 'px-4 py-2 text-sm rounded-md ',
+        default => 'px-3 py-2 text-sm rounded-md leading-4 ',
     };
     $classes .= $textClass = match($size) {
         'xs' => 'text-xs ',
@@ -39,6 +38,6 @@
 
 <a {{ $attributes->merge(['class' => $classes, 'href' => $href]) }}>
     @if($icon)
-        <i class="{{ $iconType }} fa-fw {{ $icon }} mr-1"></i>
+        <i class="{{ $iconType }} fa-fw {{ $icon }} mr-1.5"></i>
     @endif {{ $slot }}
 </a>

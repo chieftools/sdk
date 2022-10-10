@@ -11,14 +11,14 @@
     $classes = 'inline-flex font-medium shadow-sm ';
 
     $classes .= match($size) {
-        'xs' => 'px-2.5 py-1.5 text-xs rounded ',
-        'sm' => 'px-3 py-2 text-sm rounded-md leading-4 ',
-        'lg' => 'px-4 py-2 text-base rounded-md ',
-        'xl' => 'px-6 py-3 text-base rounded-md ',
-        default => 'px-4 py-2 text-sm rounded-md ',
+        'xxs' => 'px-1.5 py-1 rounded ',
+        'xs' => 'px-2.5 py-1.5 rounded ',
+        'lg' => 'px-4 py-2 rounded-md ',
+        'xl' => 'px-6 py-3 rounded-md ',
+        default => 'px-3 py-2 rounded-md leading-4 ',
     };
     $classes .= $textClass = match($size) {
-        'xs' => 'text-xs ',
+        'xxs', 'xs' => 'text-xs ',
         'lg', 'xl' => 'text-base ',
         default => 'text-sm ',
     };
@@ -39,6 +39,6 @@
 
 <a {{ $attributes->merge(['class' => $classes, 'href' => $href]) }}>
     @if($icon)
-        <i class="{{ $iconType }} fa-fw {{ $icon }} mr-1"></i>
+        <i class="{{ $iconType }} fa-fw {{ $icon }} mr-1.5"></i>
     @endif {{ $slot }}
 </a>

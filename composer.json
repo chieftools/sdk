@@ -10,7 +10,7 @@
         "laracasts/utilities": "^3.2",
         "laravel/framework": "^9.34",
         "laravel/helpers": "^1.5",
-        "laravel/passport": "^10.4",
+        "laravel/passport": "^10.4 || ^11.0",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^5.4",
         "nuwave/lighthouse": "^5.61",

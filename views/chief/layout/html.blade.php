@@ -26,6 +26,10 @@
             <link media="all" type="text/css" rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
         @show
 
+        @if(app()->bound(Sentry\State\HubInterface::class))
+            {!! Sentry\Laravel\Integration::sentryMeta() !!}
+        @endif
+
         @stack('head.style')
         @stack('head.script')
         @include('chief::layout.partial.jsvars')

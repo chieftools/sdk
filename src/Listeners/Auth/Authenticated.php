@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Listeners\Auth;
 
 use Sentry\State\Scope;
+use Sentry\State\HubInterface;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Auth\Events\Authenticated as AuthenticatedEvent;
 
@@ -20,14 +21,11 @@ class Authenticated
 
     private function setupSentryContext(User $user): void
     {
-        if (!app()->bound('sentry')) {
+        if (!app()->bound(HubInterface::class)) {
             return;
         }
 
-        /** @var \Sentry\State\Hub $sentry */
-        $sentry = app('sentry');
-
-        $sentry->configureScope(static function (Scope $scope) use ($user) {
+        app(HubInterface::class)->configureScope(static function (Scope $scope) use ($user) {
             $scope->setUser([
                 'id'       => $user->id,
                 'name'     => $user->name,

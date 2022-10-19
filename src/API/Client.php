@@ -5,6 +5,7 @@ namespace ChiefTools\SDK\API;
 use Exception;
 use RuntimeException;
 use GuzzleHttp\HandlerStack;
+use Sentry\State\HubInterface;
 use ChiefTools\SDK\Entities\Team;
 use Illuminate\Support\Collection;
 use GuzzleHttp\Client as HttpClient;
@@ -34,7 +35,7 @@ class Client extends HttpClient
     {
         $stack = HandlerStack::create();
 
-        if (app()->bound('sentry')) {
+        if (app()->bound(HubInterface::class)) {
             $stack->push(GuzzleTracingMiddleware::trace());
         }
 

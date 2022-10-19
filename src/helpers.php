@@ -284,7 +284,7 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
 {
     $stack = GuzzleHttp\HandlerStack::create();
 
-    if (app()->bound('sentry')) {
+    if (app()->bound(Sentry\State\HubInterface::class)) {
         $stack->push(Sentry\Tracing\GuzzleTracingMiddleware::trace());
     }
 
@@ -426,9 +426,8 @@ function enum_value(?UnitEnum $enum): string|int|null
  */
 function capture_exception_to_sentry(Throwable $throwable, ?callable $contextCallback = null): ?string
 {
-    if (app()->bound('sentry')) {
-        /** @var \Sentry\State\Hub $sentry */
-        $sentry = app('sentry');
+    if (app()->bound(Sentry\State\HubInterface::class)) {
+        $sentry = app(Sentry\State\HubInterface::class);
 
         $eventId = null;
 

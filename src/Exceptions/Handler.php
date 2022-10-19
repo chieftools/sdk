@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Exceptions;
 
 use Throwable;
+use Sentry\State\HubInterface;
 use Illuminate\Support\Facades\View;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -10,8 +11,8 @@ class Handler extends ExceptionHandler
 {
     public function report(Throwable $e): void
     {
-        if ($this->shouldReport($e) && app()->bound('sentry')) {
-            app('sentry')->captureException($e);
+        if ($this->shouldReport($e) && app()->bound(HubInterface::class)) {
+            app(HubInterface::class)->captureException($e);
         }
 
         parent::report($e);

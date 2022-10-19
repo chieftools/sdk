@@ -6,6 +6,7 @@ use Closure;
 use Sentry\State\Scope;
 use GraphQL\Error\Error;
 use GraphQL\Error\DebugFlag;
+use Sentry\State\HubInterface;
 use GraphQL\Error\FormattedError;
 use Nuwave\Lighthouse\Execution\ErrorHandler;
 
@@ -19,17 +20,17 @@ class GraphQLHandler implements ErrorHandler
             return $next($error);
         }
 
-        if (app()->bound('sentry')) {
+        if (app()->bound(HubInterface::class)) {
             $eventId = null;
 
-            app('sentry')->withScope(function (Scope $scope) use ($error, &$eventId) {
+            app(HubInterface::class)->withScope(function (Scope $scope) use ($error, &$eventId) {
                 $scope->setExtra('details', FormattedError::createFromException($error, DebugFlag::INCLUDE_DEBUG_MESSAGE));
                 $scope->setExtra('clientSafe', $error->isClientSafe());
 
-                $eventId = app('sentry')->captureException($error);
+                $eventId = app(HubInterface::class)->captureException($error);
             });
 
-            if (!empty($eventId)) {
+            if ($eventId !== null) {
                 $error = new Error(
                     $error->getMessage(),
                     $error->getNodes(),

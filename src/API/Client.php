@@ -8,6 +8,7 @@ use GuzzleHttp\HandlerStack;
 use Sentry\State\HubInterface;
 use ChiefTools\SDK\Entities\Team;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use GuzzleHttp\Client as HttpClient;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
@@ -72,6 +73,28 @@ class Client extends HttpClient
         }
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Get the pricing HTML for an app by it's ID.
+     *
+     * @param string $id
+     *
+     * @return \Illuminate\Support\HtmlString
+     */
+    public function appPricing(string $id): HtmlString
+    {
+        if (empty($id)) {
+            throw new RuntimeException('The app ID cannot be empty!');
+        }
+
+        $response = $this->get("/api/app/{$id}/pricing");
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not retrieve app pricing from API.');
+        }
+
+        return new HtmlString($response->getBody()->getContents());
     }
 
     /**

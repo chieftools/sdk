@@ -1,10 +1,10 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-                           ->in(__DIR__ . '/config')
-                           ->in(__DIR__ . '/database')
-                           ->in(__DIR__ . '/routes')
                            ->in(__DIR__ . '/src')
+                           ->in(__DIR__ . '/config')
+                           ->in(__DIR__ . '/routes')
+                           ->in(__DIR__ . '/database')
                            ->name('*.php')
                            ->ignoreDotFiles(true)
                            ->ignoreVCS(true);
@@ -48,6 +48,11 @@ $config
         ],
         'align_multiline_comment'     => [
             'comment_type' => 'phpdocs_like',
+        ],
+        'global_namespace_import'     => [
+            'import_classes'   => null,
+            'import_constants' => null,
+            'import_functions' => true,
         ],
         'trailing_comma_in_multiline' => [
             'elements' => ['arrays', 'arguments', 'parameters', 'match'],

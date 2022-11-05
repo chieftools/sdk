@@ -118,6 +118,7 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->commands([
             Commands\SyncTeams::class,
             Commands\SyncUsers::class,
+            Commands\DownloadPricing::class,
             Commands\QueueHealthCheck::class,
         ]);
 

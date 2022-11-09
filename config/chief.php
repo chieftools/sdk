@@ -6,8 +6,6 @@ return [
 
     'secret' => env('CHIEF_SECRET'),
 
-    'icon' => 'fa-bug',
-
     'auth' => [
 
         'model' => ChiefTools\SDK\Entities\User::class,
@@ -15,6 +13,14 @@ return [
         'redirect' => '/dashboard',
 
         'passport' => env('CHIEF_PASSPORT_ENABLED', true),
+
+    ],
+
+    'brand' => [
+
+        'icon' => 'fa-bug',
+
+        'color' => '#34495e',
 
     ],
 

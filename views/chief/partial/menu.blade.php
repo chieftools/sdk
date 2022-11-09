@@ -15,7 +15,7 @@
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
-                    <i class="fad fa-fw {{ config('chief.icon') }} text-brand text-3xl sm:text-2xl"></i><span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
+                    <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i><span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
                 </a>
 
                 @unless(empty($menuItems))

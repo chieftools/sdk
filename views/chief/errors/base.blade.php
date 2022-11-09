@@ -4,7 +4,7 @@
     <div class="min-h-full pt-16 pb-12 flex flex-col bg-white">
         <main class="flex grow flex-col justify-center max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center text-brand">
-                <i class="fad fa-fw {{ config('chief.icon') }} fa-4x" data-toggle="toolip" title="{{ config('app.title') }}"></i>
+                <i class="fad fa-fw {{ config('chief.brand.icon') }} fa-4x" data-toggle="toolip" title="{{ config('app.title') }}"></i>
             </div>
             <div class="py-16">
                 <div class="text-center">

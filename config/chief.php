@@ -6,8 +6,6 @@ return [
 
     'secret' => env('CHIEF_SECRET'),
 
-    'icon' => 'fa-bug',
-
     'auth' => [
 
         'model' => ChiefTools\SDK\Entities\User::class,
@@ -19,6 +17,8 @@ return [
     ],
 
     'brand' => [
+
+        'icon' => 'fa-bug',
 
         'color' => '#34495e',
 

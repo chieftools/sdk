@@ -328,7 +328,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
                 'isVerified' => $emailVerified,
             ],
             'fullName'   => $this->name,
-            'externalId' => $this->id,
+            'externalId' => $this->chief_id ?? $this->id,
         ], $key, 'RS256');
     }
 }

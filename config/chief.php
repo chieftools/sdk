@@ -18,6 +18,12 @@ return [
 
     ],
 
+    'brand' => [
+
+        'color' => '#34495e',
+
+    ],
+
     'teams' => true,
 
     'queue' => [

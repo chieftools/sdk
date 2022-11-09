@@ -45,6 +45,6 @@
 
         @stack('body.script')
 
-        @include('chief::partial.analytics')
+        @include('chief::partial.external')
     </body>
 </html>

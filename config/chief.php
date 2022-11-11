@@ -38,6 +38,12 @@ return [
 
     ],
 
+    'assets' => [
+
+        'provider' => 'mix',
+
+    ],
+
     'routes' => [
 
         'api' => [

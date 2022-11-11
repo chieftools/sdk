@@ -1,5 +1,8 @@
 * text=auto
 
-# git files
-.gitattributes export-ignore
+# Prevent these files ending up in the release zip/tarballs
+.github export-ignore
 .gitignore export-ignore
+.editorconfig export-ignore
+.gitattributes export-ignore
+.php-cs-fixer.php export-ignore

@@ -24,7 +24,11 @@
         <link rel="alternate icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.ico') }}" sizes="32x32">
 
         @section('styles')
-            <link media="all" type="text/css" rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
+            @if(config('chief.assets.provider') === 'mix')
+                <link media="all" type="text/css" rel="stylesheet" href="{{ asset(mix('css/app.css')) }}">
+            @else
+                @vite('resources/css/app.less')
+            @endif
         @show
 
         {!! Sentry\Laravel\Integration::sentryMeta() !!}
@@ -39,7 +43,11 @@
         </div>
 
         @section('scripts')
-            <script src="{{ asset(mix('js/app.js')) }}"></script>
+            @if(config('chief.assets.provider') === 'mix')
+                <script src="{{ asset(mix('js/app.js')) }}"></script>
+            @else
+                @vite('resources/js/app.js')
+            @endif
         @show
 
         @stack('body.script')

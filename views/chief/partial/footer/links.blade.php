@@ -11,19 +11,21 @@
         </a>
     </div>
 
-    @guest
-        <div class="px-5 py-2">
-            <a href="{{ route('auth.login') }}" class="text-base text-gray-500 hover:text-gray-900">
-                Sign in
-            </a>
-        </div>
+    @if(config('chief.auth'))
+        @guest
+            <div class="px-5 py-2">
+                <a href="{{ route('auth.login') }}" class="text-base text-gray-500 hover:text-gray-900">
+                    Sign in
+                </a>
+            </div>
 
-        <div class="px-5 py-2">
-            <a href="{{ route('auth.register') }}" class="text-base text-gray-500 hover:text-gray-900">
-                Sign up
-            </a>
-        </div>
-    @endguest
+            <div class="px-5 py-2">
+                <a href="{{ route('auth.register') }}" class="text-base text-gray-500 hover:text-gray-900">
+                    Sign up
+                </a>
+            </div>
+        @endguest
+    @endif
 
     <div class="px-5 py-2">
         <a href="{{ route('chief.privacy') }}" class="text-base text-gray-500 hover:text-gray-900">

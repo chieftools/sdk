@@ -138,6 +138,10 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
+        if (!config('chief.auth')) {
+            return;
+        }
+
         config([
             'auth.guards.ctp' => array_merge([
                 'driver'   => 'chief_remote_pat',
@@ -148,6 +152,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureAuth(): void
     {
+        if (!config('chief.auth')) {
+            return;
+        }
+
         Auth::resolved(function (AuthManager $auth) {
             $auth->extend('chief_remote_pat', function (Application $app, string $name, array $config) use ($auth) {
                 $guard = new RequestGuard(
@@ -210,6 +218,10 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Passport::ignoreMigrations();
 
+        if (!config('chief.auth')) {
+            return;
+        }
+
         Passport::useTokenModel(Entities\Passport\Token::class);
 
         if (!config('chief.auth.passport')) {
@@ -261,6 +273,14 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureSocialiteIntegration(): void
     {
+        if (!config('chief.auth')) {
+            return;
+        }
+
+        if (!$this->app->bound(Socialite::class)) {
+            return;
+        }
+
         /** @var \Laravel\Socialite\SocialiteManager $socialite */
         /** @noinspection PhpUnhandledExceptionInspection */
         $socialite = $this->app->make(Socialite::class);

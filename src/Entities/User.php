@@ -217,8 +217,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     // Preference helpers
     public function getPreference($preference, $default = null)
     {
-        if (($template = config("chief.preferences.{$preference}", false)) === false) {
-            throw new RuntimeException("Preference '{$preference}' does not exist.");
+        $template = config("chief.preferences.{$preference}", false);
+
+        if ($template === false && $default === null) {
+            throw new RuntimeException("Preference '{$preference}' does not exist and no default was given.");
         }
 
         return array_get($this->preferences, $preference, $default ?? $template[3]);

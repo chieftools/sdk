@@ -38,7 +38,7 @@
         @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
-        <div id="app" class="{{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen bg-gray-100' }} border-t-4 border-brand">
+        <div id="app" class="{{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen bg-gray-100' }} border-t-4 border-brand pb-16">
             @yield('body')
         </div>
 

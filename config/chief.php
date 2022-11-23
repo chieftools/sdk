@@ -158,12 +158,24 @@ return [
 //            'category', // (string) reference to a preference category
 //        ],
 
+//        'enable_support_widget' => [
+//            'Enable the support widget',
+//            'When enabled a support widget is shown in the bottom right corner of the screen where you can contact us anytime.',
+//            'comment',
+//            true,
+//            'ui',
+//        ],
+
     ],
 
     'preference_categories' => [
 
 //        'category' => [
 //            'name' => 'Category name', // (string) the name of the category
+//        ],
+
+//        'ui' => [
+//            'name' => 'Interface',
 //        ],
 
     ],

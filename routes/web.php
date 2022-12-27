@@ -24,6 +24,7 @@ Route::group(config('chief.routes.web'), function () {
     Route::group([
         'as' => 'chief.',
     ], function () {
+        Route::get('abuse', Controllers\Pages\Abuse::class)->name('abuse');
         Route::get('terms', Controllers\Pages\Terms::class)->name('terms');
         Route::get('contact', Controllers\Pages\Contact::class)->name('contact');
         Route::get('privacy', Controllers\Pages\Privacy::class)->name('privacy');

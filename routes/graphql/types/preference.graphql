@@ -1,9 +1,9 @@
 "A user preference."
 type UserPreference {
-    "Preference key."
+    "The preference key."
     key: String!
 
-    "Preference name."
+    "The preference name."
     name: String!
 
     "The preference category."

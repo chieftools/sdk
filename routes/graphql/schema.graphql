@@ -5,7 +5,7 @@
 #import queries/*.graphql
 #import mutations/*.graphql
 
-"All queries"
+"The query root of the GraphQL interface."
 type Query {
     """
     Playing a game or just testing?
@@ -14,11 +14,14 @@ type Query {
     """
     ping: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Ping")
 
-    "Get the app version."
-    version: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Version")
+    "Retrieve information we detected about the client."
+    client: ClientInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ClientInfo")
+
+    "Retrieve information about the application."
+    application: ApplicationInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ApplicationInfo")
 }
 
-"All mutations"
+"The mutation root of the GraphQL interface."
 type Mutation {
     """
     Playing a game or just testing?

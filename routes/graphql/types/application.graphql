@@ -1,0 +1,32 @@
+"Information about the application."
+type ApplicationInfo {
+    "The application identifier."
+    id: String!
+
+    """
+    The application environment name.
+    You should _not_ depend on this value in your application to change behaviour.
+    """
+    environment: String!
+
+    "The application version."
+    version: String!
+
+    "The application version hash."
+    versionHash: String!
+
+    "The application version as a formatted string."
+    versionFormatted: String!
+
+    """
+    The locale that should be used to render UI and/or text.
+    This value might change depending on the authenticated user.
+    """
+    locale: String!
+
+    """
+    The timezone that should be used to render UI and/or text.
+    This value might change depending on the authenticated user.
+    """
+    timezone: String!
+}

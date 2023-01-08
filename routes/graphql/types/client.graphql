@@ -1,0 +1,8 @@
+"Information about the client."
+type ClientInfo {
+    "Name of the client."
+    name: String
+
+    "Version of the client."
+    version: String
+}

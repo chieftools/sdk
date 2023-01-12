@@ -120,6 +120,7 @@ class ServiceProvider extends IlluminateServiceProvider
             Commands\SyncUsers::class,
             Commands\DownloadPricing::class,
             Commands\QueueHealthCheck::class,
+            Commands\GraphQL\BroadcastPong::class,
         ]);
 
         if (!empty(config('chief.queue.monitor'))) {
@@ -128,6 +129,13 @@ class ServiceProvider extends IlluminateServiceProvider
                          ->everyMinute()
                          ->onOneServer()
                          ->runInBackground();
+
+                if (config('chief.graphql.subscriptions.enabled')) {
+                    $schedule->command(Commands\GraphQL\BroadcastPong::class)
+                             ->everyMinute()
+                             ->onOneServer()
+                             ->runInBackground();
+                }
             });
         }
     }

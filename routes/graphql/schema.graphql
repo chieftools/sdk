@@ -30,3 +30,15 @@ type Mutation {
     """
     ping: PingPayload! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\Ping")
 }
+
+"The subscription root of the GraphQL interface."
+type Subscription {
+    """
+    Playing a game or just testing?
+
+    This subscription broadcasts "pong" every minute.
+
+    You must be authenticated to subscribe to this subscription.
+    """
+    ping: String @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Subscriptions\\Ping")
+}

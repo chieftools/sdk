@@ -40,5 +40,5 @@ type Subscription {
 
     You must be authenticated to subscribe to this subscription.
     """
-    ping: String @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Subscriptions\\Ping")
+    ping: String @guard @subscription(class: "ChiefTools\\SDK\\GraphQL\\Subscriptions\\Ping")
 }

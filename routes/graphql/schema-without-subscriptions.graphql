@@ -1,0 +1,32 @@
+#import scalars.graphql
+#import interfaces.graphql
+
+#import types/*.graphql
+#import queries/*.graphql
+#import mutations/*.graphql
+
+"The query root of the GraphQL interface."
+type Query {
+    """
+    Playing a game or just testing?
+
+    This field always returns the string "pong".
+    """
+    ping: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Ping")
+
+    "Retrieve information we detected about the client."
+    client: ClientInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ClientInfo")
+
+    "Retrieve information about the application."
+    application: ApplicationInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ApplicationInfo")
+}
+
+"The mutation root of the GraphQL interface."
+type Mutation {
+    """
+    Playing a game or just testing?
+
+    This mutation always returns the string "pong" in it's response field.
+    """
+    ping: PingPayload! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\Ping")
+}

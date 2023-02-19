@@ -279,6 +279,17 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
+    private function registerGraphQLSubscriptions(): void
+    {
+        if (!config('chief.graphql.subscriptions.enabled')) {
+            return;
+        }
+
+        $this->app->booting(
+            fn () => $this->app->register(SubscriptionServiceProvider::class),
+        );
+    }
+
     private function configureSocialiteIntegration(): void
     {
         if (!config('chief.auth')) {
@@ -296,17 +307,6 @@ class ServiceProvider extends IlluminateServiceProvider
         $socialite->extend(
             'chief',
             static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief')),
-        );
-    }
-
-    private function registerGraphQLSubscriptions(): void
-    {
-        if (!config('chief.graphql.subscriptions.enabled')) {
-            return;
-        }
-
-        $this->app->booting(
-            fn () => $this->app->register(SubscriptionServiceProvider::class),
         );
     }
 

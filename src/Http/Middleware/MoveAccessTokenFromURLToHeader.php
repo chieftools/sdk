@@ -6,20 +6,26 @@ use Closure;
 use Illuminate\Http\Request;
 
 /**
- * This middleware moves a OAuth access token from the `access_token`
- * URL parameter to the `Authorization` header for authentication.
- * This shoud _not_ be used if it can be prevented. ¯\_(ツ)_/¯.
+ * This middleware moves a bearer access token from specified input key (defaults to `access_token`)
+ * to the `Authorization` header as a bearer token that can be consumed by regular auth guards.
+ *
+ * This shoud _not_ be used if it can be prevented, but that ain't always an option ¯\_(ツ)_/¯
  */
 class MoveAccessTokenFromURLToHeader
 {
-    public function handle(Request $request, Closure $next): mixed
+    public function handle(Request $request, Closure $next, string $key = 'access_token'): mixed
     {
-        if ($request->filled('access_token') && empty($request->header('Authorization'))) {
-            $request->headers->add([
-                'Authorization' => 'Bearer ' . $request->input('access_token'),
-            ]);
+        $token = $request->filled($key) ? $request->input($key) : null;
+
+        if ($token !== null && empty($request->header('Authorization'))) {
+            $request->headers->set('Authorization', "Bearer {$token}");
         }
 
         return $next($request);
+    }
+
+    public static function withKey(string $key): string
+    {
+        return self::class . ":{$key}";
     }
 }

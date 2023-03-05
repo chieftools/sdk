@@ -16,6 +16,13 @@ class Tokens
         return view('chief::api.tokens.index', compact('user'));
     }
 
+    public function create(Request $request): RedirectResponse
+    {
+        $queryParams = array_merge($request->query(), ['app' => config('chief.id')]);
+
+        return redirect()->away(chief_base_url('api/token/create') . '?' . http_build_query($queryParams));
+    }
+
     public function delete(Request $request, string $token): RedirectResponse
     {
         /** @var \ChiefTools\SDK\Entities\User $user */

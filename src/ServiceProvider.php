@@ -13,7 +13,6 @@ use Illuminate\Auth\RequestGuard;
 use ChiefTools\SDK\Http\Middleware;
 use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Passport\RouteRegistrar;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Auth\Events as AuthEvents;
@@ -30,6 +29,7 @@ use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
+use Laravel\Passport\RouteRegistrar as Passport10RouteRegistrar;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use ChiefTools\SDK\Broadcasting\Channels\LighthouseSubscriptionChannel;
@@ -224,6 +224,11 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
+        // If the Passport package is not installed we can skip this
+        if (!class_exists(Passport::class)) {
+            return;
+        }
+
         Passport::ignoreMigrations();
 
         if (!config('chief.auth')) {
@@ -236,10 +241,14 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        Passport::routes(static function (RouteRegistrar $routes) {
-            $routes->forAccessTokens();
-            $routes->forAuthorization();
-        }, config('chief.routes.passport', []));
+        // Passport v10 uses the RouteRegistrar class to register routes so we modify it when available, for 11+ we manually override the routes
+        if (class_exists(Passport10RouteRegistrar::class)) {
+            Passport::routes(static function (Passport10RouteRegistrar $routes) {
+                // Register no routes, they are not needed!
+            }, config('chief.routes.passport', []));
+        } else {
+            Passport::ignoreRoutes();
+        }
 
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));
@@ -264,7 +273,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->publishes([
             static::basePath('database/migrations') => database_path('migrations'),
-            ...config('chief.auth.passport')
+            ...(class_exists(Passport::class) && config('chief.auth.passport'))
                 ? [static::basePath('database/passport-migrations') => database_path('migrations')]
                 : [],
         ], 'chief-migrations');
@@ -272,7 +281,7 @@ class ServiceProvider extends IlluminateServiceProvider
         if (Chief::runsMigrations()) {
             $this->loadMigrationsFrom([
                 static::basePath('database/migrations'),
-                ...config('chief.auth.passport')
+                ...(class_exists(Passport::class) && config('chief.auth.passport'))
                     ? [static::basePath('database/passport-migrations')]
                     : [],
             ]);

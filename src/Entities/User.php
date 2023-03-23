@@ -139,10 +139,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return $this->belongsTo(Chief::teamModel(), 'default_team_id');
     }
+
+    // Passport relations
     public function personalAccessTokens(): HasMany
     {
-        if (!config('chief.auth.passport')) {
-            throw new RuntimeException('Passport is not active!');
+        if (!class_exists(Passport::class) || !config('chief.auth.passport')) {
+            throw new RuntimeException('Passport is not installed/active!');
         }
 
         /** @var \Illuminate\Database\Eloquent\Model $clientModel */

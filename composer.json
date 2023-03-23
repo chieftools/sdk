@@ -11,7 +11,6 @@
         "laracasts/utilities": "^3.2",
         "laravel/framework": "^9.34",
         "laravel/helpers": "^1.5",
-        "laravel/passport": "^10.4",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^5.4",
         "nuwave/lighthouse": "^5.61",
@@ -20,11 +19,16 @@
         "sentry/sentry-laravel": "^3.1",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
-        "stayallive/laravel-passport-memoized": "^1.0",
         "tuupola/base62": "^2.1"
+    },
+    "suggest": {
+        "laravel/passport": "Passport is required when legacy OAuth personal access tokens are still in use.",
+        "stayallive/laravel-passport-memoized": "Memoizes Passport token validation to improve performance when using Laravel Passport."
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "3.13.0"
+        "laravel/passport": "^10.4|^11.8",
+        "stayallive/laravel-passport-memoized": "^1.0"
     },
     "autoload": {
         "psr-4": {

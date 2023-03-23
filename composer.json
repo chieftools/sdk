@@ -9,7 +9,7 @@
         "firebase/php-jwt": "^6.3",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^9.34",
+        "laravel/framework": "^9.34|^10.4",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^5.4",

@@ -12,8 +12,8 @@
         "laravel/framework": "^9.34|^10.4",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
-        "mll-lab/graphql-php-scalars": "^5.4",
-        "nuwave/lighthouse": "^5.61",
+        "mll-lab/graphql-php-scalars": "^6.1",
+        "nuwave/lighthouse": "^6.1",
         "paragonie/certainty": "^2.8",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^3.1",
@@ -26,7 +26,7 @@
         "stayallive/laravel-passport-memoized": "Memoizes Passport token validation to improve performance when using Laravel Passport."
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "3.15.*",
+        "friendsofphp/php-cs-fixer": "^3.16",
         "laravel/passport": "^10.4|^11.8",
         "stayallive/laravel-passport-memoized": "^1.0"
     },
@@ -52,6 +52,9 @@
         "phpstan:ci": "vendor/bin/phpstan analyse --memory-limit=2G --error-format github"
     },
     "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
+        },
         "sort-packages": true,
         "preferred-install": "dist",
         "optimize-autoloader": true

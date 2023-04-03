@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(config('chief.routes.web-api'), function () {
     Route::match(['get', 'post'], 'graphql/web', Controllers\API\GraphQL::class)->middleware([
-        Nuwave\Lighthouse\Support\Http\Middleware\AcceptJson::class,
+        Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
         ChiefTools\SDK\GraphQL\Middleware\AuthenticateWeb::class,
     ])->name('api.web');
 

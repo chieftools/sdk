@@ -4,6 +4,8 @@ namespace ChiefTools\SDK\GraphQL\Directives;
 
 use RuntimeException;
 use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use Nuwave\Lighthouse\Schema\AST\DocumentAST;
 use GraphQL\Language\AST\EnumTypeDefinitionNode;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
@@ -11,11 +13,7 @@ use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
 
 class AutoDocumentDirective extends BaseDirective implements TypeManipulator
 {
-    /**
-     * @param \Nuwave\Lighthouse\Schema\AST\DocumentAST $documentAST
-     * @param \GraphQL\Language\AST\TypeDefinitionNode  $typeDefinition
-     */
-    public function manipulateTypeDefinition(&$documentAST, &$typeDefinition): void
+    public function manipulateTypeDefinition(DocumentAST &$documentAST, TypeDefinitionNode &$typeDefinition): void
     {
         $type   = $this->directiveArgValue('type');
         $value  = null;

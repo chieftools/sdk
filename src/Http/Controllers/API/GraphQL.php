@@ -12,10 +12,10 @@ use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Definition\InterfaceType;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
+use Nuwave\Lighthouse\Http\GraphQLController;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Support\Contracts\CreatesResponse;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
-use Nuwave\Lighthouse\Support\Http\Controllers\GraphQLController;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class GraphQL extends GraphQLController

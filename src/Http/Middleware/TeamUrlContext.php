@@ -4,7 +4,6 @@ namespace ChiefTools\SDK\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use ChiefTools\SDK\Entities\Team;
 
 class TeamUrlContext
 {

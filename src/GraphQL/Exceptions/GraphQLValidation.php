@@ -2,12 +2,13 @@
 
 namespace ChiefTools\SDK\GraphQL\Exceptions;
 
+use GraphQL\Error\ClientAware;
 use Illuminate\Validation\Validator;
+use GraphQL\Error\ProvidesExtensions;
 use GraphQL\Type\Definition\ResolveInfo;
-use Nuwave\Lighthouse\Exceptions\RendersErrorsExtensions;
 use Illuminate\Validation\ValidationException as IlluminateValidationException;
 
-class GraphQLValidation extends IlluminateValidationException implements RendersErrorsExtensions
+class GraphQLValidation extends IlluminateValidationException implements ClientAware, ProvidesExtensions
 {
     public function __construct(Validator $validator, ResolveInfo $info)
     {
@@ -21,13 +22,11 @@ class GraphQLValidation extends IlluminateValidationException implements Renders
         return true;
     }
 
-    public function getCategory(): string
+    public function getExtensions(): array
     {
-        return 'validation';
-    }
-
-    public function extensionsContent(): array
-    {
-        return ['validation' => $this->errors()];
+        return array_merge([
+            'category'   => 'validation',
+            'validation' => $this->errors(),
+        ]);
     }
 }

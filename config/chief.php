@@ -102,11 +102,14 @@ return [
 
         'securityheaders' => [
 
-            'Referrer-Policy'           => 'strict-origin-when-cross-origin',
-            'X-Frame-Options'           => 'SAMEORIGIN',
-            'Permissions-Policy'        => 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=(), interest-cohort=()',
-            'X-Content-Type-Options'    => 'nosniff',
-            'Strict-Transport-Security' => 'max-age=31536000; includeSubDomains; preload',
+            'Referrer-Policy'                     => env('CHIEF_SECURITYHEADER_REFERRER_POLICY', 'strict-origin-when-cross-origin'),
+            'X-Frame-Options'                     => env('CHIEF_SECURITYHEADER_X_FRAME_OPTIONS', 'SAMEORIGIN'),
+            'X-XSS-Protection'                    => env('CHIEF_SECURITYHEADER_X_XSS_PROTECTION', '1; mode=block'),
+            'Permissions-Policy'                  => env('CHIEF_SECURITYHEADER_PERMISSIONS_POLICY', 'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()'),
+            'X-Content-Type-Options'              => env('CHIEF_SECURITYHEADER_X_CONTENT_TYPE_OPTIONS', 'nosniff'),
+            'Content-Security-Policy'             => env('CHIEF_SECURITYHEADER_CONTENT_SECURITY_POLICY'),
+            'Strict-Transport-Security'           => env('CHIEF_SECURITYHEADER_STRICT_TRANSPORT_SECURITY', 'max-age=31536000; includeSubDomains; preload'),
+            'Content-Security-Policy-Report-Only' => env('CHIEF_SECURITYHEADER_CONTENT_SECURITY_POLICY_REPORT_ONLY'),
 
         ],
 

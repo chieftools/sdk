@@ -237,6 +237,11 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
         $subscription = lcfirst(class_basename($subscription));
     }
 
+    // Optimize the queued job by unsetting all relations so they are not automatically loaded
+    if ($root instanceof Illuminate\Database\Eloquent\Model) {
+        $root = $root->withoutRelations();
+    }
+
     logger()?->debug("Dispatching subscription:{$subscription}");
 
     Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);

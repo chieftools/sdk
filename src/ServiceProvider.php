@@ -15,6 +15,7 @@ use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Events as AuthEvents;
 use Illuminate\Mail\Events as MailEvents;
 use Illuminate\Support\Facades\Broadcast;
@@ -24,6 +25,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
+use Illuminate\Database\LazyLoadingViolationException;
 use ChiefTools\SDK\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
@@ -53,6 +55,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->configureMiddleware();
 
         $this->configureSocialiteIntegration();
+
+        $this->configureDeveloperProtections();
 
         if (is_running_on_vapor()) {
             $this->ensureMixAndAssetUrlsAreConfigured();
@@ -317,6 +321,21 @@ class ServiceProvider extends IlluminateServiceProvider
             'chief',
             static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief')),
         );
+    }
+
+    private function configureDeveloperProtections(): void
+    {
+        Model::preventLazyLoading();
+        Model::preventAccessingMissingAttributes();
+        Model::preventSilentlyDiscardingAttributes();
+
+        // In production we just report the lazy loading violation instead of crashing the application since it's a performance issue not a security issue
+        if (app()->isProduction()) {
+            Model::handleLazyLoadingViolationUsing(
+                static fn (Model $model, string $relation) => report(new LazyLoadingViolationException($model, $relation)),
+            );
+        }
+
     }
 
     private function ensureMixAndAssetUrlsAreConfigured(): void

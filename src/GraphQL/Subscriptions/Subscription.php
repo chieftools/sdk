@@ -8,6 +8,11 @@ use Nuwave\Lighthouse\Schema\Types\GraphQLSubscription;
 
 abstract class Subscription extends GraphQLSubscription
 {
+    public function can(Subscriber $subscriber): bool
+    {
+        return $subscriber->context->user() !== null;
+    }
+
     public function filter(Subscriber $subscriber, $root): bool
     {
         return true;

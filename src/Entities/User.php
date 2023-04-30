@@ -8,7 +8,6 @@ use ChiefTools\SDK\Chief;
 use Laravel\Passport\Passport;
 use ChiefTools\SDK\Helpers\Avatar;
 use Illuminate\Support\Collection;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use ChiefTools\SDK\Socialite\ChiefTeam;
@@ -43,7 +42,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  */
 class User extends Entity implements AuthenticatableContract, AuthorizableContract
 {
-    use Authenticatable, Authorizable, HasApiTokens, UsesUUID;
+    use Authenticatable, Authorizable, UsesUUID;
 
     protected $table    = 'users';
     protected $fillable = [

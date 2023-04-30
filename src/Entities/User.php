@@ -258,6 +258,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     // Auth helpers
     public function updateFromRemote(ChiefUser $remote): void
     {
+        if ($this->chief_id === null) {
+            $this->chief_id = $remote->getId();
+        }
+
         $this->is_admin = $remote->is_admin;
 
         Team::createOrUpdateFromRemotes($remote->teams);

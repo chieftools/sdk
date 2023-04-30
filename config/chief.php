@@ -10,6 +10,8 @@ return [
 
         'model' => ChiefTools\SDK\Entities\User::class,
 
+        'account' => env('CHIEF_AUTH_ACCOUNT', true),
+
         'redirect' => '/dashboard',
 
         'passport' => env('CHIEF_PASSPORT_ENABLED', true),

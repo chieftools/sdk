@@ -32,7 +32,7 @@ Route::group(config('chief.routes.web'), function () {
         Route::post('webhooks/chief', Controllers\Webhook::class)->middleware(AuthenticateChief::class)->name('webhook');
     });
 
-    if (config('chief.auth')) {
+    if (config('chief.auth') && config('chief.auth.account')) {
         Route::group([
             'as'         => 'account.',
             'prefix'     => 'account',

@@ -234,7 +234,11 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
 
     // Try and be clever to get a subscription name for a subscription class name
     if (class_exists($subscription)) {
-        $subscription = constant("{$subscription}::SUBSCRIPTION_NAME") ?? lcfirst(class_basename($subscription));
+        if (defined($nameConstant = "{$subscription}::SUBSCRIPTION_NAME")) {
+            $subscription = constant($nameConstant);
+        } else {
+            $subscription = lcfirst(class_basename($subscription));
+        }
     }
 
     // Optimize the queued job by unsetting all relations so they are not automatically loaded

@@ -4,6 +4,8 @@ use ChiefTools\SDK\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Http\Middleware\AuthenticateChief;
 
+Route::redirect('.well-known/security.txt', chief_site_url('.well-known/security.txt'))->name('well-known.security');
+
 Route::group(config('chief.routes.web'), function () {
     if (config('chief.auth')) {
         Route::redirect('auth/login', '/login', 301)->name('login');

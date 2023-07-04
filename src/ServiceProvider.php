@@ -30,6 +30,7 @@ use ChiefTools\SDK\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
+use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Laravel\Passport\RouteRegistrar as Passport10RouteRegistrar;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
@@ -327,15 +328,20 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         Model::preventLazyLoading();
         Model::preventAccessingMissingAttributes();
-        Model::preventSilentlyDiscardingAttributes();
 
-        // In production we just report the lazy loading violation instead of crashing the application since it's a performance issue not a security issue
+        // In production we just report the violations instead of crashing the application since it's mostly performance issue not always a security issue
         if (app()->isProduction()) {
             Model::handleLazyLoadingViolationUsing(
                 static fn (Model $model, string $relation) => report(new LazyLoadingViolationException($model, $relation)),
             );
+
+            Model::handleMissingAttributeViolationUsing(
+                static fn (Model $model, string $key) => report(new MissingAttributeException($model, $key)),
+            );
         }
 
+        // Except for this one, we don't want to mass assign anything in production either
+        Model::preventSilentlyDiscardingAttributes();
     }
 
     private function ensureMixAndAssetUrlsAreConfigured(): void

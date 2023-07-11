@@ -1,7 +1,5 @@
 <?php
 
-$appNamespace = ucfirst(config('chief.namespace') ?? config('chief.id'));
-
 return [
 
     'dsn' => env('APP_DEBUG', false) ? null : env('SENTRY_PRIVATE_DSN', env('SENTRY_LARAVEL_DSN')),
@@ -27,8 +25,5 @@ return [
         Illuminate\Queue\Jobs\Job::class          => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeJob'],
         Illuminate\Database\Eloquent\Model::class => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeEloquentModel'],
     ],
-
-    // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#profiles-sample-rate
-    'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE') === null ? null : (float)env('SENTRY_PROFILES_SAMPLE_RATE'),
 
 ];

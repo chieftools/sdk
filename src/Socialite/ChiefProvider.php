@@ -8,25 +8,25 @@ use Laravel\Socialite\Two\ProviderInterface;
 
 class ChiefProvider extends AbstractProvider implements ProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    protected function getHttpClient()
+    {
+        if (is_null($this->httpClient)) {
+            $this->httpClient = http(options: $this->guzzle);
+        }
+
+        return $this->httpClient;
+    }
+
     protected function getAuthUrl($state)
     {
         return $this->buildAuthUrlFromBase(Client::getBaseUrl('/oauth/authorize'), $state);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getTokenUrl()
     {
         return Client::getBaseUrl('/oauth/token');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getTokenFields($code)
     {
         return array_merge(parent::getTokenFields($code), [
@@ -34,9 +34,6 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAccessTokenResponse($code)
     {
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
@@ -50,9 +47,6 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
         return json_decode($response->getBody(), true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getUserByToken($token)
     {
         $userUrl = Client::getBaseUrl('/api/me');
@@ -68,9 +62,6 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
         return json_decode($response->getBody(), true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function mapUserToObject(array $user): ChiefUser
     {
         return new ChiefUser($user);

@@ -10,13 +10,13 @@
             <p class="p-1.5 pt-0 mb-1 text-xs text-muted">
                 We are happy to help you with any questions you might have.
             </p>
-            <a href="{{ chief_roadmap_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+            <a href="{{ chief_docs_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fa fa-fw fa-book"></i>&nbsp;&nbsp;Documentation
             </a>
-            <a href="{{ chief_roadmap_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+            <a href="{{ chief_roadmap_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fa fa-fw fa-road"></i>&nbsp;&nbsp;Roadmap
             </a>
-            <a href="{{ chief_site_url('contact') }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 rounded" tabindex="-1">
+            <a href="{{ chief_site_url('contact') }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 rounded" tabindex="-1">
                 <i class="fa fa-fw fa-comment-dots"></i>&nbsp;&nbsp;Get in touch
             </a>
         </div>

@@ -98,6 +98,8 @@ return [
 
     'site_url' => env('CHIEF_SITE_URL', 'https://chief.app'),
 
+    'docs_url' => env('CHIEF_DOCS_URL', 'https://docs.chief.tools'),
+
     'roadmap_url' => env('CHIEF_ROADMAP_URL', 'https://roadmap.chief.app'),
 
     'response' => [

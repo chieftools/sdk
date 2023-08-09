@@ -43,10 +43,6 @@ final class Chief
     public static function shouldRenderSupportWidget(): bool
     {
         $default = static function () {
-            if (config('services.plain.app_key') === null) {
-                return false;
-            }
-
             /** @var \ChiefTools\SDK\Entities\User|null $user */
             $user = auth()->user();
 

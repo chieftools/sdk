@@ -43,7 +43,7 @@ final class Chief
     public static function shouldRenderSupportWidget(): bool
     {
         $default = static function () {
-            if (config('services.plain.app_key') !== null) {
+            if (config('services.plain.app_key') === null) {
                 return false;
             }
 

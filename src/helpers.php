@@ -168,6 +168,23 @@ function chief_site_url(?string $path = null): string
 }
 
 /**
+ * Get the url to the Chief docs site for the current application.
+ *
+ * @return string
+ */
+function chief_docs_url(): string
+{
+    $base  = rtrim(config('chief.roadmap_url'), '/');
+    $appId = config('chief.id');
+
+    if (empty($appId)) {
+        return $base;
+    }
+
+    return "{$base}/projects/{$appId}";
+}
+
+/**
  * Get the url to the Chief roadmap site for the current application.
  *
  * @return string

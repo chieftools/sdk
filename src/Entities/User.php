@@ -2,7 +2,6 @@
 
 namespace ChiefTools\SDK\Entities;
 
-use Firebase\JWT\JWT;
 use RuntimeException;
 use ChiefTools\SDK\Chief;
 use Laravel\Passport\Passport;
@@ -308,34 +307,5 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         Chief::dispatchAfterUserUpdateJob($local);
 
         return $local;
-    }
-
-    // Plain helpers
-    public function getPlainCustomerJwtToken(): ?string
-    {
-        $key = config('services.plain.jwt_secret');
-
-        // Bail out if there is no secret set instead of throwing hard errors
-        if ($key === null) {
-            return null;
-        }
-
-        // We do this because Chief Tools only see verified
-        // e-mails but this code also runs on Account Chief
-        // which could see unverified addresses on signs up
-        $emailVerified = method_exists($this, 'isEmailVerified')
-            ? $this->isEmailVerified()
-            : true;
-
-        return JWT::encode([
-            'iat'        => now()->timestamp,
-            'exp'        => now()->addHour()->timestamp,
-            'email'      => [
-                'email'      => $this->email,
-                'isVerified' => $emailVerified,
-            ],
-            'fullName'   => $this->name,
-            'externalId' => $this->chief_id ?? $this->id,
-        ], $key, 'RS256');
     }
 }

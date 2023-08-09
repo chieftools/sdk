@@ -174,14 +174,14 @@ function chief_site_url(?string $path = null): string
  */
 function chief_docs_url(): string
 {
-    $base  = rtrim(config('chief.roadmap_url'), '/');
+    $base  = rtrim(config('chief.docs_url'), '/');
     $appId = config('chief.id');
 
     if (empty($appId)) {
         return $base;
     }
 
-    return "{$base}/projects/{$appId}";
+    return "{$base}/{$appId}";
 }
 
 /**

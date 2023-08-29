@@ -9,8 +9,7 @@ class UsageReport implements Arrayable
     public function __construct(
         public readonly string $id,
         public readonly int $usage,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

@@ -12,8 +12,7 @@ class TeamUsageReport implements Arrayable
     public function __construct(
         public readonly string $team,
         public readonly array $usages,
-    ) {
-    }
+    ) {}
 
     public function toArray(): array
     {

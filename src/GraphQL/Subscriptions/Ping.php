@@ -2,6 +2,4 @@
 
 namespace ChiefTools\SDK\GraphQL\Subscriptions;
 
-class Ping extends Subscription
-{
-}
+class Ping extends Subscription {}

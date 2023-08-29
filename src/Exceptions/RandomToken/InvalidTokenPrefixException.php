@@ -2,6 +2,4 @@
 
 namespace ChiefTools\SDK\Exceptions\RandomToken;
 
-class InvalidTokenPrefixException extends InvalidTokenException
-{
-}
+class InvalidTokenPrefixException extends InvalidTokenException {}

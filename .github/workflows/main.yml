@@ -33,6 +33,8 @@ jobs:
         with:
           php-version: '8.1'
           extensions: zip
+          coverage: none
+
       - name: Cache Composer dependencies
         uses: actions/cache@v3
         id: composer-cache
@@ -74,6 +76,8 @@ jobs:
         with:
           php-version: '8.1'
           extensions: zip
+          coverage: none
+
       - name: Cache Composer dependencies
         uses: actions/cache@v3
         id: composer-cache

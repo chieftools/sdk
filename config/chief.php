@@ -151,7 +151,7 @@ return [
 
         'url' => 'https://chronicle.chief.tools/chronicle/replica/tiZovLY5eSPRMWQhos5bnSTtVEE628FOJV_vRIcG4QUl',
 
-        'pubkey' => 'Bgcc1QfkP0UNgMZuHzi0hC1hA1SoVAyUrskmSkzRw3E=',
+        'pubkey' => 'sX5DuEBydKWJBUFInnlmDWML-1Cs_GMlr6-RiTWPaLI=',
 
     ],
 

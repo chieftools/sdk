@@ -37,12 +37,15 @@
             <p>
                 If you want to play around with the API from your own tooling and/or application you can <a href="{{ route('api.tokens') }}" class="font-medium text-brand-600 hover:text-brand-500">generate</a> a personal access token and pass it using the <code>Authorization</code> header.
             </p>
-            <pre class="p-0 my-0"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
+        </div>
+
+        <hr class="my-4">
+
+        <pre class="leading-6 text-sm"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
 curl -X "POST" "<span class="text-brand">{{ route('api') }}</span>" \
      -H 'Accept: application/json' \
      -H 'Authorization: Bearer <span class="text-brand">&lt;personal access token&gt;</span>' \
      -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' \
-     --data-urlencode "query={viewer{name}}"</code></pre>
-        </div>
+     --data-urlencode "query={ viewer { name } }"</code></pre>
     </x-tw::panel>
 @endsection

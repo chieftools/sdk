@@ -1,4 +1,4 @@
-@extendsfirst(['layout.html', 'chief::layout.html'], ['title' => 'Playground - API'])
+@extendsfirst(['layout.html', 'chief::layout.html'], ['title' => 'Playground - API', 'fullHeight' => true])
 
 @push('head.meta')
     <meta name="robots" content="noindex, nofollow">
@@ -20,7 +20,7 @@
         }
 
         #graphiql {
-            height: {{ config('debugbar.enabled') ? 'calc(100vh - 60px - 28px)' : 'calc(100vh - 60px)' }};
+            height: {{ config('debugbar.enabled') ? 'calc(100vh - 61px - 35px)' : 'calc(100vh - 61px)' }};
         }
 
         #graphiql .title {
@@ -36,17 +36,40 @@
         }
 
         #graphiql .query-editor .CodeMirror {
-            padding: 0 20px;
             height: 100% !important;
+            font-family: inherit;
         }
 
         #graphiql .result-window .CodeMirror {
             left: 20px;
-            padding: 0;
             height: 100% !important;
+            padding: 0;
+            font-family: inherit;
+        }
+
+        #graphiql .graphiql-container,
+        #graphiql .graphiql-container input,
+        #graphiql .graphiql-container button {
+            font-family: inherit;
+        }
+
+        #graphiql .graphiql-container .toolbar-button {
+            padding: 3px 11px 3px;
         }
     </style>
 @endpush
+
+@section('body')
+    @include('partial.menu', ['fullwidthMenu' => true])
+
+    <div class="container-fluid p-0" style="margin-top: 1px; height: calc(100% - 57px);">
+        <div id="graphiql">
+            <div style="text-align: center; margin-top: 20px;">
+                <i class="fal fa-3x fa-fw fa-circle-notch fa-spin"></i>
+            </div>
+        </div>
+    </div>
+@endsection
 
 @push('body.script')
     <script src="//cdn.jsdelivr.net/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
@@ -234,15 +257,3 @@
         document.getElementsByClassName('toolbar-button')[0].click();
     </script>
 @endpush
-
-@section('body')
-    @include('partial.menu', ['fullwidth' => true])
-
-    <div class="container-fluid p-0" style="height: calc(100% - 55px);">
-        <div id="graphiql">
-            <div style="text-align: center; margin-top: 20px;">
-                <i class="fal fa-3x fa-fw fa-circle-notch fa-spin"></i>
-            </div>
-        </div>
-    </div>
-@endsection

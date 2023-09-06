@@ -1,6 +1,6 @@
 @php
     $minimalMenu = isset($minimalMenu) && $minimalMenu;
-    $menuLogoText = !isset($menuLogoText) || !$menuLogoText;
+    $menuLogoText = !isset($menuLogoText) || $menuLogoText;
     $fullwidthMenu = $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
 @endphp
 <nav @class(['mb-5' => $minimalMenu, 'bg-white shadow' => !$minimalMenu])
@@ -28,7 +28,7 @@
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
                     <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i>
-                    @if(!isset($noLogoText) || !$noLogoText)
+                    @if($menuLogoText)
                         <span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
                     @endif
                 </a>

@@ -46,9 +46,7 @@
     },
     "scripts": {
         "phpcs": "vendor/bin/php-cs-fixer fix",
-        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff",
-        "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
-        "phpstan:ci": "vendor/bin/phpstan analyse --memory-limit=2G --error-format github"
+        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff"
     },
     "config": {
         "allow-plugins": {

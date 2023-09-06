@@ -15,8 +15,7 @@ class ChiefTeam
         public readonly string $timezone,
         public readonly ?string $avatarHash,
         public readonly ?string $gravatarEmail,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $team): self
     {

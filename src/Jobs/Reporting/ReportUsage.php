@@ -12,8 +12,7 @@ class ReportUsage extends Job implements ShouldQueue
         private readonly string $teamSlug,
         private readonly string $usageId,
         private readonly int $usage,
-    ) {
-    }
+    ) {}
 
     public function handle(Client $mothership): void
     {

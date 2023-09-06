@@ -25,8 +25,7 @@ final class Avatar
         private readonly string $name = '',
         private readonly ?string $email = null,
         private readonly ?string $avatarHash = null,
-    ) {
-    }
+    ) {}
 
     public function url(): string
     {

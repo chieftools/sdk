@@ -1,8 +1,20 @@
-<nav class="bg-white shadow" x-data="{ menuOpen: false, userMenuOpen: false, teamMenuOpen: false }">
-    <div class="{{ ($fullwidth ?? false) === true ? 'px-4' : 'max-w-7xl px-2 sm:px-6 lg:px-8' }} mx-auto">
+@php
+    $minimalMenu = isset($minimalMenu) && $minimalMenu;
+    $menuLogoText = !isset($menuLogoText) || !$menuLogoText;
+    $fullwidthMenu = $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
+@endphp
+<nav @class(['mb-5' => $minimalMenu, 'bg-white shadow' => !$minimalMenu])
+     x-data="{ menuOpen: false, userMenuOpen: false, teamMenuOpen: false }"
+     @if($minimalMenu)
+         x-bind:class="menuOpen ? 'bg-white shadow' : ''"
+    @endif
+>
+    <div @class(['px-2 sm:px-6 lg:px-8', 'max-w-7xl mx-auto' => !$fullwidthMenu])>
         <div class="relative flex justify-between h-14">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <button x-cloak x-on:click="menuOpen = !menuOpen" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500" aria-controls="mobile-menu" aria-expanded="false">
+                <button x-cloak x-on:click="menuOpen = !menuOpen" type="button"
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
+                        aria-controls="mobile-menu" aria-expanded="false">
                     <span class="sr-only">Open main menu</span>
 
                     <svg class="h-6 w-6" x-show="menuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -15,27 +27,41 @@
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
-                    <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i><span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
+                    <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i>
+                    @if(!isset($noLogoText) || !$noLogoText)
+                        <span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
+                    @endif
                 </a>
 
                 @unless(empty($menuItems))
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8 sm:ml-auto main-menu-items">
                         @foreach($menuItems as $item)
                             @php
-                                $itemClass = $item['active'] ?? false
-                                    ? 'border-brand-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
-                                    : 'border-transparent text-gray-500 hover:border-brand-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
+                                if ($minimalMenu) {
+                                    $itemClass = $item['active'] ?? false
+                                        ? 'text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium'
+                                        : 'text-gray-500 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium';
+                                } else {
+                                    $itemClass = $item['active'] ?? false
+                                        ? 'border-brand-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium'
+                                        : 'border-transparent text-gray-500 hover:border-brand-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium';
+                                }
+
                                 $iconClass = $item['active'] ?? false
                                     ? 'text-brand'
                                     : 'text-gray-500 group-hover:text-brand-300';
                             @endphp
                             @if(isset($item['vue']) && $item['vue'])
                                 <router-link v-bind:to="{!! $item['to'] ?? $item['href'] !!}" class="group {{ $itemClass }}">
-                                    @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
+                                    @if(isset($item['icon']))
+                                        <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
+                                    @endif{{ $item['text'] }}
                                 </router-link>
                             @else
                                 <a href="{{ $item['href'] }}" class="group {{ $itemClass }}">
-                                    @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
+                                    @if(isset($item['icon']))
+                                        <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
+                                    @endif{{ $item['text'] }}
                                 </a>
                             @endif
                         @endforeach
@@ -48,11 +74,15 @@
                     <div class="absolute inset-y-0 right-10 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                         <div class="ml-3 relative">
                             <div>
-                                <button x-on:click="teamMenuOpen = !teamMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="team-menu-button" aria-expanded="false" aria-haspopup="true">
+                                <button x-on:click="teamMenuOpen = !teamMenuOpen" type="button"
+                                        class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="team-menu-button"
+                                        aria-expanded="false" aria-haspopup="true">
                                     <span class="sr-only">Open team menu</span>
                                     <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
                                 </button>
-                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">T</div>
+                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">
+                                    T
+                                </div>
                             </div>
 
                             <div x-cloak
@@ -79,12 +109,16 @@
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto {{ config('chief.teams') ? 'sm:ml-0' : 'sm:ml-6' }} sm:pr-0">
                     <div class="{{ config('chief.teams') ? 'ml-4' : 'ml-3' }} relative">
                         <div>
-                            <button x-on:click="userMenuOpen = !userMenuOpen" type="button" class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                            <button x-on:click="userMenuOpen = !userMenuOpen" type="button"
+                                    class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="user-menu-button"
+                                    aria-expanded="false" aria-haspopup="true">
                                 <span class="sr-only">Open user menu</span>
                                 <img class="h-8 w-8 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
                             </button>
                             @if(config('chief.teams'))
-                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">P</div>
+                                <div class="absolute -right-1.5 -bottom-1.5 text-[8px] leading-[12px] text-white text-center font-bold bg-brand rounded-full border-white border-2 w-4 h-4">
+                                    P
+                                </div>
                             @endif
                         </div>
 
@@ -124,7 +158,9 @@
                             : 'text-gray-500 group-hover:text-brand-300';
                     @endphp
                     <a href="{{ $item['href'] }}" class="group {{ $itemClass }} text-base font-medium">
-                        @if(isset($item['icon']))<i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i> @endif{{ $item['text'] }}
+                        @if(isset($item['icon']))
+                            <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
+                        @endif{{ $item['text'] }}
                     </a>
                 @endforeach
             </div>

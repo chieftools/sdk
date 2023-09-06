@@ -21,8 +21,7 @@ class RandomToken
         public readonly string $prefix,
         public readonly string $random,
         public readonly string $checksum,
-    ) {
-    }
+    ) {}
 
     public function __toString(): string
     {

@@ -233,7 +233,7 @@ function latest_ca_bundle_file_path(): string
         return $fetch->getLatestBundle()->getFilePath();
     }, null, false);
 
-    return $certaintyPath ?? resource_path('files/cacert-2022-02-01.pem');
+    return $certaintyPath ?? resource_path('files/cacert-2022-07-19.pem');
 }
 
 /**

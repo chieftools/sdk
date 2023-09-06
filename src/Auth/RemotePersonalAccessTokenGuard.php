@@ -19,8 +19,7 @@ class RemotePersonalAccessTokenGuard
         private readonly string $guard,
         private readonly Client $client,
         private readonly CacheManager $cache,
-    ) {
-    }
+    ) {}
 
     public function __invoke(Request $request): ?User
     {

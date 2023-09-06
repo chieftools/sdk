@@ -149,7 +149,7 @@ return [
 
     'chronicle' => [
 
-        'url' => 'https://chronicle.devdomein.nl/chronicle/replica/LogbDtnCLxxdWsrtUQKAueytA7igS2p9Y_ZUz8L-QbZ2/',
+        'url' => 'https://chronicle.chief.tools/chronicle/replica/tiZovLY5eSPRMWQhos5bnSTtVEE628FOJV_vRIcG4QUl',
 
         'pubkey' => 'Bgcc1QfkP0UNgMZuHzi0hC1hA1SoVAyUrskmSkzRw3E=',
 

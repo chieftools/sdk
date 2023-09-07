@@ -483,39 +483,6 @@
     </style>
 @endpush
 
-@push('body.script')
-    <script src="//cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
-    <script type="text/javascript">
-        window.addEventListener('load', function (event) {
-            const loadingWrapper = document.getElementById('loading-wrapper');
-
-            loadingWrapper.classList.add('fadeOut');
-
-            const root = document.getElementById('root');
-
-            root.classList.add('playgroundIn');
-
-            GraphQLPlayground.init(root, {
-                env:           '{{ config('app.env') }}',
-                endpoint:      '{{ route('api.web') }}',
-                settings:      {
-                    'editor.fontFamily':             `'Fira Code', 'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace`,
-                    'prettier.tabWidth':             4,
-                    'schema.polling.enable':         false,
-                    'schema.polling.interval':       10000,
-                    'tracing.tracingSupported':      false,
-                    'schema.polling.endpointFilter': '*{{ config('app.domain') }}*',
-                },
-                workspaceName: 'GraphQL API ({{ config('app.env') }})',
-
-                createApolloLink: function () {
-                    return window.$vue.$apolloProvider.clients.defaultClient;
-                },
-            });
-        });
-    </script>
-@endpush
-
 @section('body')
     @include('partial.menu', ['fullwidth' => true])
 
@@ -560,3 +527,36 @@
 
     <div id="root"/>
 @endsection
+
+@push('body.script')
+    <script src="https://cdn.jsdelivr.net/npm/graphql-playground-react/build/static/js/middleware.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', function (event) {
+            const loadingWrapper = document.getElementById('loading-wrapper');
+
+            loadingWrapper.classList.add('fadeOut');
+
+            const root = document.getElementById('root');
+
+            root.classList.add('playgroundIn');
+
+            GraphQLPlayground.init(root, {
+                env:           '{{ config('app.env') }}',
+                endpoint:      '{{ route('api.web') }}',
+                settings:      {
+                    'editor.fontFamily':             `'IBM Plex Mono', 'Fira Code', 'Source Code Pro', 'Consolas', 'Inconsolata', 'Droid Sans Mono', 'Monaco', monospace`,
+                    'prettier.tabWidth':             4,
+                    'schema.polling.enable':         false,
+                    'schema.polling.interval':       10000,
+                    'tracing.tracingSupported':      false,
+                    'schema.polling.endpointFilter': '*{{ config('app.domain') }}*',
+                },
+                workspaceName: 'GraphQL API ({{ config('app.env') }})',
+
+                createApolloLink: function () {
+                    return window.$vue.$apolloProvider.clients.defaultClient;
+                },
+            });
+        });
+    </script>
+@endpush

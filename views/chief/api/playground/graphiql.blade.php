@@ -37,14 +37,14 @@
 
         #graphiql .query-editor .CodeMirror {
             height: 100% !important;
-            font-family: inherit;
+            font-family: IBM Plex Mono, Fira Code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         #graphiql .result-window .CodeMirror {
             left: 20px;
             height: 100% !important;
             padding: 0;
-            font-family: inherit;
+            font-family: IBM Plex Mono, Fira Code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
         }
 
         #graphiql .graphiql-container,
@@ -72,14 +72,14 @@
 @endsection
 
 @push('body.script')
-    <script src="//cdn.jsdelivr.net/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
-    <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
-    <script src="//cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
-    <script src="//cdn.jsdelivr.net/react/15.4.2/react-dom.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/graphql-query-compress@1.1.0/lib/graphql-query-compress.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/react/15.4.2/react-dom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/graphql-query-compress@1.1.0/lib/graphql-query-compress.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/graphiql@0.17.5/graphiql.min.js" integrity="sha256-fGppMKjJJ1IZ/fA9Cl8a7QJhvTHgJ1PVspgwvIfXAkY=" crossorigin="anonymous"></script>
-    <script src="//unpkg.com/prettier@1.13.0/standalone.js"></script>
-    <script src="//unpkg.com/prettier@1.13.0/parser-graphql.js"></script>
+    <script src="https://unpkg.com/prettier@1.13.0/standalone.js"></script>
+    <script src="https://unpkg.com/prettier@1.13.0/parser-graphql.js"></script>
     <script>
         // Parse the search string to get url parameters.
         let search     = window.location.search;

@@ -8,6 +8,7 @@ use RuntimeException;
 use ParagonIE\Certainty;
 use ChiefTools\SDK\API\Client;
 use Laravel\Passport\Passport;
+use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
 use ChiefTools\SDK\Http\Middleware;
@@ -332,7 +333,7 @@ class ServiceProvider extends IlluminateServiceProvider
         // In production we just report the violations instead of crashing the application since it's mostly performance issue not always a security issue
         if (app()->isProduction()) {
             Model::handleLazyLoadingViolationUsing(
-                static fn (Model $model, string $relation) => report(new LazyLoadingViolationException($model, $relation)),
+                Integration::lazyLoadingViolationReporter(),
             );
 
             Model::handleMissingAttributeViolationUsing(

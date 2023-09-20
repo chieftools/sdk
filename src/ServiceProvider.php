@@ -26,7 +26,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
-use Illuminate\Database\LazyLoadingViolationException;
 use ChiefTools\SDK\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;

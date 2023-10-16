@@ -288,10 +288,25 @@ function dispatch_vapor(mixed $job): void
 function user_agent(): string
 {
     return sprintf(
-        '%s/%s (+%s)',
+        '%sBot/%s (+%s)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
-        config('chief.app_home') ?? url('/'),
+        rtrim(config('chief.app_home') ?? url('/'), '/'),
+    );
+}
+
+/**
+ * Get the user agent for the application used for crawling.
+ *
+ * @return string
+ */
+function crawler_user_agent(): string
+{
+    return sprintf(
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +%s) Chrome/49.0.2623.75 Safari/537.36',
+        str_replace(' ', '', config('app.name')),
+        config('app.version'),
+        rtrim(config('chief.app_home') ?? url('/'), '/'),
     );
 }
 

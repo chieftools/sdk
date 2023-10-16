@@ -288,10 +288,25 @@ function dispatch_vapor(mixed $job): void
 function user_agent(): string
 {
     return sprintf(
-        '%s/%s (+%s)',
+        '%sBot/%s (+%s)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
-        config('chief.app_home') ?? url('/'),
+        rtrim(config('chief.app_home') ?? url('/'), '/'),
+    );
+}
+
+/**
+ * Get the user agent for the application used for crawling.
+ *
+ * @return string
+ */
+function crawler_user_agent(): string
+{
+    return sprintf(
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +%s) Chrome/49.0.2623.75 Safari/537.36',
+        str_replace(' ', '', config('app.name')),
+        config('app.version'),
+        rtrim(config('chief.app_home') ?? url('/'), '/'),
     );
 }
 
@@ -323,10 +338,28 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
         'handler'         => $stack,
         'timeout'         => $timeout,
         'connect_timeout' => $timeout,
-        'headers'         => array_merge($headers, [
+        'headers'         => array_merge([
             'User-Agent' => user_agent(),
-        ]),
+        ], $headers),
     ]));
+}
+
+/**
+ * Get an HTTP client to use with sane timeouts and defaults used for crawling.
+ *
+ * @param string|null   $baseUri
+ * @param array         $headers
+ * @param int           $timeout
+ * @param array         $options
+ * @param \Closure|null $stackCallback
+ *
+ * @return \GuzzleHttp\Client
+ */
+function crawler_http(?string $baseUri = null, array $headers = [], int $timeout = 10, array $options = [], ?Closure $stackCallback = null): GuzzleHttp\Client
+{
+    return http($baseUri, array_merge([
+        'User-Agent' => crawler_user_agent(),
+    ], $headers), $timeout, $options, $stackCallback);
 }
 
 /**

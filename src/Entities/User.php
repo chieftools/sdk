@@ -281,7 +281,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     private static function createFromRemote(ChiefUser $remote): self
     {
-        $user = new static();
+        $user = new static;
 
         $user->chief_id = $remote->getId();
 

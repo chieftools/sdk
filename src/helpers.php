@@ -323,9 +323,9 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
         'handler'         => $stack,
         'timeout'         => $timeout,
         'connect_timeout' => $timeout,
-        'headers'         => array_merge($headers, [
+        'headers'         => array_merge([
             'User-Agent' => user_agent(),
-        ]),
+        ], $headers),
     ]));
 }
 

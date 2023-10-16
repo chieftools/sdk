@@ -345,6 +345,24 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
 }
 
 /**
+ * Get an HTTP client to use with sane timeouts and defaults used for crawling.
+ *
+ * @param string|null   $baseUri
+ * @param array         $headers
+ * @param int           $timeout
+ * @param array         $options
+ * @param \Closure|null $stackCallback
+ *
+ * @return \GuzzleHttp\Client
+ */
+function crawler_http(?string $baseUri = null, array $headers = [], int $timeout = 10, array $options = [], ?Closure $stackCallback = null): GuzzleHttp\Client
+{
+    return http($baseUri, array_merge([
+        'User-Agent' => crawler_user_agent(),
+    ], $headers), $timeout, $options, $stackCallback);
+}
+
+/**
  * Replace the Vapor asset domain with a custom asset domain.
  *
  * This should only be called from the `config/app.php` file.

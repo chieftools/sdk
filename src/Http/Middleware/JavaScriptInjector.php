@@ -21,6 +21,7 @@ class JavaScriptInjector
             'DEBUG'          => config('app.debug'),
             'SENTRY'         => [
                 'DSN'                => $sentryDsn,
+                'TUNNEL'             => config('chief.analytics.sentry.public_tunnel'),
                 'TRACES_SAMPLE_RATE' => $sentryDsn !== null ? config('sentry.traces_sample_rate', 0) : 0,
             ],
             'VERSION'        => config('app.version'),

@@ -1,4 +1,7 @@
-<div x-data="{ open: false, opened: false }" x-on:click.away="open = false" class="fixed bottom-6 right-6 z-50">
+<div x-data="{ open: false, opened: false, showBugReportBtn: false }"
+     x-on:click.away="open = false"
+     x-init="$watch('opened', () => showBugReportBtn = window.SENTRY_FEEDBACK && window.SENTRY_FEEDBACK.attachTo($refs.sentryBugReportBtn, {}) !== null)"
+     class="fixed bottom-6 right-6 z-50">
     <button x-on:click="open = !open; opened = true" type="button" class="bg-brand hover:bg-brand-600 text-white px-2 py-1.5 rounded-md">
         <i x-bind:class="{'opacity-0': open}" class="transition-opacity fad fa-fw fa-messages-question !absolute"></i>
         <i x-cloak x-bind:class="{'opacity-0': !open}" class="transition-opacity fa fa-fw fa-xmark !static"></i>
@@ -15,6 +18,9 @@
             </a>
             <a href="{{ chief_roadmap_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fa fa-fw fa-road"></i>&nbsp;&nbsp;Roadmap
+            </a>
+            <a x-show="showBugReportBtn" x-ref="sentryBugReportBtn" href="#" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+                <i class="fa fa-fw fa-bug"></i>&nbsp;&nbsp;Report a bug
             </a>
             <a href="{{ chief_site_url('contact') }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 rounded" tabindex="-1">
                 <i class="fa fa-fw fa-comment-dots"></i>&nbsp;&nbsp;Get in touch

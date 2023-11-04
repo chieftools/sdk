@@ -4,7 +4,7 @@ return [
 
     'dsn' => env('APP_DEBUG', false) ? null : env('SENTRY_PRIVATE_DSN', env('SENTRY_LARAVEL_DSN')),
 
-    'release' => config('app.version'),
+    'release' => env('APP_COMMIT_SHA', config('app.version')),
 
     'error_types' => E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED,
 

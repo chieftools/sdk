@@ -143,7 +143,7 @@ return [
 
             'public_dsn' => env('APP_DEBUG', false) ? null : env('SENTRY_PUBLIC_DSN', env('SENTRY_LARAVEL_DSN')),
 
-            'public_tunnel' => env('SENTRY_PUBLIC_TUNNEL'),
+            'public_tunnel' => env('SENTRY_PUBLIC_TUNNEL', 'https://visibility.on.chief.tools/ingest'),
 
         ],
 

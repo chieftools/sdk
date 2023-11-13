@@ -15,7 +15,7 @@
         "nuwave/lighthouse": "^6.1",
         "paragonie/certainty": "^2.8",
         "pusher/pusher-php-server": "^7.2",
-        "sentry/sentry-laravel": "^3.6",
+        "sentry/sentry-laravel": "dev-prepare-4.0",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
         "tuupola/base62": "^2.1"

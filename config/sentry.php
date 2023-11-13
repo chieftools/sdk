@@ -26,4 +26,18 @@ return [
         Illuminate\Database\Eloquent\Model::class => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeEloquentModel'],
     ],
 
+    'trace_propagation_targets' => [
+
+        'tny.app',
+        'bill.do',
+        'chief.app',
+        'chief.tools',
+        'pkgtrends.app',
+        'ip.chief.tools',
+        'cert.chief.app',
+        'deploy.chief.app',
+        'account.chief.app',
+
+    ],
+
 ];

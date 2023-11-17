@@ -10,7 +10,7 @@
     @foreach($_chief_teams as $_chief_team)
         @continue($_chief_team->is($_current_team))
         <x-chief::account.dropdown-link :href="route('team.switch', [$_chief_team])">
-            <img class="inline h-4 w-4 rounded-md mr-1" src="{{ $_chief_team->avatar_url }}" alt=""> {{ $_chief_team }}
+            <img x-bind:src="teamMenuOpened ? '{{ $_chief_team->avatar_url }}' : ''" class="inline h-4 w-4 rounded-md mr-1" src="" alt=""> {{ $_chief_team }}
         </x-chief::account.dropdown-link>
     @endforeach
 

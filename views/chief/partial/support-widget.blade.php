@@ -10,7 +10,9 @@
 
     <div x-cloak x-bind:class="{'opacity-0 pointer-events-none': !open}" class="select-none transition-opacity absolute right-0 bottom-0 mt-2 mb-[44px] w-64 rounded-sm bg-white shadow-sm ring-1 ring-black ring-opacity-5 focus:outline-none" tabindex="-1">
         <div class="relative p-4">
-            <h4 class="p-1.5 pt-0">Need help?</h4>
+            <p class="text-base p-1.5 pt-0">
+                Need help?
+            </p>
             <p class="p-1.5 pt-0 mb-1 text-xs text-muted">
                 We are happy to help you with any questions you might have.
             </p>

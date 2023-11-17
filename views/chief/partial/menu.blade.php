@@ -4,7 +4,7 @@
     $fullwidthMenu = $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
 @endphp
 <nav @class(['mb-5' => $minimalMenu, 'bg-white shadow' => !$minimalMenu])
-     x-data="{ menuOpen: false, userMenuOpen: false, teamMenuOpen: false }"
+     x-data="{ menuOpen: false, userMenuOpen: false, teamMenuOpen: false, teamMenuOpened: false }"
      @if($minimalMenu)
          x-bind:class="menuOpen ? 'bg-white shadow' : ''"
     @endif
@@ -74,7 +74,7 @@
                     <div class="absolute inset-y-0 right-10 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                         <div class="ml-3 relative">
                             <div>
-                                <button x-on:click="teamMenuOpen = !teamMenuOpen" type="button"
+                                <button x-on:click="teamMenuOpen = !teamMenuOpen; teamMenuOpened = true" type="button"
                                         class="bg-white rounded-md flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500" id="team-menu-button"
                                         aria-expanded="false" aria-haspopup="true">
                                     <span class="sr-only">Open team menu</span>

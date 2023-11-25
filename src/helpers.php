@@ -406,7 +406,7 @@ function is_running_on_vapor(): bool
  */
 function static_asset(?string $path = null): string
 {
-    $url = 'https://static.assets.chief.app';
+    $url = 'https://static.assets.chief.tools';
 
     if (!empty($path)) {
         $url .= '/' . ltrim($path, '/');

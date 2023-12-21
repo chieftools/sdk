@@ -302,7 +302,7 @@ function user_agent(): string
 function crawler_user_agent(): string
 {
     return sprintf(
-        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://docs.chief.tools/bots) Chrome/49.0.2623.75 Safari/537.36',
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.71 Safari/537.36 (compatible; %sBot/%s; +https://docs.chief.tools/bots)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );

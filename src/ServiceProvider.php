@@ -31,6 +31,7 @@ use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Database\Eloquent\MissingAttributeException;
+use Illuminate\Contracts\Http\Kernel as HttpKernelInterface;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Laravel\Passport\RouteRegistrar as Passport10RouteRegistrar;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
@@ -268,6 +269,10 @@ class ServiceProvider extends IlluminateServiceProvider
         $router->aliasMiddleware('team', Middleware\TeamUrlContext::class);
         $router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
+
+        if ($this->app->bound(HttpKernelInterface::class)) {
+            $this->app->make(HttpKernelInterface::class)->pushMiddleware(Middleware\SentryMetricsFlusher::class);
+        }
     }
 
     private function publishStaticFiles(): void

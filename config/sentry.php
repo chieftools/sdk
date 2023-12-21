@@ -40,4 +40,6 @@ return [
 
     ],
 
+    'attach_metric_code_locations' => true,
+
 ];

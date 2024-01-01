@@ -37,6 +37,13 @@
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8 sm:ml-auto main-menu-items">
                         @foreach($menuItems as $item)
                             @php
+                                $item['router-link-active'] = false;
+
+                                if (!empty($item['vue-href']) && $item['active'] ?? false) {
+                                    $item['active'] = false; // prevent normal active classes from being applied
+                                    $item['router-link-active'] = true;
+                                }
+
                                 if ($minimalMenu) {
                                     $itemClass = $item['active'] ?? false
                                         ? 'text-gray-900 inline-flex items-center px-1 pt-1 text-sm font-medium'
@@ -58,7 +65,7 @@
                                     @endif{{ $item['text'] }}
                                 </router-link>
                             @else
-                                <a href="{{ $item['href'] }}" class="group {{ $itemClass }}">
+                                <a href="{{ $item['href'] }}" @class(["group {$itemClass}", 'router-link-active' => $item['router-link-active'] ?? false]) @if(!empty($item['vue-href'])) vue-href='{{ $item['vue-href'] }}' @endif>
                                     @if(isset($item['icon']))
                                         <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
                                     @endif{{ $item['text'] }}

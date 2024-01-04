@@ -88,9 +88,11 @@
                                    {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                             >
                         </div>
-                        <div class="ml-3 text-sm">
-                            <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
-                        </div>
+                        @if($label)
+                            <div class="ml-3 text-sm">
+                                <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
+                            </div>
+                        @endif
                     </div>
                 @elseif($type === 'textarea')
                     <textarea id="{{ $name }}"

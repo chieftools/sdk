@@ -3,6 +3,7 @@
     'title' => null,
     'footer' => null,
     'header' => null,
+    'noPadder' => false,
     'iconType' => 'fad',
     'collapsed' => false,
     'collapsable' => false,
@@ -24,7 +25,7 @@
             @endif
         </div>
     @endif
-    <div class="bg-white py-4 px-5"  @if($collapsable) x-show="show" @endif>
+    <div @class(['bg-white', 'py-4 px-5' => !$noPadder]) @if($collapsable) x-show="show" @endif>
         {{ $slot }}
     </div>
     @if($footer)

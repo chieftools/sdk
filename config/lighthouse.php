@@ -146,7 +146,7 @@ return [
 
     'security' => [
         'max_query_complexity'  => QuerySecurityRule::DISABLED,
-        'max_query_depth'       => 12,
+        'max_query_depth'       => 14,
         'disable_introspection' => QuerySecurityRule::DISABLED,
     ],
 

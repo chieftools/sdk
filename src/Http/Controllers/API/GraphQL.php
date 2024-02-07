@@ -92,7 +92,7 @@ class GraphQL extends GraphQLController
         ];
     }
 
-    private function extractFragmentTypesJSON(SChema $schema): string
+    private function extractFragmentTypesJSON(Schema $schema): string
     {
         $possibleTypes = [];
 

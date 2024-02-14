@@ -16,7 +16,7 @@
         "paragonie/certainty": "^2.8",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry": "^4.3",
-        "sentry/sentry-laravel": "^4.1",
+        "sentry/sentry-laravel": "^4.2",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
         "tuupola/base62": "^2.1"

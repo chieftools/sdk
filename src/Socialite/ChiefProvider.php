@@ -10,7 +10,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
 {
     protected $scopes = ['profile', 'email', 'teams'];
 
-    protected $usesPKCE = false;
+    protected $usesPKCE = true;
 
     protected $stateless = false;
 
@@ -35,6 +35,11 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
         return Client::getBaseUrl('/api/oauth/token');
     }
 
+    protected function getTokenRevokeUrl()
+    {
+        return Client::getBaseUrl('/api/oauth/token/revoke');
+    }
+
     protected function getTokenFields($code)
     {
         return array_merge(parent::getTokenFields($code), [
@@ -53,6 +58,18 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
         ]);
 
         return json_decode($response->getBody(), true);
+    }
+
+    public function revokeAccessToken($token): void
+    {
+        $this->getHttpClient()->post($this->getTokenRevokeUrl(), [
+            'json'   => [
+                'token'         => $token,
+                'client_id'     => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ],
+            'verify' => config('services.chief.verify', true),
+        ]);
     }
 
     protected function getUserByToken($token)

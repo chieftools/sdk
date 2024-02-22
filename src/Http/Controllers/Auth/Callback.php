@@ -11,7 +11,7 @@ class Callback
     public function __invoke(): RedirectResponse
     {
         /** @var \ChiefTools\SDK\Socialite\ChiefUser $remote */
-        $remote = Socialite::driver('chief')->stateless()->user();
+        $remote = Socialite::driver('chief')->user();
 
         Auth::guard()->login(
             config('chief.auth.model')::createOrUpdateFromRemote($remote),

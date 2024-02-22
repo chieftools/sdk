@@ -10,7 +10,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
 {
     protected $scopes = ['profile', 'email', 'teams'];
 
-    protected $usesPKCE = false;
+    protected $usesPKCE = true;
 
     protected $stateless = false;
 

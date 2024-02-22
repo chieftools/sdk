@@ -8,6 +8,14 @@ use Laravel\Socialite\Two\ProviderInterface;
 
 class ChiefProvider extends AbstractProvider implements ProviderInterface
 {
+    protected $scopes = ['profile', 'email', 'teams'];
+
+    protected $usesPKCE = false;
+
+    protected $stateless = false;
+
+    protected $scopeSeparator = ' ';
+
     protected function getHttpClient()
     {
         if (is_null($this->httpClient)) {
@@ -19,12 +27,12 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
 
     protected function getAuthUrl($state)
     {
-        return $this->buildAuthUrlFromBase(Client::getBaseUrl('/oauth/authorize'), $state);
+        return $this->buildAuthUrlFromBase(Client::getBaseUrl('/login/oauth/authorize'), $state);
     }
 
     protected function getTokenUrl()
     {
-        return Client::getBaseUrl('/oauth/token');
+        return Client::getBaseUrl('/api/oauth/token');
     }
 
     protected function getTokenFields($code)
@@ -49,7 +57,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
 
     protected function getUserByToken($token)
     {
-        $userUrl = Client::getBaseUrl('/api/me');
+        $userUrl = Client::getBaseUrl('/api/oauth/userinfo');
 
         $response = $this->getHttpClient()->get($userUrl, [
             'verify'  => config('services.chief.verify', true),

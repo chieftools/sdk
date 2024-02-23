@@ -5,7 +5,11 @@
         Forbidden
 
         <x-slot name="expanded">
-            You are not allowed to access this resource.
+            @if($exception instanceof Symfony\Component\HttpKernel\Exception\HttpException && $exception->getMessage())
+                {{ $exception->getMessage() }}
+            @else
+                You are not allowed to access this resource.
+            @endif
         </x-slot>
     </x-chief::errors.message>
 @endsection

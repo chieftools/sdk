@@ -5,7 +5,11 @@
         Unauthorized
 
         <x-slot name="expanded">
-            You are not authorized to access this resource.
+            @if($exception instanceof Symfony\Component\HttpKernel\Exception\HttpException && $exception->getMessage())
+                {{ $exception->getMessage() }}
+            @else
+                You are not authorized to access this resource.
+            @endif
         </x-slot>
     </x-chief::errors.message>
 @endsection

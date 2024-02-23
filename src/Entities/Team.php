@@ -15,8 +15,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property int                 $id
  * @property string              $slug
  * @property string              $name
- * @property string|null         $gravatar_email
+ * @property string              $avatar_url
  * @property string|null         $avatar_hash
+ * @property string|null         $gravatar_email
  * @property array               $limits
  * @property string              $timezone
  * @property bool                $is_default

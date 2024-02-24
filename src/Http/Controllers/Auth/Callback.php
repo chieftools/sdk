@@ -16,9 +16,13 @@ class Callback
         /** @var \ChiefTools\SDK\Socialite\ChiefUser $remote */
         $remote = $driver->user();
 
-        dispatch(function () use ($driver, $remote) {
-            rescue(static fn () => $driver->revokeAccessToken($remote->token));
-        })->afterResponse();
+        $token = $remote->token;
+
+        dispatch(static fn () => rescue(static function () use ($token) {
+            /** @var \ChiefTools\SDK\Socialite\ChiefProvider $driver */
+            $driver = Socialite::driver('chief');
+            $driver->revokeAccessToken($token);
+        }))->afterResponse();
 
         Auth::guard()->login(
             config('chief.auth.model')::createOrUpdateFromRemote($remote),

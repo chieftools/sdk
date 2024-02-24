@@ -13,12 +13,12 @@ use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
 use Stayallive\RandomTokens\Exceptions\InvalidTokenException;
 
-class RemotePersonalAccessTokenGuard
+readonly class RemoteAccessTokenGuard
 {
     public function __construct(
-        private readonly string $guard,
-        private readonly Client $client,
-        private readonly CacheManager $cache,
+        private string $guard,
+        private Client $client,
+        private CacheManager $cache,
     ) {}
 
     public function __invoke(Request $request): ?User
@@ -37,8 +37,8 @@ class RemotePersonalAccessTokenGuard
             return null;
         }
 
-        // Make sure it's a personal access token
-        if (!TokenPrefix::PERSONAL_ACCESS_TOKEN->isForToken($randomToken)) {
+        // Make sure it's a personal access token or an OAuth access token
+        if (!TokenPrefix::PERSONAL_ACCESS_TOKEN->isForToken($randomToken) && !TokenPrefix::OAUTH_ACCESS_TOKEN->isForToken($randomToken)) {
             return null;
         }
 
@@ -46,7 +46,7 @@ class RemotePersonalAccessTokenGuard
 
         if ($response === null) {
             try {
-                $response = $this->client->validatePAT((string)$randomToken);
+                $response = $this->client->validateAccessToken((string)$randomToken);
                 $timeout  = 60 * 60; // 1 hour (result might change)
             } catch (ClientException) {
                 $response = false;
@@ -70,6 +70,14 @@ class RemotePersonalAccessTokenGuard
         $user = User::query()->where('chief_id', '=', $response['user_id'])->first();
 
         if ($user !== null) {
+            if (in_array(HasRemoteTokens::class, class_uses_recursive(User::class), true)) {
+                $user = $user->withChiefRemoteAccessToken(new ChiefRemoteAccessToken(
+                    scopes: $response['scopes'],
+                    userId: $response['user_id'],
+                    expiresAt: $expires ?: null,
+                ));
+            }
+
             event(new Authenticated($this->guard, $user));
         }
 

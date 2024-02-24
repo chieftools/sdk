@@ -36,7 +36,7 @@ return [
 
     'guards' => [
 
-        'api' => ['ctp', 'api'],
+        'api' => ['chief', 'api'],
 
     ],
 

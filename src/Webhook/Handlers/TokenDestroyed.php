@@ -2,8 +2,8 @@
 
 namespace ChiefTools\SDK\Webhook\Handlers;
 
-use ChiefTools\SDK\Helpers\RandomToken;
-use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenException;
+use Stayallive\RandomTokens\RandomToken;
+use Stayallive\RandomTokens\Exceptions\InvalidTokenException;
 
 class TokenDestroyed extends BaseHandler
 {

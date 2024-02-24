@@ -2,7 +2,7 @@
 
 namespace ChiefTools\SDK\Enums;
 
-use ChiefTools\SDK\Helpers\RandomToken;
+use Stayallive\RandomTokens\RandomToken;
 
 enum TokenPrefix: string
 {

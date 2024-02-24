@@ -24,9 +24,9 @@ use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Broadcasting\BroadcastManager;
+use ChiefTools\SDK\Auth\RemoteAccessTokenGuard;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
-use ChiefTools\SDK\Auth\RemotePersonalAccessTokenGuard;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
@@ -156,10 +156,10 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         config([
-            'auth.guards.ctp' => array_merge([
-                'driver'   => 'chief_remote_pat',
+            'auth.guards.chief' => array_merge([
+                'driver'   => 'chief_remote',
                 'provider' => null,
-            ], config('auth.guards.ctp', [])),
+            ], config('auth.guards.chief', [])),
         ]);
     }
 
@@ -170,9 +170,9 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         Auth::resolved(function (AuthManager $auth) {
-            $auth->extend('chief_remote_pat', function (Application $app, string $name, array $config) use ($auth) {
+            $auth->extend('chief_remote', function (Application $app, string $name, array $config) use ($auth) {
                 $guard = new RequestGuard(
-                    new RemotePersonalAccessTokenGuard($name, new Client, $app->make('cache')),
+                    new RemoteAccessTokenGuard($name, new Client, $app->make('cache')),
                     request(),
                     $auth->createUserProvider($config['provider'] ?? null),
                 );

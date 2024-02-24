@@ -181,27 +181,27 @@ class Client extends HttpClient
     }
 
     /**
-     * Validate a PAT with the mothership.
+     * Validate a access token with the mothership.
      *
-     * @param string $pat
+     * @param string $token
      *
-     * @return array{user_id: string, token_id: string, expires_at: ?int}|null
+     * @return array{scopes: array, user_id: string, expires_at: ?int}|null
      */
-    public function validatePAT(string $pat): ?array
+    public function validateAccessToken(string $token): ?array
     {
-        if (empty($pat)) {
-            throw new RuntimeException('The PAT cannot be empty!');
+        if (empty($token)) {
+            throw new RuntimeException('The token cannot be empty!');
         }
 
-        $response = $this->get('/api/auth/validate-pat', [
+        $response = $this->get('/api/auth/validate-token', [
             'headers' => [
-                'Authorization' => "Bearer {$pat}",
+                'Authorization' => "Bearer {$token}",
                 ...$this->internalAuthHeaders(),
             ],
         ]);
 
         if ($response->getStatusCode() !== 200) {
-            throw new RuntimeException('Could not validate PAT.');
+            throw new RuntimeException('Could not validate token.');
         }
 
         return json_decode($response->getBody()->getContents(), true);

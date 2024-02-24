@@ -67,10 +67,10 @@ readonly class RemoteAccessTokenGuard
         }
 
         /** @var \ChiefTools\SDK\Entities\User|null $user */
-        $user = User::query()->where('chief_id', '=', $response['user_id'])->first();
+        $user = config('chief.auth.model')::query()->where('chief_id', '=', $response['user_id'])->first();
 
         if ($user !== null) {
-            if (in_array(HasRemoteTokens::class, class_uses_recursive(User::class), true)) {
+            if (in_array(HasRemoteTokens::class, class_uses_recursive(config('chief.auth.model')), true)) {
                 $user = $user->withChiefRemoteAccessToken(new ChiefRemoteAccessToken(
                     scopes: $response['scopes'],
                     userId: $response['user_id'],

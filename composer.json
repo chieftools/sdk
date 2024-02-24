@@ -19,7 +19,7 @@
         "sentry/sentry-laravel": "^4.2",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
-        "tuupola/base62": "^2.1"
+        "stayallive/random-tokens": "^1.0"
     },
     "suggest": {
         "laravel/passport": "Passport is required when legacy OAuth personal access tokens are still in use.",

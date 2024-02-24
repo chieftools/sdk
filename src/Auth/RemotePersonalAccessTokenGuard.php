@@ -8,10 +8,10 @@ use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Cache\CacheManager;
 use ChiefTools\SDK\Enums\TokenPrefix;
-use ChiefTools\SDK\Helpers\RandomToken;
+use Stayallive\RandomTokens\RandomToken;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
-use ChiefTools\SDK\Exceptions\RandomToken\InvalidTokenException;
+use Stayallive\RandomTokens\Exceptions\InvalidTokenException;
 
 class RemotePersonalAccessTokenGuard
 {

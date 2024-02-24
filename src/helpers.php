@@ -295,6 +295,20 @@ function user_agent(): string
 }
 
 /**
+ * Get the user agent for the application used for internal requests.
+ *
+ * @return string
+ */
+function internal_user_agent(): string
+{
+    return sprintf(
+        '%s/%s',
+        str_replace(' ', '', config('app.name')),
+        config('app.version'),
+    );
+}
+
+/**
  * Get the user agent for the application used for crawling.
  *
  * @return string
@@ -338,7 +352,7 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
         'connect_timeout' => $timeout,
         'headers'         => array_merge([
             'User-Agent' => user_agent(),
-        ], $headers),
+        ], $headers, $options['headers'] ?? []),
     ]));
 }
 

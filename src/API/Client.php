@@ -48,7 +48,7 @@ class Client extends HttpClient
             'connect_timeout' => $timeout,
             'headers'         => array_merge($headers, [
                 'Accept'     => 'application/json',
-                'User-Agent' => user_agent(),
+                'User-Agent' => internal_user_agent(),
             ]),
         ]));
     }

@@ -5,6 +5,7 @@ namespace ChiefTools\SDK\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use ChiefTools\SDK\API\Client;
+use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Cache\CacheManager;
 use ChiefTools\SDK\Enums\TokenPrefix;
@@ -66,16 +67,27 @@ readonly class RemoteAccessTokenGuard
             return null;
         }
 
+        $remoteToken = new ChiefRemoteAccessToken(
+            scopes: $response['scopes'],
+            userId: $response['user_id'],
+            teamId: $response['team_id'] ?? null,
+            expiresAt: $expires ?: null,
+        );
+
         /** @var \ChiefTools\SDK\Entities\User|null $user */
-        $user = config('chief.auth.model')::query()->where('chief_id', '=', $response['user_id'])->first();
+        $user = config('chief.auth.model')::query()->where('chief_id', '=', $remoteToken->userId)->first();
 
         if ($user !== null) {
             if (in_array(HasRemoteTokens::class, class_uses_recursive(config('chief.auth.model')), true)) {
-                $user = $user->withChiefRemoteAccessToken(new ChiefRemoteAccessToken(
-                    scopes: $response['scopes'],
-                    userId: $response['user_id'],
-                    expiresAt: $expires ?: null,
-                ));
+                $user = $user->withChiefRemoteAccessToken($remoteToken);
+            }
+
+            if ($remoteToken->teamId !== null) {
+                $user->setCurrentTeam(
+                    $user->teams->firstOrFail(
+                        static fn (Team $team) => $team->id === $remoteToken->teamId,
+                    ),
+                );
             }
 
             event(new Authenticated($this->guard, $user));

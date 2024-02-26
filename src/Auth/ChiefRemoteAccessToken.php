@@ -11,5 +11,6 @@ readonly class ChiefRemoteAccessToken
         public string $userId,
         public ?int $teamId,
         public ?Carbon $expiresAt,
+        public ?string $plainTextToken = null,
     ) {}
 }

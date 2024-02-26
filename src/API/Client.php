@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\API;
 
 use Exception;
+use Carbon\Carbon;
 use RuntimeException;
 use GuzzleHttp\HandlerStack;
 use Sentry\State\HubInterface;
@@ -15,6 +16,7 @@ use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
 use Sentry\Tracing\GuzzleTracingMiddleware;
 use ChiefTools\SDK\Jobs\Reporting\ReportUsage;
+use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
 
 class Client extends HttpClient
 {
@@ -175,6 +177,40 @@ class Client extends HttpClient
             $data = json_decode($response->getBody()->getContents(), true);
 
             return ChiefTeam::fromArray($data);
+        } catch (GuzzleException) {
+            return null;
+        }
+    }
+
+    /**
+     * Generate an access token for a user.
+     *
+     * The token is scoped to the requesting app and the user's team.
+     *
+     * @param string $uuid
+     *
+     * @return \ChiefTools\SDK\Auth\ChiefRemoteAccessToken|null
+     */
+    public function generateAccessToken(string $uuid): ?ChiefRemoteAccessToken
+    {
+        try {
+            $response = $this->post("/api/user/{$uuid}/access_token", [
+                'headers' => $this->internalAuthHeaders(),
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return null;
+            }
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return new ChiefRemoteAccessToken(
+                scopes: $data['scopes'],
+                userId: $data['user_id'],
+                teamId: $data['team_id'],
+                expiresAt: $data['expires_at'] ? Carbon::createFromTimestamp($data['expires_at']) : null,
+                plainTextToken: $data['access_token'],
+            );
         } catch (GuzzleException) {
             return null;
         }

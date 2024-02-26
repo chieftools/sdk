@@ -3,8 +3,11 @@
 namespace ChiefTools\SDK\Exceptions;
 
 use Throwable;
+use ChiefTools\SDK\Chief;
 use Sentry\Laravel\Integration;
 use Illuminate\Support\Facades\View;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -28,5 +31,29 @@ class Handler extends ExceptionHandler
                 ->push(base_path('vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views'))
                 ->all(),
         );
+    }
+
+    protected function invalidJson($request, ValidationException $exception)
+    {
+        $customHandler = Chief::getValidationExceptionJsonResponseHandler();
+
+        if ($customHandler) {
+            return $customHandler($request, $exception);
+        }
+
+        return parent::invalidJson($request, $exception);
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($this->shouldReturnJson($request, $exception)) {
+            $customHandler = Chief::getAuthenticationExceptionJsonResponseHandler();
+
+            if ($customHandler) {
+                return $customHandler($request, $exception);
+            }
+        }
+
+        return parent::unauthenticated($request, $exception);
     }
 }

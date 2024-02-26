@@ -20,6 +20,10 @@ final class Chief
 
     private static ?Closure $shouldRenderAnalyticsTrackerResolver = null;
 
+    private static ?Closure $validationExceptionJsonResponseHandler = null;
+
+    private static ?Closure $authenticationExceptionJsonResponseHandler = null;
+
     public static function useTeamModel(string $teamModel): void
     {
         self::$teamModel = $teamModel;
@@ -103,5 +107,25 @@ final class Chief
     public static function registerShouldRenderAnalyticsTrackerResolver(?Closure $resolver): void
     {
         self::$shouldRenderAnalyticsTrackerResolver = $resolver;
+    }
+
+    public static function getValidationExceptionJsonResponseHandler(): ?Closure
+    {
+        return self::$validationExceptionJsonResponseHandler;
+    }
+
+    public static function registerValidationExceptionJsonResponseHandler(?Closure $handler): void
+    {
+        self::$validationExceptionJsonResponseHandler = $handler;
+    }
+
+    public static function getAuthenticationExceptionJsonResponseHandler(): ?Closure
+    {
+        return self::$authenticationExceptionJsonResponseHandler;
+    }
+
+    public static function registerAuthenticationExceptionJsonResponseHandler(?Closure $handler): void
+    {
+        self::$authenticationExceptionJsonResponseHandler = $handler;
     }
 }

@@ -2,7 +2,7 @@
 
 @section('maincontent')
     <x-tw::panel icon="fa-books" title="Documentation">
-        <div class="prose-sm prose-brand max-w-none mt-3 mb-3">
+        <div class="prose-sm prose-brand max-w-none mb-3">
             <p>
                 The API is based on the <a href="https://graphql.org/learn/" target="_blank" rel="noopener" class="font-medium text-brand-600 hover:text-brand-500">GraphQL</a> query language and lives here: <code>{{ route('api') }}</code>.
             </p>
@@ -37,7 +37,7 @@
 
         <hr class="my-4">
 
-        <pre class="leading-6 text-xs"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
+        <pre class="leading-6 text-xs"><code>## Example {{ config('app.title') }} GraphQL request
 curl -X "POST" "<span class="text-brand">{{ route('api') }}</span>" \
      -H 'Accept: application/json' \
      -H 'Authorization: Bearer <span class="text-brand">&lt;personal access token&gt;</span>' \

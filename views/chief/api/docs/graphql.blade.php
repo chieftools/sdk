@@ -37,7 +37,7 @@
 
         <hr class="my-4">
 
-        <pre class="leading-6 text-sm"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
+        <pre class="leading-6 text-xs"><code>## {{ config('app.title') }}@if(config('app.beta')) &beta;@endif GraphQL request
 curl -X "POST" "<span class="text-brand">{{ route('api') }}</span>" \
      -H 'Accept: application/json' \
      -H 'Authorization: Bearer <span class="text-brand">&lt;personal access token&gt;</span>' \

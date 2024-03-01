@@ -9,9 +9,7 @@ class ForceUnspecifiedAcceptHeaderToJson
 {
     public function handle(Request $request, Closure $next): mixed
     {
-        $acceptHeader = $request->headers->get('Accept');
-
-        if ($acceptHeader === null || $acceptHeader === '*' || $acceptHeader === '*/*') {
+        if ($request->acceptsAnyContentType()) {
             $request->headers->set('Accept', 'application/json');
         }
 

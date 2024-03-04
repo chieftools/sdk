@@ -8,6 +8,7 @@
     'value' => null,
     'style' => null,
     'options' => [],
+    'fromOld' => true,
     'checked' => false,
     'disabled' => false,
     'required' => false,
@@ -46,13 +47,15 @@
         'lg'      => 'px-4 py-3',
         'regular' => 'px-3 py-2 sm:text-sm',
     ][$size];
+
+    $value = $fromOld ? old($name, $value) : $value;
 @endphp
 
 @if($type === 'hidden')
     <input id="{{ $name }}"
            name="{{ $name }}"
            type="{{ $type }}"
-           value="{{ old($name, $value) }}"
+           value="{{ $value }}"
            {{ $disabled ? 'disabled' : '' }}
            {{ $required ? 'required' : '' }}
            {{ $readonly ? 'readonly' : '' }}
@@ -106,7 +109,7 @@
                               {{ $autofocus ? 'autofocus' : '' }}
                               {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                               {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
-                    >{{ old($name, $value) }}</textarea>
+                    >{{ $value }}</textarea>
                 @elseif($type === 'select')
                     <select id="{{ $name }}"
                             name="{{ $name }}"
@@ -120,14 +123,14 @@
                             {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                     >
                         @foreach($options as $optionValue => $option)
-                            <option value="{{ $optionValue }}"{{ $optionValue === old($name, $value) ? ' selected' : '' }}>{{ $option }}</option>
+                            <option value="{{ $optionValue }}"{{ $optionValue === $value ? ' selected' : '' }}>{{ $option }}</option>
                         @endforeach
                     </select>
                 @else
                     <input id="{{ $name }}"
                            name="{{ $name }}"
                            type="{{ $type }}"
-                           value="{{ old($name, $value) }}"
+                           value="{{ $value }}"
                            class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
                            {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                            {{ $disabled ? 'disabled' : '' }}

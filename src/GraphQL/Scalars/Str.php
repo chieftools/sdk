@@ -10,7 +10,11 @@ class Str extends ScalarType
 {
     public function serialize($value)
     {
-        return $value;
+        if ($value === null) {
+            return null;
+        }
+
+        return (string)$value;
     }
 
     public function parseValue($value)

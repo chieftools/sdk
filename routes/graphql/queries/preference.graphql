@@ -6,5 +6,5 @@ extend type User {
 
         "Indicates which preferences to retrieve by their category."
         categories: [String!]
-    ): [UserPreference!]! @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\UserPreferences")
+    ): [UserPreference!]! @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\UserPreferences") @local
 }

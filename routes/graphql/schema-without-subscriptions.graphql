@@ -12,13 +12,13 @@ type Query {
 
     This field always returns the string "pong".
     """
-    ping: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Ping")
+    ping: String! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\Ping") @shareable
 
     "Retrieve information we detected about the client."
-    client: ClientInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ClientInfo")
+    client: ClientInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ClientInfo") @shareable
 
     "Retrieve information about the application."
-    application: ApplicationInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ApplicationInfo")
+    application: ApplicationInfo! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Queries\\ApplicationInfo") @local
 }
 
 "The mutation root of the GraphQL interface."
@@ -28,5 +28,5 @@ type Mutation {
 
     This mutation always returns the string "pong" in it's response field.
     """
-    ping: PingPayload! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\Ping")
+    ping: PingPayload! @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\Ping") @shareable
 }

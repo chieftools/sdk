@@ -1,5 +1,5 @@
 "A user or actor in the system."
-type User implements Entity {
+type User implements Entity @key(fields: "id") @shareable {
     id: ID!
 
     "The user name."

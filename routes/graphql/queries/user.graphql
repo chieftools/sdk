@@ -1,4 +1,4 @@
 extend type Query {
     "The currently authenticated user."
-    viewer: User @auth
+    viewer: User @auth @shareable
 }

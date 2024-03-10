@@ -1,0 +1,18 @@
+#import schema-without-subscriptions.graphql
+
+extend schema @link(
+    url: "https://specs.apollo.dev/federation/v2.3",
+    import: [
+        "@composeDirective",
+        "@extends",
+        "@external",
+        "@inaccessible",
+        "@interfaceObject",
+        "@key",
+        "@override",
+        "@provides",
+        "@requires",
+        "@shareable",
+        "@tag"
+    ]
+)

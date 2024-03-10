@@ -538,3 +538,23 @@ function __access_class_property(object $object, string $propertyName): mixed
 
     return $property->getValue($object);
 }
+
+/**
+ * Update a private/protected class property from an object instance.
+ *
+ * @param object $object
+ * @param string $propertyName
+ * @param mixed  $value
+ *
+ * @throws \ReflectionException
+ */
+function __set_class_property(object $object, string $propertyName, mixed $value): void
+{
+    $reflection = new ReflectionClass($object);
+
+    $property = $reflection->getProperty($propertyName);
+
+    $property->setAccessible(true);
+
+    $property->setValue($object, $value);
+}

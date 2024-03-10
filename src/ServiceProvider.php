@@ -304,15 +304,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->app->singleton(LighthouseFederation\EntityResolverProvider::class);
 
-        if ($this->app->runningInConsole()) {
-            $this->app->booting(static function (Application $app) {
-                $dispatcher = $app->make(Dispatcher::class);
-                $dispatcher->listen(
-                    LighthouseEvents\RegisterDirectiveNamespaces::class,
-                    static fn () => 'Nuwave\\Lighthouse\\Federation\\Directives',
-                );
-            });
-        }
+        $this->app->make(Dispatcher::class)->listen(
+            LighthouseEvents\RegisterDirectiveNamespaces::class,
+            static fn () => 'Nuwave\\Lighthouse\\Federation\\Directives',
+        );
     }
 
     private function registerGraphQLSubscriptions(): void

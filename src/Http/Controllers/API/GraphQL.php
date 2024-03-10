@@ -154,7 +154,6 @@ class GraphQL extends GraphQLController
     {
         LocalDirective::markRequestAsFederated();
 
-        $dispatcher->listen(LighthouseEvents\RegisterDirectiveNamespaces::class, static fn () => 'Nuwave\\Lighthouse\\Federation\\Directives');
         $dispatcher->listen(ManipulateAST::class, ASTManipulator::class);
         $dispatcher->listen(LighthouseEvents\ValidateSchema::class, LighthouseFederation\SchemaValidator::class);
 

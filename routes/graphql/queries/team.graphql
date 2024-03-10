@@ -1,0 +1,4 @@
+extend type User {
+    "The teams the user belongs to."
+    teams: [Team!]! @belongsToMany(type: PAGINATOR) @shareable
+}

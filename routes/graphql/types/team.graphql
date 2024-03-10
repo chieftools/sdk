@@ -1,0 +1,13 @@
+"A team in the system."
+type Team implements Entity @key(fields: "id") @shareable {
+    id: ID! @rename(attribute: "slug")
+
+    "The name of the team."
+    name: String!
+
+    "The timezone configured for the team."
+    timezone: String!
+
+    "Identifies the date and time when the object was created."
+    createdAt: DateTime! @rename(attribute: "created_at")
+}

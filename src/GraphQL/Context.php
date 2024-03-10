@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Contracts\Auth\Authenticatable;
+use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
 class Context implements GraphQLContext
@@ -39,5 +40,18 @@ class Context implements GraphQLContext
     public function request(): ?Request
     {
         return $this->request;
+    }
+
+    public function token(): ?ChiefRemoteAccessToken
+    {
+        if ($this->user === null || !method_exists($this->user, 'currentChiefRemoteAccessToken')) {
+            return null;
+        }
+
+        if (!$this->user->hasChiefRemoteAccessToken()) {
+            return null;
+        }
+
+        return $this->user->currentChiefRemoteAccessToken();
     }
 }

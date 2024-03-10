@@ -9,6 +9,11 @@ trait HasRemoteTokens
      */
     private ?ChiefRemoteAccessToken $chiefRemoteAccessToken = null;
 
+    public function hasChiefRemoteAccessToken(): bool
+    {
+        return $this->chiefRemoteAccessToken !== null;
+    }
+
     public function currentChiefRemoteAccessToken(): ChiefRemoteAccessToken
     {
         return $this->chiefRemoteAccessToken;

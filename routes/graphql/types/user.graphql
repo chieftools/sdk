@@ -3,13 +3,13 @@ type User implements Entity @key(fields: "id") @shareable {
     id: ID!
 
     "The user name."
-    name: String!
+    name: String! @tokenScopes(scopes: ["profile"])
 
     "The user email address."
-    email: String!
+    email: String! @tokenScopes(scopes: ["email"])
 
     "The timezone configured for the user."
-    timezone: String!
+    timezone: String! @tokenScopes(scopes: ["profile"])
 
     "Identifies the date and time when the object was created."
     createdAt: DateTime! @rename(attribute: "created_at")

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Http\Middleware\AuthenticateChief;
 
 Route::redirect('.well-known/security.txt', chief_site_url('.well-known/security.txt'))->name('well-known.security');
+Route::redirect('.well-known/change-password', chief_base_url('account/password'))->name('well-known.change-password');
 
 Route::group(config('chief.routes.web'), function () {
     if (config('chief.auth')) {

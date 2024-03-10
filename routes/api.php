@@ -3,9 +3,9 @@
 use ChiefTools\SDK\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 
-Route::get('.well-known/graphql.json', [Controllers\API\GraphQL::class, 'discovery'])->name('well-known.graphql');
-
 Route::group(config('chief.routes.api'), function () {
+    Route::get('.well-known/graphql.json', [Controllers\API\GraphQL::class, 'discovery'])->name('well-known.graphql');
+
     Route::match(['get', 'post'], 'graphql', Controllers\API\GraphQL::class)->middleware([
         Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
         Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),

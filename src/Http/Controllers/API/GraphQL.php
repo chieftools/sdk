@@ -33,13 +33,14 @@ class GraphQL extends GraphQLController
         RequestParser $requestParser,
         CreatesResponse $createsResponse,
         CreatesContext $createsContext,
+        bool $federated = false,
     ): SymfonyResponse {
         sync_user_timezone();
 
         // If we are in a local environment we print the schema and possible types configuration
         // on every request it's a bit wasteful but the impact is not that big and it saves
         // setting up git hooks and all that horrible jazz. For apollo and GitHub diffs.
-        if (app()->environment('local')) {
+        if (!$federated && app()->environment('local')) {
             $schema = app(SchemaBuilder::class)->schema();
 
             $fragmentTypes = /** @lang JavaScript */
@@ -101,7 +102,7 @@ class GraphQL extends GraphQLController
 
         $this->setupFederationOnLighthouseInstance($graphQL, $eventsDispatcher);
 
-        return $this($request, $graphQL, $eventsDispatcher, $requestParser, $createsResponse, $createsContext);
+        return $this($request, $graphQL, $eventsDispatcher, $requestParser, $createsResponse, $createsContext, federated: true);
     }
 
     public function discovery(): array

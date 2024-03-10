@@ -92,8 +92,10 @@ class GraphQL extends GraphQLController
     ): SymfonyResponse {
         abort_unless(config('chief.graphql.federation.enabled'), 404);
 
-        abort_unless($request->filled('federation_token'), 401);
-        abort_unless(config('chief.graphql.federation.secret') === $request->input('federation_token'), 403);
+        $federationToken = $request->header('chief-federation-token', $request->input('federation_token'));
+
+        abort_if(empty($federationToken), 400, 'Missing required federation token.');
+        abort_unless(config('chief.graphql.federation.secret') === $federationToken, 403, 'Invalid federation token.');
 
         /** @var \Nuwave\Lighthouse\Schema\SchemaBuilder $schemaBuilder */
         $schemaBuilder = __access_class_property($graphQL, 'schemaBuilder');

@@ -1,0 +1,4 @@
+extend type User {
+    "The teams the user belongs to."
+    teams: [Team!]! @tokenScopes(scopes: ["team"]) @with(relation: "teams") @shareable
+}

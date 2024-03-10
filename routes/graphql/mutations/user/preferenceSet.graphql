@@ -1,6 +1,6 @@
 extend type Mutation {
     "Set a preference value."
-    preferenceSet(input: PreferenceSetInput!): PreferenceSetPayload! @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\User\\Preference\\Set") @local
+    preferenceSet(input: PreferenceSetInput!): PreferenceSetPayload! @guard @tokenScopes(scopes: ["profile"]) @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\User\\Preference\\Set") @local
 }
 
 input PreferenceSetInput @local {

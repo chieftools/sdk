@@ -1,5 +1,5 @@
 "Information about the client."
-type ClientInfo {
+type ClientInfo @shareable {
     "Name of the client."
     name: String
 

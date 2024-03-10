@@ -1,4 +1,4 @@
-type PingPayload implements MutationPayload {
+type PingPayload implements MutationPayload @shareable {
     "The response is always \"pong\"."
     response: String!
 

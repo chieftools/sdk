@@ -11,6 +11,7 @@ use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
+use Nuwave\Lighthouse\Federation;
 use ChiefTools\SDK\Http\Middleware;
 use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Broadcast;
 use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Broadcasting\BroadcastManager;
 use ChiefTools\SDK\Auth\RemoteAccessTokenGuard;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
@@ -76,6 +78,7 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->registerAuth();
 
+        $this->registerGraphQLFederation();
         $this->registerGraphQLSubscriptions();
 
         $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
@@ -293,6 +296,26 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
+    private function registerGraphQLFederation(): void
+    {
+        if (!config('chief.graphql.federation.enabled')) {
+            return;
+        }
+
+        $this->app->singleton(Federation\EntityResolverProvider::class);
+
+        $this->app->booting(static function (Application $app) {
+            $dispatcher = $app->make(Dispatcher::class);
+
+            $dispatcher->listen(LighthouseEvents\ValidateSchema::class, Federation\SchemaValidator::class);
+            $dispatcher->listen(LighthouseEvents\RegisterDirectiveNamespaces::class, static fn () => '\\Nuwave\\Lighthouse\\Federation\\Directives');
+
+            if ($app->runningInConsole()) {
+                $dispatcher->listen(LighthouseEvents\ManipulateAST::class, Federation\ASTManipulator::class);
+            }
+        });
+    }
+
     private function registerGraphQLSubscriptions(): void
     {
         if (!config('chief.graphql.subscriptions.enabled')) {
@@ -300,7 +323,7 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         $this->app->booting(
-            fn () => $this->app->register(SubscriptionServiceProvider::class),
+            static fn (Application $app) => $app->register(SubscriptionServiceProvider::class),
         );
     }
 

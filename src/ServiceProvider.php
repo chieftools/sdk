@@ -11,7 +11,6 @@ use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
-use Nuwave\Lighthouse\Federation;
 use ChiefTools\SDK\Http\Middleware;
 use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +30,7 @@ use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Nuwave\Lighthouse\Federation as LighthouseFederation;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
@@ -302,18 +302,17 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        $this->app->singleton(Federation\EntityResolverProvider::class);
+        $this->app->singleton(LighthouseFederation\EntityResolverProvider::class);
 
-        $this->app->booting(static function (Application $app) {
-            $dispatcher = $app->make(Dispatcher::class);
-
-            $dispatcher->listen(LighthouseEvents\ValidateSchema::class, Federation\SchemaValidator::class);
-            $dispatcher->listen(LighthouseEvents\RegisterDirectiveNamespaces::class, static fn () => '\\Nuwave\\Lighthouse\\Federation\\Directives');
-
-            if ($app->runningInConsole()) {
-                $dispatcher->listen(LighthouseEvents\ManipulateAST::class, Federation\ASTManipulator::class);
-            }
-        });
+        if ($this->app->runningInConsole()) {
+            $this->app->booting(static function (Application $app) {
+                $dispatcher = $app->make(Dispatcher::class);
+                $dispatcher->listen(
+                    LighthouseEvents\RegisterDirectiveNamespaces::class,
+                    static fn () => 'Nuwave\\Lighthouse\\Federation\\Directives',
+                );
+            });
+        }
     }
 
     private function registerGraphQLSubscriptions(): void

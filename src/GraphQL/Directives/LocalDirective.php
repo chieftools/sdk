@@ -26,7 +26,7 @@ class LocalDirective extends BaseDirective implements FieldManipulator, TypeMani
 """
 Mark the field or object as local only, it will be removed from the graph when a federated request comes in.
 """
-directive @local repeatable on FIELD_DEFINITION | OBJECT
+directive @local repeatable on FIELD_DEFINITION | INPUT_OBJECT | OBJECT
 GRAPHQL;
     }
 

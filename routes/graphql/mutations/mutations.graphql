@@ -20,7 +20,7 @@ type ValidationError @shareable {
 }
 
 "The default payload returned from a mutation."
-interface MutationPayload @shareable {
+interface MutationPayload {
     "Information about the status of the mutation."
     status: MutationStatus!
 }

@@ -154,6 +154,14 @@ class GraphQL extends GraphQLController
     {
         LocalDirective::markRequestAsFederated();
 
+        $app = app();
+
+        $loadedProviders = __access_class_property($app, 'loadedProviders');
+
+        $loadedProviders[LighthouseFederation\FederationServiceProvider::class] = true;
+
+        __set_class_property($app, 'loadedProviders', $loadedProviders);
+
         $dispatcher->listen(ManipulateAST::class, ASTManipulator::class);
         $dispatcher->listen(LighthouseEvents\ValidateSchema::class, LighthouseFederation\SchemaValidator::class);
 

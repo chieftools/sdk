@@ -134,13 +134,15 @@ class Client extends HttpClient
      * Retrieve user info from the mothership.
      *
      * @param string $uuid
+     * @param array  $extra
      *
      * @return \ChiefTools\SDK\Socialite\ChiefUser|null
      */
-    public function user(string $uuid): ?ChiefUser
+    public function user(string $uuid, array $extra = []): ?ChiefUser
     {
         try {
             $response = $this->get("/api/user/{$uuid}", [
+                'query'   => $extra,
                 'headers' => $this->internalAuthHeaders(),
             ]);
 

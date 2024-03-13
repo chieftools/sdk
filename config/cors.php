@@ -20,7 +20,6 @@ return [
         'horizon/*',
         'api/graphql',
         'api/graphql/schema',
-        'api/graphql/federated',
     ],
 
     'allowed_methods' => ['*'],

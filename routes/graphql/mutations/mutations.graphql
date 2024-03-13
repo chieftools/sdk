@@ -1,5 +1,5 @@
 "Information container about the status of the mutation."
-type MutationStatus @shareable {
+type MutationStatus {
     "Indicates if the request was successful."
     success: Boolean!
 
@@ -11,7 +11,7 @@ type MutationStatus @shareable {
 }
 
 "A validation error for a field."
-type ValidationError @shareable {
+type ValidationError {
     "The name of the field."
     name: String!
 

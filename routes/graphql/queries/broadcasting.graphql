@@ -1,9 +1,9 @@
 extend type Query {
     "Authenticate to a broadcasting channel for a specified socket connection."
-    authenticateBroadcastChannel(input: AuthenticateBroadcastChannelInput!): BroadcastChannelAuth @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\AuthenticateBroadcastChannel") @local
+    authenticateBroadcastChannel(input: AuthenticateBroadcastChannelInput!): BroadcastChannelAuth @guard @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\AuthenticateBroadcastChannel")
 }
 
-input AuthenticateBroadcastChannelInput @local {
+input AuthenticateBroadcastChannelInput {
     "The channel name to authenticate."
     channel: String!
 
@@ -12,7 +12,7 @@ input AuthenticateBroadcastChannelInput @local {
 }
 
 "Data required to authenticate with a broadcasting channel."
-type BroadcastChannelAuth @local {
+type BroadcastChannelAuth {
     "The authentication token."
     token: String!
 

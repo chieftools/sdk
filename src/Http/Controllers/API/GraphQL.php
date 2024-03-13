@@ -10,17 +10,11 @@ use GraphQL\Utils\SchemaPrinter;
 use Laragraph\Utils\RequestParser;
 use GraphQL\Type\Definition\UnionType;
 use GraphQL\Type\Definition\InterfaceType;
-use Nuwave\Lighthouse\Events\ManipulateAST;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
 use Nuwave\Lighthouse\Http\GraphQLController;
-use Nuwave\Lighthouse\Federation\ASTManipulator;
-use Nuwave\Lighthouse\Events as LighthouseEvents;
-use Nuwave\Lighthouse\Schema\Source\SchemaStitcher;
-use ChiefTools\SDK\GraphQL\Directives\LocalDirective;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Support\Contracts\CreatesResponse;
-use Nuwave\Lighthouse\Federation as LighthouseFederation;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -33,14 +27,13 @@ class GraphQL extends GraphQLController
         RequestParser $requestParser,
         CreatesResponse $createsResponse,
         CreatesContext $createsContext,
-        bool $federated = false,
     ): SymfonyResponse {
         sync_user_timezone();
 
         // If we are in a local environment we print the schema and possible types configuration
         // on every request it's a bit wasteful but the impact is not that big and it saves
         // setting up git hooks and all that horrible jazz. For apollo and GitHub diffs.
-        if (!$federated && app()->environment('local')) {
+        if (app()->environment('local')) {
             $schema = app(SchemaBuilder::class)->schema();
 
             $fragmentTypes = /** @lang JavaScript */
@@ -83,26 +76,6 @@ class GraphQL extends GraphQLController
             'Content-Type'        => 'text/plain',
             'Content-Disposition' => "inline; filename=\"{$appId}-schema.graphql\"",
         ]);
-    }
-
-    public function federated(
-        Request $request,
-        Lighthouse $graphQL,
-        EventsDispatcher $eventsDispatcher,
-        RequestParser $requestParser,
-        CreatesResponse $createsResponse,
-        CreatesContext $createsContext,
-    ): SymfonyResponse {
-        abort_unless(config('chief.graphql.federation.enabled'), 404);
-
-        $federationToken = $request->header('chief-federation-token', $request->input('federation_token'));
-
-        abort_if(empty($federationToken), 400, 'Missing required federation token.');
-        abort_unless(config('chief.graphql.federation.secret') === $federationToken, 403, 'Invalid federation token.');
-
-        $this->setupFederationOnLighthouseInstance($graphQL, $eventsDispatcher);
-
-        return $this($request, $graphQL, $eventsDispatcher, $requestParser, $createsResponse, $createsContext, federated: true);
     }
 
     public function discovery(): array
@@ -148,38 +121,5 @@ class GraphQL extends GraphQLController
                 'types' => array_values($possibleTypes),
             ],
         ]);
-    }
-
-    private function setupFederationOnLighthouseInstance(Lighthouse $graphQL, EventsDispatcher $dispatcher): void
-    {
-        LocalDirective::markRequestAsFederated();
-
-        $app = app();
-
-        $loadedProviders = __access_class_property($app, 'loadedProviders');
-
-        $loadedProviders[LighthouseFederation\FederationServiceProvider::class] = true;
-
-        __set_class_property($app, 'loadedProviders', $loadedProviders);
-
-        $dispatcher->listen(ManipulateAST::class, ASTManipulator::class);
-        $dispatcher->listen(LighthouseEvents\ValidateSchema::class, LighthouseFederation\SchemaValidator::class);
-
-        /** @var \Nuwave\Lighthouse\Schema\SchemaBuilder $schemaBuilder */
-        $schemaBuilder = __access_class_property($graphQL, 'schemaBuilder');
-
-        /** @var \Nuwave\Lighthouse\Schema\AST\ASTBuilder $astBuilder */
-        $astBuilder = __access_class_property($schemaBuilder, 'astBuilder');
-
-        $schemaPath = str_replace('schema.graphql', 'schema-federated.graphql', config('lighthouse.schema_path'));
-
-        __set_class_property($astBuilder, 'schemaSourceProvider', new SchemaStitcher($schemaPath));
-
-        /** @var \Nuwave\Lighthouse\Schema\AST\ASTCache $astCache */
-        $astCache = __access_class_property($astBuilder, 'astCache');
-
-        $schemaCachePath = str_replace('schema.php', 'schema-federated.php', config('lighthouse.schema_cache.path'));
-
-        __set_class_property($astCache, 'path', $schemaCachePath);
     }
 }

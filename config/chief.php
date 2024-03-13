@@ -80,14 +80,6 @@ return [
 
         ],
 
-        'federation' => [
-
-            'enabled' => env('CHIEF_GRAPHQL_FEDERATION_ENABLED', false),
-
-            'secret' => env('CHIEF_GRAPHQL_FEDERATION_SECRET'),
-
-        ],
-
         'playground' => env('CHIEF_GRAPHQL_PLAYGROUND', 'graphiql'),
 
         'subscriptions' => [

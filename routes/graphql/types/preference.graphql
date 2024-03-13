@@ -1,5 +1,5 @@
 "A user preference."
-type UserPreference @local {
+type UserPreference {
     "The preference key."
     key: String!
 
@@ -23,7 +23,7 @@ type UserPreference @local {
 }
 
 "A user preference category."
-type UserPreferenceCategory @local {
+type UserPreferenceCategory {
     "The preference category key."
     key: String!
 

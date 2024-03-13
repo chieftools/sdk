@@ -13,13 +13,6 @@ Route::group(config('chief.routes.api'), function () {
         Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),
     ])->name('api');
 
-    if (config('chief.graphql.federation.enabled')) {
-        Route::match(['get', 'post'], 'graphql/federated', [Controllers\API\GraphQL::class, 'federated'])->middleware([
-            Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
-            Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),
-        ]);
-    }
-
     if (config('chief.graphql.subscriptions.enabled')) {
         Route::post('graphql/subscriptions/webhook', Controllers\API\GraphQL\SubscriptionsWebhook::class)->name('api.subscriptions.webhook');
     }

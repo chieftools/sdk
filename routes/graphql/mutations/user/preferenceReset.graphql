@@ -1,14 +1,14 @@
 extend type Mutation {
     "Reset a preference to it's default value."
-    preferenceReset(input: PreferenceResetInput!): PreferenceResetPayload! @guard @tokenScopes(scopes: ["profile"]) @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\User\\Preference\\Reset") @local
+    preferenceReset(input: PreferenceResetInput!): PreferenceResetPayload! @guard @tokenScopes(scopes: ["profile"]) @field(resolver: "ChiefTools\\SDK\\GraphQL\\Mutations\\User\\Preference\\Reset")
 }
 
-input PreferenceResetInput @local {
+input PreferenceResetInput {
     "The preference key to reset to it's default value."
     key: String!
 }
 
-type PreferenceResetPayload implements MutationPayload @local {
+type PreferenceResetPayload implements MutationPayload {
     "The preference that was reset."
     preference: UserPreference
 

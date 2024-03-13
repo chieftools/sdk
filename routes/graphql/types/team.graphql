@@ -1,5 +1,5 @@
 "A team in the system."
-type Team implements Entity @key(fields: "id") @shareable {
+type Team implements Entity {
     id: ID! @rename(attribute: "slug")
 
     "The name of the team."

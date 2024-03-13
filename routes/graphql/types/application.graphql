@@ -1,5 +1,5 @@
 "Information about the application."
-type ApplicationInfo @local {
+type ApplicationInfo {
     "The application identifier."
     id: String!
 

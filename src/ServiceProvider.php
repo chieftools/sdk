@@ -23,14 +23,12 @@ use Illuminate\Support\Facades\Broadcast;
 use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Broadcasting\BroadcastManager;
 use ChiefTools\SDK\Auth\RemoteAccessTokenGuard;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
-use Nuwave\Lighthouse\Federation as LighthouseFederation;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
@@ -78,7 +76,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->registerAuth();
 
-        $this->registerGraphQLFederation();
         $this->registerGraphQLSubscriptions();
 
         $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
@@ -294,20 +291,6 @@ class ServiceProvider extends IlluminateServiceProvider
                     : [],
             ]);
         }
-    }
-
-    private function registerGraphQLFederation(): void
-    {
-        if (!config('chief.graphql.federation.enabled')) {
-            return;
-        }
-
-        $this->app->singleton(LighthouseFederation\EntityResolverProvider::class);
-
-        $this->app->make(Dispatcher::class)->listen(
-            LighthouseEvents\RegisterDirectiveNamespaces::class,
-            static fn () => 'Nuwave\\Lighthouse\\Federation\\Directives',
-        );
     }
 
     private function registerGraphQLSubscriptions(): void

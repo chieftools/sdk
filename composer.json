@@ -8,7 +8,7 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^9.34|^10.4",
+        "laravel/framework": "^10.4",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",
@@ -27,7 +27,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.16",
-        "laravel/passport": "^10.4|^11.8",
+        "laravel/passport": "^10.4|^11.8|^12",
         "stayallive/laravel-passport-memoized": "^1.0"
     },
     "autoload": {

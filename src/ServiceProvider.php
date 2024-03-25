@@ -80,6 +80,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
 
+        $this->app->singleton(Client::class, static fn () => new Client);
+
         $this->app->singleton(Certainty\RemoteFetch::class, static function () {
             return (new Certainty\RemoteFetch(storage_path('framework/cache')))
                 ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
@@ -172,7 +174,7 @@ class ServiceProvider extends IlluminateServiceProvider
         Auth::resolved(function (AuthManager $auth) {
             $auth->extend('chief_remote', function (Application $app, string $name, array $config) use ($auth) {
                 $guard = new RequestGuard(
-                    new RemoteAccessTokenGuard($name, new Client, $app->make('cache')),
+                    new RemoteAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
                     request(),
                     $auth->createUserProvider($config['provider'] ?? null),
                 );

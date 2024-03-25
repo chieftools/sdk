@@ -323,7 +323,7 @@ function crawler_user_agent(): string
 }
 
 /**
- * Get an HTTP client to use with sane timeouts and defaults.
+ * Get a HTTP client to use with sane timeouts and defaults.
  *
  * @param string|null   $baseUri
  * @param array         $headers
@@ -357,7 +357,7 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
 }
 
 /**
- * Get an HTTP client to use with sane timeouts and defaults used for crawling.
+ * Get a HTTP client to use with sane timeouts and defaults used for crawling.
  *
  * @param string|null   $baseUri
  * @param array         $headers
@@ -372,6 +372,32 @@ function crawler_http(?string $baseUri = null, array $headers = [], int $timeout
     return http($baseUri, array_merge([
         'User-Agent' => crawler_user_agent(),
     ], $headers), $timeout, $options, $stackCallback);
+}
+
+/**
+ * Get a HTTP client to use with sane timeouts and defaults used for internal use.
+ *
+ * @param string|null   $baseUri
+ * @param array         $headers
+ * @param int           $timeout
+ * @param array         $options
+ * @param \Closure|null $stackCallback
+ *
+ * @return \GuzzleHttp\Client
+ */
+function internal_http(?string $baseUri = null, array $headers = [], int $timeout = 10, array $options = [], ?Closure $stackCallback = null): GuzzleHttp\Client
+{
+    return http(
+        $baseUri,
+        array_merge([
+            'User-Agent' => internal_user_agent(),
+        ], $headers),
+        $timeout,
+        array_merge([
+            'verify' => config('services.chief.verify', true),
+        ], $options),
+        $stackCallback,
+    );
 }
 
 /**

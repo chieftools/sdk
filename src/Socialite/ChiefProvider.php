@@ -19,9 +19,7 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
     protected function getHttpClient()
     {
         if (is_null($this->httpClient)) {
-            $this->httpClient = http(options: $this->guzzle, headers: [
-                'User-Agent' => internal_user_agent(),
-            ]);
+            $this->httpClient = internal_http(options: $this->guzzle);
         }
 
         return $this->httpClient;

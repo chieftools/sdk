@@ -5,8 +5,6 @@ namespace ChiefTools\SDK\API;
 use Exception;
 use Carbon\Carbon;
 use RuntimeException;
-use GuzzleHttp\HandlerStack;
-use Sentry\State\HubInterface;
 use ChiefTools\SDK\Entities\Team;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
@@ -14,45 +12,18 @@ use GuzzleHttp\Client as HttpClient;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
-use Sentry\Tracing\GuzzleTracingMiddleware;
 use ChiefTools\SDK\Jobs\Reporting\ReportUsage;
 use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
 
-class Client extends HttpClient
+class Client
 {
-    /**
-     * Get the URL to the Account Chief application.
-     */
-    public static function getBaseUrl(?string $path = null): string
+    private HttpClient $http;
+
+    public function __construct(?HttpClient $http = null)
     {
-        $url = rtrim(config('chief.base_url', 'https://account.chief.app'), '/');
-
-        if (!empty($path)) {
-            $url .= '/' . ltrim($path, '/');
-        }
-
-        return $url;
-    }
-
-    public function __construct(array $config = [], array $headers = [], int $timeout = 10)
-    {
-        $stack = HandlerStack::create();
-
-        if (app()->bound(HubInterface::class)) {
-            $stack->push(GuzzleTracingMiddleware::trace());
-        }
-
-        parent::__construct(array_merge($config, [
-            'base_uri'        => self::getBaseUrl(),
-            'handler'         => $stack,
-            'verify'          => config('services.chief.verify', true),
-            'timeout'         => $timeout,
-            'connect_timeout' => $timeout,
-            'headers'         => array_merge($headers, [
-                'Accept'     => 'application/json',
-                'User-Agent' => internal_user_agent(),
-            ]),
-        ]));
+        $this->http = $http ?? internal_http(self::getBaseUrl(), [
+            'Accept' => 'application/json',
+        ]);
     }
 
     /**
@@ -68,7 +39,7 @@ class Client extends HttpClient
             throw new RuntimeException('The app ID cannot be empty!');
         }
 
-        $response = $this->get("/api/app/{$id}");
+        $response = $this->http->get("/api/app/{$id}");
 
         if ($response->getStatusCode() !== 200) {
             throw new RuntimeException('Could not retrieve Chief app from API.');
@@ -90,7 +61,7 @@ class Client extends HttpClient
             throw new RuntimeException('The app ID cannot be empty!');
         }
 
-        $response = $this->get("/api/app/{$id}/pricing");
+        $response = $this->http->get("/api/app/{$id}/pricing");
 
         if ($response->getStatusCode() !== 200) {
             throw new RuntimeException('Could not retrieve app pricing from API.');
@@ -119,7 +90,7 @@ class Client extends HttpClient
             $queryParams['authenticated'] = $authenticated ? '1' : '0';
         }
 
-        $response = $this->get('/api/apps', [
+        $response = $this->http->get('/api/apps', [
             'query' => array_filter($queryParams),
         ]);
 
@@ -141,7 +112,7 @@ class Client extends HttpClient
     public function user(string $uuid, array $extra = []): ?ChiefUser
     {
         try {
-            $response = $this->get("/api/user/{$uuid}", [
+            $response = $this->http->get("/api/user/{$uuid}", [
                 'query'   => $extra,
                 'headers' => $this->internalAuthHeaders(),
             ]);
@@ -168,7 +139,7 @@ class Client extends HttpClient
     public function team(string $slug): ?ChiefTeam
     {
         try {
-            $response = $this->get("/api/team/{$slug}", [
+            $response = $this->http->get("/api/team/{$slug}", [
                 'headers' => $this->internalAuthHeaders(),
             ]);
 
@@ -196,7 +167,7 @@ class Client extends HttpClient
     public function generateAccessToken(string $uuid): ?ChiefRemoteAccessToken
     {
         try {
-            $response = $this->post("/api/user/{$uuid}/access_token", [
+            $response = $this->http->post("/api/user/{$uuid}/access_token", [
                 'headers' => $this->internalAuthHeaders(),
             ]);
 
@@ -231,7 +202,7 @@ class Client extends HttpClient
             throw new RuntimeException('The token cannot be empty!');
         }
 
-        $response = $this->get('/api/auth/validate-token', [
+        $response = $this->http->get('/api/auth/validate-token', [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
                 ...$this->internalAuthHeaders(),
@@ -256,7 +227,7 @@ class Client extends HttpClient
      */
     public function reportUsage(string $teamSlug, string $usageId, int $usage): void
     {
-        $response = $this->put("/api/team/{$teamSlug}/billing/plan/usage/{$usageId}", [
+        $response = $this->http->put("/api/team/{$teamSlug}/billing/plan/usage/{$usageId}", [
             'json'    => compact('usage'),
             'headers' => $this->internalAuthHeaders(),
         ]);
@@ -285,7 +256,7 @@ class Client extends HttpClient
 
         $reports = collect($reports)->toArray();
 
-        $response = $this->put('/api/bulk/team/billing/plan/usage', [
+        $response = $this->http->put('/api/bulk/team/billing/plan/usage', [
             'json'    => compact('reports'),
             'headers' => $this->internalAuthHeaders(),
         ]);
@@ -318,7 +289,7 @@ class Client extends HttpClient
      */
     public function activateBetaPlan(string $teamSlug): void
     {
-        $response = $this->post("/api/team/{$teamSlug}/billing/plan/beta/activate", [
+        $response = $this->http->post("/api/team/{$teamSlug}/billing/plan/beta/activate", [
             'headers' => $this->internalAuthHeaders(),
         ]);
 
@@ -337,7 +308,7 @@ class Client extends HttpClient
     public function reportActivity(Team $team): void
     {
         try {
-            $this->post("/api/team/{$team->slug}/activity", [
+            $this->http->post("/api/team/{$team->slug}/activity", [
                 'headers' => $this->internalAuthHeaders(),
             ]);
         } catch (Exception) {
@@ -356,5 +327,19 @@ class Client extends HttpClient
             'X-Chief-App'    => config('chief.id'),
             'X-Chief-Secret' => config('chief.secret'),
         ];
+    }
+
+    /**
+     * Get the URL to the Account Chief application.
+     */
+    public static function getBaseUrl(?string $path = null): string
+    {
+        $url = rtrim(config('chief.base_url', 'https://account.chief.app'), '/');
+
+        if (!empty($path)) {
+            $url .= '/' . ltrim($path, '/');
+        }
+
+        return $url;
     }
 }

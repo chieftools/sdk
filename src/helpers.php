@@ -288,7 +288,7 @@ function dispatch_vapor(mixed $job): void
 function user_agent(): string
 {
     return sprintf(
-        '%sBot/%s (+https://docs.chief.tools/bots)',
+        '%sBot/%s (+https://aka.chief.app/bot)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );
@@ -316,14 +316,14 @@ function internal_user_agent(): string
 function crawler_user_agent(): string
 {
     return sprintf(
-        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://docs.chief.tools/bots) Chrome/120.0.6099.71 Safari/537.36',
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/123.0.6312.58 Safari/537.36',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );
 }
 
 /**
- * Get an HTTP client to use with sane timeouts and defaults.
+ * Get a HTTP client to use with sane timeouts and defaults.
  *
  * @param string|null   $baseUri
  * @param array         $headers
@@ -357,7 +357,7 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
 }
 
 /**
- * Get an HTTP client to use with sane timeouts and defaults used for crawling.
+ * Get a HTTP client to use with sane timeouts and defaults used for crawling.
  *
  * @param string|null   $baseUri
  * @param array         $headers
@@ -372,6 +372,32 @@ function crawler_http(?string $baseUri = null, array $headers = [], int $timeout
     return http($baseUri, array_merge([
         'User-Agent' => crawler_user_agent(),
     ], $headers), $timeout, $options, $stackCallback);
+}
+
+/**
+ * Get a HTTP client to use with sane timeouts and defaults used for internal use.
+ *
+ * @param string|null   $baseUri
+ * @param array         $headers
+ * @param int           $timeout
+ * @param array         $options
+ * @param \Closure|null $stackCallback
+ *
+ * @return \GuzzleHttp\Client
+ */
+function internal_http(?string $baseUri = null, array $headers = [], int $timeout = 10, array $options = [], ?Closure $stackCallback = null): GuzzleHttp\Client
+{
+    return http(
+        $baseUri,
+        array_merge([
+            'User-Agent' => internal_user_agent(),
+        ], $headers),
+        $timeout,
+        array_merge([
+            'verify' => config('services.chief.verify', true),
+        ], $options),
+        $stackCallback,
+    );
 }
 
 /**

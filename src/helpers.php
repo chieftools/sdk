@@ -288,7 +288,7 @@ function dispatch_vapor(mixed $job): void
 function user_agent(): string
 {
     return sprintf(
-        '%sBot/%s (+https://docs.chief.tools/bots)',
+        '%sBot/%s (+https://aka.chief.app/bot)',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );
@@ -316,7 +316,7 @@ function internal_user_agent(): string
 function crawler_user_agent(): string
 {
     return sprintf(
-        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://docs.chief.tools/bots) Chrome/120.0.6099.71 Safari/537.36',
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/123.0.6312.58 Safari/537.36',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );

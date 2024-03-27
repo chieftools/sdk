@@ -34,7 +34,9 @@ use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Laravel\Passport\RouteRegistrar as Passport10RouteRegistrar;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
+use Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
+use ChiefTools\SDK\GraphQL\Subscriptions\Storage\RedisStorageManager;
 use ChiefTools\SDK\Broadcasting\Channels\LighthouseSubscriptionChannel;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -302,7 +304,11 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         $this->app->booting(
-            static fn (Application $app) => $app->register(SubscriptionServiceProvider::class),
+            static function (Application $app) {
+                $app->register(SubscriptionServiceProvider::class);
+
+                $app->singleton(StoresSubscriptions::class, RedisStorageManager::class);
+            },
         );
     }
 

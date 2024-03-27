@@ -38,6 +38,7 @@ use Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use ChiefTools\SDK\GraphQL\Subscriptions\Storage\RedisStorageManager;
 use ChiefTools\SDK\Broadcasting\Channels\LighthouseSubscriptionChannel;
+use Nuwave\Lighthouse\Subscriptions\Storage\RedisStorageManager as LighthouseRedisStorageManager;
 
 class ServiceProvider extends IlluminateServiceProvider
 {
@@ -307,7 +308,17 @@ class ServiceProvider extends IlluminateServiceProvider
             static function (Application $app) {
                 $app->register(SubscriptionServiceProvider::class);
 
-                $app->singleton(StoresSubscriptions::class, RedisStorageManager::class);
+                $app->extend(
+                    StoresSubscriptions::class,
+                    static function (StoresSubscriptions $storage) {
+                        // Replace the Lighthouse storage manager with our own implementation
+                        if ($storage instanceof LighthouseRedisStorageManager) {
+                            return app(RedisStorageManager::class);
+                        }
+
+                        return $storage;
+                    },
+                );
             },
         );
     }

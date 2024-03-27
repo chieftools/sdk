@@ -258,6 +258,14 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
         }
     }
 
+    // We check if the subscription has any subscribers (which is a really cheap operation) before dispatching a job that we know to do nothing
+    // The check can return `null` so we need to check for `false` explicitly to ensure we only skip if we are certain about the result
+    if (does_subscription_have_subscribers($subscription, $root) === false) {
+        logger()?->debug("Skipping subscription:{$subscription} because there are no subscribers");
+
+        return;
+    }
+
     // Optimize the queued job by unsetting all relations so they are not automatically loaded
     if ($root instanceof Illuminate\Database\Eloquent\Model) {
         $root = $root->withoutRelations();
@@ -266,6 +274,38 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
     logger()?->debug("Dispatching subscription:{$subscription}");
 
     Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);
+}
+
+/**
+ * Test if a GraphQL subscription has any subscribers.
+ *
+ * @param string $subscriptionField
+ * @param mixed  $root
+ *
+ * @return bool|null
+ */
+function does_subscription_have_subscribers(string $subscriptionField, mixed $root): ?bool
+{
+    $subscriptionStorage = app(Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions::class);
+
+    // We only support this test for our own storage manager that has the needed API to access the information
+    if (!$subscriptionStorage instanceof ChiefTools\SDK\GraphQL\Subscriptions\Storage\RedisStorageManager) {
+        return null;
+    }
+
+    // We need to load the schema into memory to be able to access the subscription registry correctly
+    app(Nuwave\Lighthouse\Schema\SchemaBuilder::class)->schema();
+
+    $registry = app(Nuwave\Lighthouse\Subscriptions\SubscriptionRegistry::class);
+
+    // If the subscription field cannot be found it's gonna throw when we dispatch, let the error come from there instead of here
+    if (!$registry->has($subscriptionField)) {
+        return null;
+    }
+
+    $topic = $registry->subscription($subscriptionField)->decodeTopic($subscriptionField, $root);
+
+    return $subscriptionStorage->hasSubscribersForTopic($topic);
 }
 
 /**

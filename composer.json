@@ -8,7 +8,7 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^10.4",
+        "laravel/framework": "^10.4|^11.1",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",

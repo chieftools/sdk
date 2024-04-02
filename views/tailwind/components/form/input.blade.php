@@ -15,6 +15,7 @@
     'readonly' => false,
     'copyable' => false,
     'autofocus' => false,
+    'maxlength' => null,
     'placeholder' => null,
     'autocomplete' => null,
     'withoutUnchecked' => false,
@@ -61,9 +62,17 @@
            {{ $readonly ? 'readonly' : '' }}
     >
 @else
-    <div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }}>
+    <div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }} @if($maxlength) x-data="{val: ''}" @endif>
         @if($label && $type !== 'checkbox')
-            <label for="{{ $name }}" class="block text-sm font-medium {{ $labelClass }}">{{ $label }}{{ $required ? '*' : '' }}</label>
+            <label for="{{ $name }}" class="flex block text-sm font-medium {{ $labelClass }}">
+                {{ $label }}{{ $required ? '*' : '' }}
+
+                @if($maxlength)
+                    <span class="ml-auto text-muted text-xs mt-1">
+                        <span x-text="val ? val.length : 0"></span>/{{ $maxlength }}
+                    </span>
+                @endif
+            </label>
         @endif
         <div class="mt-1 flex">
             <div class="relative flex items-stretch flex-grow focus-within:z-10">
@@ -107,6 +116,7 @@
                               {{ $required ? 'required' : '' }}
                               {{ $readonly ? 'readonly' : '' }}
                               {{ $autofocus ? 'autofocus' : '' }}
+                              {!! $maxlength ? "maxlength='{$maxlength}' x-model.fill='val'" : '' !!}
                               {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                               {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                     >{{ $value }}</textarea>
@@ -137,6 +147,7 @@
                            {{ $required ? 'required' : '' }}
                            {{ $readonly ? 'readonly' : '' }}
                            {{ $autofocus ? 'autofocus' : '' }}
+                           {!! $maxlength ? "maxlength='{$maxlength}' x-model.fill='val'" : '' !!}
                            {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                            {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                     >

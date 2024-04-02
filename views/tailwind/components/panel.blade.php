@@ -11,7 +11,7 @@
 
 <div {{ $attributes->merge(['class' => 'shadow overflow-hidden rounded-md']) }} @if($collapsable) x-cloak x-data="{show: {{ $collapsed ? 'false' : 'true' }}}" @endif>
     @if($title)
-        <div class="bg-white py-4 px-5 border-b border-gray-200 sm:px-6" @if($collapsable) x-on:click="show = !show" @endif>
+        <div class="bg-white py-4 px-5 border-b border-gray-200 sm:px-6 @if($collapsable) cursor-pointer @endif" @if($collapsable) x-on:click="show = !show" @endif>
             <h3 class="inline-block text-lg leading-6 font-medium text-gray-900">
                 @if($icon)<i class="{{ $iconType }} fa-fw {{ $icon }} text-gray-500"></i> @endif{{ $title }}
             </h3>

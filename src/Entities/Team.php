@@ -183,7 +183,7 @@ class Team extends Entity
         }
 
         if ($value === 'current') {
-            return auth()->user()->getTeamFromSession();
+            return $user->getTeamFromSession() ?? $user->defaultOrFirstTeam();
         }
 
         return $user->teams()->where($field ?? 'slug', '=', $value)->first();

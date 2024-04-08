@@ -82,6 +82,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return $this->name;
     }
+    public function name(): Attribute
+    {
+        return new Attribute(
+            set: static fn ($value) => trim($value),
+        );
+    }
     public function team(): Attribute
     {
         return Attribute::make(

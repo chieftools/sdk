@@ -5,8 +5,8 @@
 @endpush
 
 @push('head.style')
-    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@graphiql/plugin-explorer/dist/style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/graphiql/graphiql.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@graphiql/plugin-explorer/dist/style.css" />
     <style>
         html, body {
             height: 100%;
@@ -35,10 +35,10 @@
 @endsection
 
 @push('body.script')
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/graphiql/graphiql.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@graphiql/plugin-explorer/dist/index.umd.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/graphiql/graphiql.min.js" crossorigin></script>
+    <script src="https://cdn.jsdelivr.net/npm/@graphiql/plugin-explorer/dist/index.umd.js" crossorigin></script>
     <script>
         // Default the theme to 'light' to match the application style
         const storedTheme = localStorage.getItem('graphiql:theme');

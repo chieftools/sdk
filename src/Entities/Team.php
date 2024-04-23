@@ -123,7 +123,7 @@ class Team extends Entity
             return true;
         }
 
-        return $this->last_activity_at->diffInHours() >= 1;
+        return $this->last_activity_at->diffInHours(absolute: true) >= 1;
     }
 
     // Static helpers

@@ -103,7 +103,7 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors');
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
-        $this->mergeConfigFrom(static::basePath('config/session.php'), 'session');
+        $this->mergeConfigFrom(static::basePath('config/session.php'), 'session', force: true);
         $this->mergeConfigFrom(static::basePath('config/javascript.php'), 'javascript');
         $this->mergeConfigFrom(static::basePath('config/lighthouse.php'), 'lighthouse');
     }
@@ -369,6 +369,19 @@ class ServiceProvider extends IlluminateServiceProvider
             'app.mix_url'   => replace_custom_asset_domain($_ENV['MIX_URL'] ?? '/'),
             'app.asset_url' => replace_custom_asset_domain($_ENV['ASSET_URL'] ?? '/'),
         ]);
+    }
+
+    protected function mergeConfigFrom($path, $key, $force = false): void
+    {
+        if (!($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
+            $config = $this->app->make('config');
+
+            $config->set($key, $force ? array_merge(
+                $config->get($key, []), require $path,
+            ) : array_merge(
+                require $path, $config->get($key, []),
+            ));
+        }
     }
 
     private static function basePath(string $path): string

@@ -8,7 +8,7 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^10.4|^11.1",
+        "laravel/framework": "^11.5",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",
@@ -16,7 +16,7 @@
         "paragonie/certainty": "^2.8",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry": "^4.3",
-        "sentry/sentry-laravel": "^4.2",
+        "sentry/sentry-laravel": "^4.5",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
         "stayallive/random-tokens": "^1.0"
@@ -26,8 +26,8 @@
         "stayallive/laravel-passport-memoized": "Memoizes Passport token validation to improve performance when using Laravel Passport."
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.16",
-        "laravel/passport": "^10.4|^11.8|^12",
+        "friendsofphp/php-cs-fixer": "^3.54",
+        "laravel/passport": "^12",
         "stayallive/laravel-passport-memoized": "^1.0"
     },
     "autoload": {

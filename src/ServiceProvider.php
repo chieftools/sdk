@@ -32,7 +32,6 @@ use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
-use Laravel\Passport\RouteRegistrar as Passport10RouteRegistrar;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
@@ -234,14 +233,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configurePassport(): void
     {
-        // If the Passport package is not installed we can skip this
-        if (!class_exists(Passport::class)) {
-            return;
-        }
-
-        Passport::ignoreMigrations();
-
-        if (!config('chief.auth')) {
+        // If the Passport package is not installed or not auth is enabled we can skip the setup
+        if (!class_exists(Passport::class) || !config('chief.auth')) {
             return;
         }
 
@@ -251,14 +244,7 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        // Passport v10 uses the RouteRegistrar class to register routes so we modify it when available, for 11+ we manually override the routes
-        if (class_exists(Passport10RouteRegistrar::class)) {
-            Passport::routes(static function (Passport10RouteRegistrar $routes) {
-                // Register no routes, they are not needed!
-            }, config('chief.routes.passport', []));
-        } else {
-            Passport::ignoreRoutes();
-        }
+        Passport::ignoreRoutes();
 
         Passport::tokensExpireIn(now()->addDays(7));
         Passport::refreshTokensExpireIn(now()->addDays(31));

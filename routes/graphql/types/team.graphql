@@ -1,6 +1,6 @@
 "A team in the system."
 type Team implements Entity {
-    id: ID! @rename(attribute: "slug")
+    id: ID! @rename(attribute: "slug") @autoDocument
 
     "The name of the team."
     name: String!
@@ -8,6 +8,5 @@ type Team implements Entity {
     "The timezone configured for the team."
     timezone: String!
 
-    "Identifies the date and time when the object was created."
-    createdAt: DateTime! @rename(attribute: "created_at")
+    createdAt: DateTime! @rename(attribute: "created_at") @autoDocument
 }

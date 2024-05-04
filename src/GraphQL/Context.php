@@ -18,8 +18,17 @@ class Context implements GraphQLContext
     public function __construct(
         private readonly ?Request $request,
     ) {
-        $this->user = $request?->user();
-        $this->team = $this->user?->team;
+        $authenticated = $request?->user();
+
+        if ($authenticated instanceof User) {
+            $this->user = $request?->user();
+            $this->team = $this->user?->team;
+        }
+
+        if ($authenticated instanceof Team) {
+            $this->user = null;
+            $this->team = $authenticated;
+        }
     }
 
     public function user(): ?User

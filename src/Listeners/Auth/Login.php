@@ -2,13 +2,17 @@
 
 namespace ChiefTools\SDK\Listeners\Auth;
 
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Auth\Events\Login as LoginEvent;
 
 class Login
 {
     public function handle(LoginEvent $event): void
     {
-        /** @var \ChiefTools\SDK\Entities\User $user */
+        if (!$event->user instanceof User) {
+            return;
+        }
+
         $user = $event->user;
 
         $user->last_login = now();

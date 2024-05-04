@@ -24,8 +24,9 @@ use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Broadcasting\BroadcastManager;
-use ChiefTools\SDK\Auth\RemoteAccessTokenGuard;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
+use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
+use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
@@ -161,9 +162,12 @@ class ServiceProvider extends IlluminateServiceProvider
 
         config([
             'auth.guards.chief' => array_merge([
-                'driver'   => 'chief_remote',
-                'provider' => null,
+                'driver' => 'chief_remote_user',
             ], config('auth.guards.chief', [])),
+
+            'auth.guards.chief_team' => array_merge([
+                'driver' => 'chief_remote_team',
+            ], config('auth.guards.chief_team', [])),
         ]);
     }
 
@@ -174,11 +178,21 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         Auth::resolved(function (AuthManager $auth) {
-            $auth->extend('chief_remote', function (Application $app, string $name, array $config) use ($auth) {
+            $auth->extend('chief_remote_user', static function (Application $app, string $name) {
                 $guard = new RequestGuard(
-                    new RemoteAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
+                    new RemoteUserAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
                     request(),
-                    $auth->createUserProvider($config['provider'] ?? null),
+                );
+
+                $app->refresh('request', $guard, 'setRequest');
+
+                return $guard;
+            });
+
+            $auth->extend('chief_remote_team', static function (Application $app, string $name) {
+                $guard = new RequestGuard(
+                    new RemoteTeamAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
+                    request(),
                 );
 
                 $app->refresh('request', $guard, 'setRequest');

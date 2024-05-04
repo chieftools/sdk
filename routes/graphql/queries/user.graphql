@@ -1,4 +1,10 @@
 extend type Query {
     "The currently authenticated user."
-    viewer: User @auth
+    viewer: User @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\AuthenticatedUser")
+
+    "The currently authenticated team or currently authenticated user team."
+    team(
+        "Hint for the team slug to resolve, only applicable when authenticated as a user."
+        hint: String
+    ): Team @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\AuthenticatedTeam")
 }

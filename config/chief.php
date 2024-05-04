@@ -10,6 +10,8 @@ return [
 
         'model' => ChiefTools\SDK\Entities\User::class,
 
+        'teamModel' => ChiefTools\SDK\Entities\Team::class,
+
         'account' => env('CHIEF_AUTH_ACCOUNT', true),
 
         'redirect' => '/dashboard',
@@ -36,7 +38,7 @@ return [
 
     'guards' => [
 
-        'api' => ['chief', 'api'],
+        'api' => ['chief', 'chief_team', 'api'],
 
     ],
 

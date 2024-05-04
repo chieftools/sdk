@@ -82,9 +82,9 @@ function user_now(): Carbon
 /**
  * Sync the authenticated user timezone to the correct config key.
  *
- * @param \ChiefTools\SDK\Entities\User|null $user
+ * @param \ChiefTools\SDK\Entities\User|\ChiefTools\SDK\Entities\Team|null $user
  */
-function sync_user_timezone(?ChiefTools\SDK\Entities\User $user = null): void
+function sync_user_timezone(ChiefTools\SDK\Entities\User|ChiefTools\SDK\Entities\Team|null $user = null): void
 {
     $user = $user ?? auth()->user();
 

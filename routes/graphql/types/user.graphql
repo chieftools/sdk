@@ -1,6 +1,6 @@
 "A user or actor in the system."
 type User implements Entity {
-    id: ID!
+    id: ID! @autoDocument
 
     "The user name."
     name: String! @tokenScopes(scopes: ["profile"])
@@ -11,6 +11,5 @@ type User implements Entity {
     "The timezone configured for the user."
     timezone: String! @tokenScopes(scopes: ["profile"])
 
-    "Identifies the date and time when the object was created."
-    createdAt: DateTime! @rename(attribute: "created_at")
+    createdAt: DateTime! @rename(attribute: "created_at") @autoDocument
 }

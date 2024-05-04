@@ -5,13 +5,17 @@ namespace ChiefTools\SDK\GraphQL\Directives;
 use RuntimeException;
 use GraphQL\Language\AST\StringValueNode;
 use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\FieldDefinitionNode;
 use Nuwave\Lighthouse\Schema\AST\DocumentAST;
 use GraphQL\Language\AST\EnumTypeDefinitionNode;
+use GraphQL\Language\AST\ObjectTypeDefinitionNode;
+use GraphQL\Language\AST\InterfaceTypeDefinitionNode;
 use Nuwave\Lighthouse\Schema\Directives\BaseDirective;
 use GraphQL\Language\AST\InputObjectTypeDefinitionNode;
 use Nuwave\Lighthouse\Support\Contracts\TypeManipulator;
+use Nuwave\Lighthouse\Support\Contracts\FieldManipulator;
 
-class AutoDocumentDirective extends BaseDirective implements TypeManipulator
+class AutoDocumentDirective extends BaseDirective implements TypeManipulator, FieldManipulator
 {
     public function manipulateTypeDefinition(DocumentAST &$documentAST, TypeDefinitionNode &$typeDefinition): void
     {
@@ -74,6 +78,35 @@ class AutoDocumentDirective extends BaseDirective implements TypeManipulator
         ]);
     }
 
+    public function manipulateFieldDefinition(DocumentAST &$documentAST, FieldDefinitionNode &$fieldDefinition, ObjectTypeDefinitionNode|InterfaceTypeDefinitionNode &$parentType): void
+    {
+        $value = null;
+
+        switch ($fieldDefinition->name->value) {
+            case 'id':
+                $value = 'The unique identifier for the object.';
+                break;
+            case 'createdAt':
+                $value = 'Identifies the date and time when the object was created.';
+                break;
+            case 'updatedAt':
+                $value = 'Identifies the date and time when the object was updated.';
+                break;
+            case 'deletedAt':
+                $value = 'Identifies the date and time when the object was deleted.';
+                break;
+        }
+
+        if ($value === null) {
+            throw new RuntimeException("{$fieldDefinition->name->value} cannot be auto documented at this time!");
+        }
+
+        $fieldDefinition->description = new StringValueNode([
+            'value' => sprintf($value, 'object'),
+            'block' => false,
+        ]);
+    }
+
     private function addFieldDocumentationForOrderInput(InputObjectTypeDefinitionNode $node, string $type): void
     {
         foreach ($node->fields as $field) {
@@ -103,7 +136,7 @@ class AutoDocumentDirective extends BaseDirective implements TypeManipulator
         directive @autoDocument(
             "Override the auto generated type name."
             type: String
-        ) on INPUT_OBJECT | ENUM
+        ) on INPUT_OBJECT | ENUM | FIELD_DEFINITION
         GRAPHQL;
     }
 }

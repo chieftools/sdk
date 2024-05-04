@@ -6,6 +6,8 @@ return [
 
     'release' => env('APP_COMMIT_SHA', config('app.version')),
 
+    'spotlight' => env('SENTRY_SPOTLIGHT', false),
+
     'error_types' => E_ALL ^ E_DEPRECATED ^ E_USER_DEPRECATED,
 
     'traces_sampler' => [ChiefTools\SDK\Exceptions\Sentry::class, 'tracesSampler'],

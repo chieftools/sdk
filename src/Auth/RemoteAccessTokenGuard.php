@@ -2,29 +2,29 @@
 
 namespace ChiefTools\SDK\Auth;
 
-use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use ChiefTools\SDK\API\Client;
-use ChiefTools\SDK\Entities\Team;
-use ChiefTools\SDK\Entities\User;
 use Illuminate\Cache\CacheManager;
-use ChiefTools\SDK\Enums\TokenPrefix;
 use Stayallive\RandomTokens\RandomToken;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
-use Illuminate\Support\ItemNotFoundException;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Stayallive\RandomTokens\Exceptions\InvalidTokenException;
 
-readonly class RemoteAccessTokenGuard
+abstract readonly class RemoteAccessTokenGuard
 {
     public function __construct(
-        private string $guard,
-        private Client $client,
-        private CacheManager $cache,
+        protected string $guard,
+        protected Client $client,
+        protected CacheManager $cache,
     ) {}
 
-    public function __invoke(Request $request): ?User
+    abstract protected function isSupportedToken(RandomToken $token): bool;
+
+    abstract protected function resolveAuthenticatableForRemoteToken(ChiefRemoteAccessToken $remoteAccessToken): ?Authenticatable;
+
+    public function __invoke(Request $request): ?Authenticatable
     {
         $tokenFromRequest = $this->getTokenFromRequest($request);
 
@@ -40,8 +40,7 @@ readonly class RemoteAccessTokenGuard
             return null;
         }
 
-        // Make sure it's a personal access token or an OAuth access token
-        if (!TokenPrefix::PERSONAL_ACCESS_TOKEN->isForToken($randomToken) && !TokenPrefix::OAUTH_ACCESS_TOKEN->isForToken($randomToken)) {
+        if (!$this->isSupportedToken($randomToken)) {
             return null;
         }
 
@@ -71,77 +70,27 @@ readonly class RemoteAccessTokenGuard
 
         $remoteToken = new ChiefRemoteAccessToken(
             scopes: $response['scopes'],
-            userId: $response['user_id'],
+            userId: $response['user_id'] ?? null,
             teamId: $response['team_id'] ?? null,
             expiresAt: $expires ?: null,
         );
 
-        $user = $this->resolveUserForRemoteToken($remoteToken);
+        $authenticatable = $this->resolveAuthenticatableForRemoteToken($remoteToken);
 
-        if ($user !== null) {
-            if (in_array(HasRemoteTokens::class, class_uses_recursive(config('chief.auth.model')), true)) {
-                $user = $user->withChiefRemoteAccessToken($remoteToken);
+        if ($authenticatable !== null) {
+            if (in_array(HasRemoteTokens::class, class_uses_recursive($authenticatable::class), true)) {
+                /** @var \Illuminate\Contracts\Auth\Authenticatable&\ChiefTools\SDK\Auth\HasRemoteTokens $authenticatable */
+                $authenticatable = $authenticatable->withChiefRemoteAccessToken($remoteToken);
             }
 
-            if ($remoteToken->teamId !== null) {
-                retry(2, function () use (&$user, $remoteToken) {
-                    $user->setCurrentTeam(
-                        $user->teams->firstOrFail(
-                            static fn (Team $team) => $team->id === $remoteToken->teamId,
-                        ),
-                    );
-                }, when: function (Exception $e) use (&$user, $remoteToken) {
-                    if ($e instanceof ItemNotFoundException) {
-                        // If we can't find the team update the user from the mothership to sync their teams
-                        $user = $this->resolveUserFromMothershipForRemoteToken($remoteToken);
-
-                        return true;
-                    }
-
-                    return false;
-                });
-            }
-
-            event(new Authenticated($this->guard, $user));
+            event(new Authenticated($this->guard, $authenticatable));
         }
 
-        return $user;
+        return $authenticatable;
     }
 
     protected function getTokenFromRequest(Request $request): ?string
     {
         return $request->bearerToken();
-    }
-
-    private function resolveUserForRemoteToken(ChiefRemoteAccessToken $remoteToken): ?User
-    {
-        return $this->resolveUserFromDatabaseForRemoteToken($remoteToken)
-               ?? $this->resolveUserFromMothershipForRemoteToken($remoteToken);
-    }
-
-    private function resolveUserFromDatabaseForRemoteToken(ChiefRemoteAccessToken $remoteToken): ?User
-    {
-        return config('chief.auth.model')::query()->where('chief_id', '=', $remoteToken->userId)->first();
-    }
-
-    private function resolveUserFromMothershipForRemoteToken(ChiefRemoteAccessToken $remoteAccessToken): ?User
-    {
-        try {
-            $remote = $this->client->user($remoteAccessToken->userId, [
-                'team_hint'     => $remoteAccessToken->teamId,
-                'mark_as_usage' => '1',
-            ]);
-
-            if ($remote !== null) {
-                /** @var \ChiefTools\SDK\Entities\User $user */
-                $user = config('chief.auth.model')::createOrUpdateFromRemote($remote);
-
-                return $user;
-            }
-        } catch (Exception $e) {
-            report($e);
-        }
-
-        return null;
     }
 }

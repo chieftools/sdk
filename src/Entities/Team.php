@@ -7,9 +7,11 @@ use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Helpers\Avatar;
 use ChiefTools\SDK\Socialite\ChiefTeam;
+use ChiefTools\SDK\Auth\HasRemoteTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 
 /**
  * @property int                 $id
@@ -25,8 +27,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Carbon\Carbon      $created_at
  * @property \Carbon\Carbon      $updated_at
  */
-class Team extends Entity
+class Team extends Entity implements AuthenticatableContract
 {
+    use HasRemoteTokens;
+
     protected $table    = 'teams';
     protected $casts    = [
         'limits'           => AsArrayObject::class,
@@ -47,6 +51,14 @@ class Team extends Entity
     {
         return new Attribute(
             set: static fn ($value) => trim($value),
+        );
+    }
+    public function password(): Attribute
+    {
+        // We don't support passwords for teams
+        return new Attribute(
+            set: static fn ($value) => null,
+            get: static fn () => str_random(),
         );
     }
     public function timezone(): Attribute
@@ -187,5 +199,35 @@ class Team extends Entity
         }
 
         return $user->teams()->where($field ?? 'slug', '=', $value)->first();
+    }
+
+    // Authenticatable
+    public function getAuthIdentifierName(): string
+    {
+        return 'id';
+    }
+    public function getAuthIdentifier(): int
+    {
+        return $this->id;
+    }
+    public function getAuthPasswordName(): string
+    {
+        return 'password';
+    }
+    public function getAuthPassword(): string
+    {
+        return $this->password;
+    }
+    public function getRememberToken(): string
+    {
+        return '';
+    }
+    public function setRememberToken($value): void
+    {
+        // Do nothing, we don't support remember tokens
+    }
+    public function getRememberTokenName(): string
+    {
+        return '';
     }
 }

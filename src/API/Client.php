@@ -194,7 +194,7 @@ class Client
      *
      * @param string $token
      *
-     * @return array{scopes: array, user_id: string, expires_at: ?int}|null
+     * @return array{scopes: array, user_id: string|null, team_id: int|null, expires_at: ?int}|null
      */
     public function validateAccessToken(string $token): ?array
     {

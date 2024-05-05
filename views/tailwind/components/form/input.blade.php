@@ -18,6 +18,7 @@
     'maxlength' => null,
     'placeholder' => null,
     'autocomplete' => null,
+    'togglePassword' => false,
     'withoutUnchecked' => false,
 ])
 
@@ -62,7 +63,7 @@
            {{ $readonly ? 'readonly' : '' }}
     >
 @else
-    <div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }} @if($maxlength) x-data="{val: ''}" @endif>
+    <div {{ $attributes->merge(['class' => 'mb-3 last:mb-0']) }} @if($maxlength || $togglePassword) x-data="{val: '', passwordReadable: false}" @endif>
         @if($label && $type !== 'checkbox')
             <label for="{{ $name }}" class="flex block text-sm font-medium {{ $labelClass }}">
                 {{ $label }}{{ $required ? '*' : '' }}
@@ -140,6 +141,7 @@
                     <input id="{{ $name }}"
                            name="{{ $name }}"
                            type="{{ $type }}"
+                           {!! $type === 'password' && $togglePassword ? ':type="passwordReadable ? \'text\' : \'password\'"' : '' !!}
                            value="{{ $value }}"
                            class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
                            {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
@@ -151,6 +153,13 @@
                            {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                            {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
                     >
+
+                    @if($type === 'password' && $togglePassword)
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" @click="passwordReadable = !passwordReadable">
+                            <i class="fa fa-fw fa-eye text-gray-500" :class="{'block': !passwordReadable, 'hidden': passwordReadable}"></i>
+                            <i class="fa fa-fw fa-eye-slash text-gray-500" :class="{'block': passwordReadable, 'hidden': !passwordReadable}"></i>
+                        </div>
+                   @endif
                 @endif
 
                 @if($hasError)

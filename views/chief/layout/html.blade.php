@@ -14,10 +14,12 @@
         <link rel="canonical" href="{{ url()->current() }}">
         <link rel="preconnect" href="{{ static_asset() }}" crossorigin="anonymous">
 
-        @if(!empty($title))
-            <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>
-        @else
-            <title>{{ config('app.title') }}</title>
+        @if(!isset($noTitle) || !$noTitle)
+            @if(!empty($title))
+                <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>
+            @else
+                <title>{{ config('app.title') }}</title>
+            @endif
         @endif
 
         <link rel="icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.svg') }}" type="image/svg+xml">

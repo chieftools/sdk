@@ -23,8 +23,8 @@
 ])
 
 @php
-    $hasError     = $errors->has($name);
-    $errorMessage = $errors->get($name)[0] ?? null;
+    $hasError     = isset($errors) && $errors->has($name);
+    $errorMessage = isset($errors) ? ($errors->get($name)[0] ?? null) : null;
 
     $labelClass = $hasError
         ? 'text-red-700'

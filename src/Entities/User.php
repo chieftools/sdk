@@ -16,7 +16,9 @@ use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -134,7 +136,13 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         $relation = $this->belongsToMany(Chief::teamModel())->withTimestamps();
 
         $relation->getQuery()->when($this->default_team_id !== null, function (Builder $query) {
-            $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]);
+            $grammer = $query->getQuery()->grammar;
+
+            match (true) {
+                $grammer instanceof MySqlGrammar    => $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]),
+                $grammer instanceof PostgresGrammar => $query->orderByRaw('CASE WHEN "teams"."id" = ? THEN \'-1\' ELSE "name" END ASC', [$this->default_team_id]),
+                default                             => throw new RuntimeException('Unsupported database grammar for teams relation ordering!'),
+            };
         }, function (Builder $query) {
             $query->orderBy('name');
         })->orderBy('id');

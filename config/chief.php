@@ -8,10 +8,6 @@ return [
 
     'auth' => [
 
-        'model' => ChiefTools\SDK\Entities\User::class,
-
-        'teamModel' => ChiefTools\SDK\Entities\Team::class,
-
         'account' => env('CHIEF_AUTH_ACCOUNT', true),
 
         'redirect' => '/dashboard',

@@ -10,6 +10,10 @@ final class Chief
 {
     private static bool $runsMigrations = true;
 
+    /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
+    private static string $userModel = User::class;
+
+    /** @param class-string<\ChiefTools\SDK\Entities\Team> $teamModel */
     private static string $teamModel = Team::class;
 
     private static ?string $afterUserUpdateJob = null;
@@ -24,11 +28,25 @@ final class Chief
 
     private static ?Closure $authenticationExceptionJsonResponseHandler = null;
 
+    /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
+    public static function useUserModel(string $userModel): void
+    {
+        self::$userModel = $userModel;
+    }
+
+    /** @return class-string<\ChiefTools\SDK\Entities\User> */
+    public static function userModel(): string
+    {
+        return self::$userModel;
+    }
+
+    /** @param class-string<\ChiefTools\SDK\Entities\Team> $teamModel */
     public static function useTeamModel(string $teamModel): void
     {
         self::$teamModel = $teamModel;
     }
 
+    /** @return class-string<\ChiefTools\SDK\Entities\Team> */
     public static function teamModel(): string
     {
         return self::$teamModel;

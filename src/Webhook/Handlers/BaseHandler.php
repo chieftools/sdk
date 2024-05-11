@@ -2,6 +2,7 @@
 
 namespace ChiefTools\SDK\Webhook\Handlers;
 
+use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 
@@ -9,7 +10,7 @@ abstract class BaseHandler implements Handler
 {
     protected function getUserById(string $id): ?User
     {
-        return config('chief.auth.model')::query()->where('chief_id', '=', $id)->first();
+        return Chief::userModel()::query()->where('chief_id', '=', $id)->first();
     }
 
     protected function getTeamById(int $id): ?Team

@@ -2,6 +2,7 @@
 
 namespace ChiefTools\SDK\Auth;
 
+use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\Enums\TokenPrefix;
 use Stayallive\RandomTokens\RandomToken;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -19,6 +20,6 @@ readonly class RemoteTeamAccessTokenGuard extends RemoteAccessTokenGuard
             return null;
         }
 
-        return config('chief.auth.teamModel')::query()->where('id', '=', $remoteAccessToken->teamId)->first();
+        return Chief::teamModel()::query()->where('id', '=', $remoteAccessToken->teamId)->first();
     }
 }

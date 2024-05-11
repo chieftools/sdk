@@ -2,6 +2,7 @@
 
 namespace ChiefTools\SDK\Http\Controllers\Auth;
 
+use ChiefTools\SDK\Chief;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
@@ -25,7 +26,7 @@ class Callback
         }))->afterResponse();
 
         Auth::guard()->login(
-            config('chief.auth.model')::createOrUpdateFromRemote($remote),
+            Chief::userModel()::createOrUpdateFromRemote($remote),
         );
 
         return redirect()->intended(config('chief.auth.redirect'));

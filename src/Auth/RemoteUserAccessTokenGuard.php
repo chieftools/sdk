@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Auth;
 
 use Exception;
+use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use ChiefTools\SDK\Enums\TokenPrefix;
@@ -63,7 +64,7 @@ readonly class RemoteUserAccessTokenGuard extends RemoteAccessTokenGuard
             return null;
         }
 
-        return config('chief.auth.model')::query()->where('chief_id', '=', $remoteToken->userId)->first();
+        return Chief::userModel()::query()->where('chief_id', '=', $remoteToken->userId)->first();
     }
 
     private function resolveUserFromMothershipForRemoteToken(ChiefRemoteAccessToken $remoteToken): ?User
@@ -79,10 +80,7 @@ readonly class RemoteUserAccessTokenGuard extends RemoteAccessTokenGuard
             ]);
 
             if ($remote !== null) {
-                /** @var \ChiefTools\SDK\Entities\User $user */
-                $user = config('chief.auth.model')::createOrUpdateFromRemote($remote);
-
-                return $user;
+                return Chief::userModel()::createOrUpdateFromRemote($remote);
             }
         } catch (Exception $e) {
             report($e);

@@ -36,39 +36,45 @@ Route::group(config('chief.routes.web'), function () {
         Route::post('webhooks/chief', Controllers\Webhook::class)->middleware(AuthenticateChief::class)->name('webhook');
     });
 
-    if (config('chief.auth') && config('chief.auth.account')) {
-        Route::group([
-            'as'         => 'account.',
-            'prefix'     => 'account',
-            'middleware' => 'auth',
-        ], function () {
-            Route::view('profile', 'chief::account.profile')->name('profile');
+    if (config('chief.auth')) {
+        if (config('chief.auth.account')) {
+            Route::group([
+                'as'         => 'account.',
+                'prefix'     => 'account',
+                'middleware' => 'auth',
+            ], function () {
+                Route::view('profile', 'chief::account.profile')->name('profile');
 
-            Route::get('preferences', Controllers\Account\Preferences::class)->name('preferences');
-            Route::post('preference/toggle', [Controllers\Account\Preferences::class, 'toggle'])->name('preferences.toggle');
-        });
+                Route::get('preferences', Controllers\Account\Preferences::class)->name('preferences');
+                Route::post('preference/toggle', [Controllers\Account\Preferences::class, 'toggle'])->name('preferences.toggle');
+            });
+        }
 
-        Route::group([
-            'as'         => 'team.',
-            'prefix'     => 'team',
-            'middleware' => 'auth',
-        ], function () {
-            Route::get('{team}/switch', Controllers\Team\SwitchActive::class)->name('switch');
-            Route::get('{team}/chief', Controllers\Team\Manage::class)->name('chief.manage');
-            Route::get('{team}/chief/manage', Controllers\Team\ManageSingle::class)->name('chief.manage.single');
-            Route::get('{team}/chief/manage/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
-        });
+        if (config('chief.teams')) {
+            Route::group([
+                'as'         => 'team.',
+                'prefix'     => 'team',
+                'middleware' => 'auth',
+            ], function () {
+                Route::get('{team}/switch', Controllers\Team\SwitchActive::class)->name('switch');
+                Route::get('{team}/chief', Controllers\Team\Manage::class)->name('chief.manage');
+                Route::get('{team}/chief/manage', Controllers\Team\ManageSingle::class)->name('chief.manage.single');
+                Route::get('{team}/chief/manage/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
+            });
+        }
 
-        Route::group([
-            'as'         => 'api.',
-            'prefix'     => 'api',
-            'middleware' => 'auth',
-        ], function () {
-            Route::view('docs/graphql', 'chief::api.docs.graphql')->name('docs.graphql');
+        if (config('chief.routes.api')) {
+            Route::group([
+                'as'         => 'api.',
+                'prefix'     => 'api',
+                'middleware' => 'auth',
+            ], function () {
+                Route::view('docs/graphql', 'chief::api.docs.graphql')->name('docs.graphql');
 
-            Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
-            Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');
-            Route::post('token/{id}/delete', [Controllers\API\Tokens::class, 'delete'])->name('tokens.delete');
-        });
+                Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
+                Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');
+                Route::post('token/{id}/delete', [Controllers\API\Tokens::class, 'delete'])->name('tokens.delete');
+            });
+        }
     }
 });

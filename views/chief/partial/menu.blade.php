@@ -27,7 +27,14 @@
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
-                    <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i>
+                    @if(config('chief.brand.brandIcon'))
+                        <span class="fa-stack text-brand">
+                            <i class="fad {{ config('chief.brand.icon') }} fa-stack-2x"></i>
+                            <i class="fab {{ config('chief.brand.brandIcon') }} fa-stack-1x" style="font-size: 8px;"></i>
+                        </span>
+                    @else
+                        <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i>
+                    @endif
                     @if($menuLogoText)
                         <span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
                     @endif

@@ -130,6 +130,36 @@ class Client
     }
 
     /**
+     * Retrieve user info from the mothership.
+     *
+     * @param string $email
+     * @param array  $extra
+     *
+     * @return \ChiefTools\SDK\Socialite\ChiefUser|null
+     */
+    public function userByEmail(string $email, array $extra = []): ?ChiefUser
+    {
+        try {
+            $response = $this->http->get('/api/user/find-by-email', [
+                'query'   => array_merge($extra, [
+                    'email' => $email,
+                ]),
+                'headers' => $this->internalAuthHeaders(),
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                return null;
+            }
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            return new ChiefUser($data);
+        } catch (GuzzleException) {
+            return null;
+        }
+    }
+
+    /**
      * Retrieve team info from the mothership.
      *
      * @param string $slug

@@ -11,7 +11,8 @@ class SyncUsers extends Command
 {
     protected $signature   = <<<COMMAND
                              chief:account:sync-users { users? : The user ID's to sync, seperated by a comma }
-                                 { --all : Sync all users }
+                                 { --all : Sync all connected users }
+                                 { --disconnected : Sync all disconnected users }
                              COMMAND;
     protected $description = 'Sync user data with the mothership.';
 
@@ -29,11 +30,18 @@ class SyncUsers extends Command
             ->when(count($userIds) > 0, function (Builder $query) use ($userIds) {
                 $query->whereIn('id', $userIds);
             })
-            ->whereNotNull('chief_id')
+            ->when(!$this->option('all') && $this->option('disconnected'), static fn (Builder $query) => $query->whereNull('chief_id'))
+            ->when($this->option('all') && !$this->option('disconnected'), static fn (Builder $query) => $query->whereNotNull('chief_id'))
             ->each(function (User $user) use ($mothership) {
-                $this->info("=> Syncing user:{$user->chief_id} '{$user}' ({$user->email})");
+                if ($user->chief_id === null) {
+                    $this->info("=> Syncing user '{$user}' ({$user->email})");
 
-                $userInfo = $mothership->user($user->chief_id);
+                    $userInfo = $mothership->userByEmail($user->email);
+                } else {
+                    $this->info("=> Syncing user:{$user->chief_id} '{$user}' ({$user->email})");
+
+                    $userInfo = $mothership->user($user->chief_id);
+                }
 
                 if ($userInfo === null) {
                     $this->warn('!> No info from the mothership for this user!');

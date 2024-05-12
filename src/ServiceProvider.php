@@ -384,7 +384,7 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
-    private static function basePath(string $path): string
+    public static function basePath(string $path): string
     {
         return __DIR__ . '/../' . ltrim($path, '/');
     }

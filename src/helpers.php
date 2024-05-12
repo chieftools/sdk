@@ -233,7 +233,7 @@ function latest_ca_bundle_file_path(): string
         return $fetch->getLatestBundle()->getFilePath();
     }, null, false);
 
-    return $certaintyPath ?? resource_path('files/cacert-2022-07-19.pem');
+    return $certaintyPath ?? ChiefTools\SDK\ServiceProvider::basePath('files/cacert-2024-03-11.pem');
 }
 
 /**

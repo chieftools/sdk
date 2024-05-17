@@ -32,7 +32,7 @@ class Authenticated
                     'id'       => $authenticatable->id,
                     'name'     => $authenticatable->name,
                     'email'    => $authenticatable->email,
-                    'chief_id' => $authenticatable->chief_id,
+                    'chief_id' => $authenticatable->hasAttribute('chief_id') ? $authenticatable->getAttribute('chief_id') : null,
                 ]);
             }
 

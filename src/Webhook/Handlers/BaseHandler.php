@@ -15,7 +15,7 @@ abstract class BaseHandler implements Handler
 
     protected function getTeamById(int $id): ?Team
     {
-        return Team::query()->find($id);
+        return Chief::teamModel()::query()->find($id);
     }
 
     protected function getUserFromPayload(array $payload): ?User

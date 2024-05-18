@@ -279,7 +279,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         $this->is_admin = $remote->is_admin;
 
-        Team::createOrUpdateFromRemotes($remote->teams);
+        Chief::teamModel()::createOrUpdateFromRemotes($remote->teams);
 
         $this->forceFill([
             'name'            => $remote->getName(),

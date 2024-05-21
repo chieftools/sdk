@@ -80,7 +80,7 @@ class GraphQL extends GraphQLController
         // If we are in a local environment we print the schema and possible types configuration
         // on every request it's a bit wasteful but the impact is not that big and it saves
         // setting up git hooks and all that horrible jazz. For apollo and GitHub diffs.
-        if (!context()->isLocal()) {
+        if (!app()->isLocal()) {
             return;
         }
 
@@ -106,7 +106,7 @@ class GraphQL extends GraphQLController
                 JSEXPORT;
 
         // Prevent constantly updating the fragmentTypes.js causing `yarn run watch` to work on every API request
-        if (!file_exists($fragmentTypesPath = resource_path('assets/js/api/possibleTypes.js')) || file_get_contents($fragmentTypesPath) !== $fragmentTypes) {
+        if (!file_exists($fragmentTypesPath = resource_path('js/api/possibleTypes.js')) || file_get_contents($fragmentTypesPath) !== $fragmentTypes) {
             file_put_contents($fragmentTypesPath, $fragmentTypes);
         }
 

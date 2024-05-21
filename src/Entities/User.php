@@ -217,7 +217,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function defaultOrFirstTeam(): Team
     {
-        return $this->defaultTeam ?? $this->teams->first();
+        return $this->defaultTeam ?? $this->teams()->first();
     }
     public function getTeamFromSession(): ?Team
     {

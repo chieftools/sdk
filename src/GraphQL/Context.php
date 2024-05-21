@@ -13,22 +13,12 @@ class Context implements GraphQLContext
 {
     private ?User $user;
 
-    private readonly ?Team $team;
+    private ?Team $team;
 
     public function __construct(
         private readonly ?Request $request,
     ) {
-        $authenticated = $request?->user();
-
-        if ($authenticated instanceof User) {
-            $this->user = $request?->user();
-            $this->team = $this->user?->team;
-        }
-
-        if ($authenticated instanceof Team) {
-            $this->user = null;
-            $this->team = $authenticated;
-        }
+        $this->setUser($request?->user());
     }
 
     public function user(): ?User
@@ -38,7 +28,24 @@ class Context implements GraphQLContext
 
     public function setUser(?Authenticatable $user): void
     {
-        $this->user = $user;
+        if ($user instanceof User) {
+            $this->user = $user;
+            $this->team = $user->team;
+        } elseif ($user instanceof Team) {
+            $this->user = null;
+            $this->team = $user;
+        } else {
+            $this->user = null;
+            $this->team = null;
+        }
+
+        if ($this->user !== null) {
+            $this->user->preventsLazyLoading = false;
+        }
+
+        if ($this->team !== null) {
+            $this->team->preventsLazyLoading = false;
+        }
     }
 
     public function team(): ?Team

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use ChiefTools\SDK\API\Client;
 use Illuminate\Cache\CacheManager;
+use Illuminate\Database\Eloquent\Model;
 use Stayallive\RandomTokens\RandomToken;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
@@ -77,14 +78,20 @@ abstract readonly class RemoteAccessTokenGuard
 
         $authenticatable = $this->resolveAuthenticatableForRemoteToken($remoteToken);
 
-        if ($authenticatable !== null) {
-            if (in_array(HasRemoteTokens::class, class_uses_recursive($authenticatable::class), true)) {
-                /** @var \Illuminate\Contracts\Auth\Authenticatable&\ChiefTools\SDK\Auth\HasRemoteTokens $authenticatable */
-                $authenticatable = $authenticatable->withChiefRemoteAccessToken($remoteToken);
-            }
-
-            event(new Authenticated($this->guard, $authenticatable));
+        if ($authenticatable === null) {
+            return null;
         }
+
+        if ($authenticatable instanceof Model) {
+            $authenticatable->preventsLazyLoading = false;
+        }
+
+        if (in_array(HasRemoteTokens::class, class_uses_recursive($authenticatable::class), true)) {
+            /** @var \Illuminate\Contracts\Auth\Authenticatable&\ChiefTools\SDK\Auth\HasRemoteTokens $authenticatable */
+            $authenticatable = $authenticatable->withChiefRemoteAccessToken($remoteToken);
+        }
+
+        event(new Authenticated($this->guard, $authenticatable));
 
         return $authenticatable;
     }

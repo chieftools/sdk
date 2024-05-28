@@ -9,6 +9,7 @@ use ChiefTools\SDK\Helpers\Avatar;
 use Illuminate\Support\Collection;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use ChiefTools\SDK\Auth\HasRemoteToken;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
+use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -43,9 +45,10 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\Team> $teams
  * @property \ChiefTools\SDK\Entities\Team|null                                           $defaultTeam
  */
-class User extends Entity implements AuthenticatableContract, AuthorizableContract
+class User extends Entity implements AuthenticatableContract, AuthorizableContract, AuthenticatesWithRemoteToken
 {
-    use Authenticatable, Authorizable, UsesUUID;
+    use UsesUUID;
+    use Authenticatable, Authorizable, HasRemoteToken;
 
     protected $table    = 'users';
     protected $fillable = [

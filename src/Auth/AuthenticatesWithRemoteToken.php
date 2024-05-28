@@ -8,5 +8,5 @@ interface AuthenticatesWithRemoteToken
 
     public function getChiefRemoteAccessToken(): ?ChiefRemoteAccessToken;
 
-    public function withChiefRemoteAccessToken(ChiefRemoteAccessToken $accessToken): self;
+    public function withChiefRemoteAccessToken(ChiefRemoteAccessToken $accessToken): static;
 }

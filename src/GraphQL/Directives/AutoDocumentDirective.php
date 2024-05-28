@@ -23,6 +23,7 @@ class AutoDocumentDirective extends BaseDirective implements TypeManipulator, Fi
         $value  = null;
         $plural = true;
 
+        /** @phpstan-ignore property.notFound */
         $definitionName = $typeDefinition->name->value;
 
         if ($typeDefinition instanceof InputObjectTypeDefinitionNode) {
@@ -102,7 +103,7 @@ class AutoDocumentDirective extends BaseDirective implements TypeManipulator, Fi
         }
 
         $fieldDefinition->description = new StringValueNode([
-            'value' => sprintf($value, 'object'),
+            'value' => $value,
             'block' => false,
         ]);
     }

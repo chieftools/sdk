@@ -32,8 +32,7 @@ class JavaScriptInjector
         ]);
 
         if (auth()->check()) {
-            /** @var \ChiefTools\SDK\Entities\User $user */
-            $user = auth()->user();
+            $user = authenticated_user_or_fail();
 
             /** @noinspection PhpMethodParametersCountMismatchInspection */
             JavaScript::put([

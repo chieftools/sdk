@@ -46,7 +46,7 @@ final class Avatar
 
         $nameParts = explode(' ', $this->name);
 
-        if (!empty($nameParts)) {
+        if (!empty($nameParts[0])) {
             $firstPart = str(array_shift($nameParts));
 
             $initials = (string)$firstPart->substr(0, 1);

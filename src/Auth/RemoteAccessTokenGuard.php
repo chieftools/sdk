@@ -86,8 +86,7 @@ abstract readonly class RemoteAccessTokenGuard
             $authenticatable->preventsLazyLoading = false;
         }
 
-        if (in_array(HasRemoteTokens::class, class_uses_recursive($authenticatable::class), true)) {
-            /** @var \Illuminate\Contracts\Auth\Authenticatable&\ChiefTools\SDK\Auth\HasRemoteTokens $authenticatable */
+        if ($authenticatable instanceof AuthenticatesWithRemoteToken) {
             $authenticatable = $authenticatable->withChiefRemoteAccessToken($remoteToken);
         }
 

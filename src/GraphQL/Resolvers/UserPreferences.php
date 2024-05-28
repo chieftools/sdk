@@ -34,12 +34,12 @@ class UserPreferences extends QueryResolver
             $settings->push(compact('key', 'name', 'description', 'default', 'value', 'changed', 'icon', 'category'));
         }
 
-        if (!empty($args['only'])) {
-            $settings = $settings->whereIn('key', $args['only']);
+        if ($this->filled('only')) {
+            $settings = $settings->whereIn('key', $this->input('only'));
         }
 
-        if (!empty($args['categories'])) {
-            $settings = $settings->whereIn('category.key', $args['categories']);
+        if ($this->filled('categories')) {
+            $settings = $settings->whereIn('category.key', $this->input('categories'));
         }
 
         return $settings->all();

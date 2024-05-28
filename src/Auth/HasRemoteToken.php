@@ -2,7 +2,11 @@
 
 namespace ChiefTools\SDK\Auth;
 
-trait HasRemoteTokens
+/**
+ * @phpstan-require-implements \Illuminate\Contracts\Auth\Authenticatable
+ * @phpstan-require-implements \ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken
+ */
+trait HasRemoteToken
 {
     /**
      * The access token the user is using for the current request.
@@ -14,7 +18,7 @@ trait HasRemoteTokens
         return $this->chiefRemoteAccessToken !== null;
     }
 
-    public function currentChiefRemoteAccessToken(): ChiefRemoteAccessToken
+    public function getChiefRemoteAccessToken(): ?ChiefRemoteAccessToken
     {
         return $this->chiefRemoteAccessToken;
     }

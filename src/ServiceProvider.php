@@ -11,6 +11,7 @@ use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
+use Illuminate\Support\Facades\DB;
 use ChiefTools\SDK\Http\Middleware;
 use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
@@ -345,6 +346,8 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureDeveloperProtections(): void
     {
+        DB::prohibitDestructiveCommands(app()->isProduction());
+
         Model::preventLazyLoading();
         Model::preventAccessingMissingAttributes();
 

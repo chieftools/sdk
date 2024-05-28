@@ -6,8 +6,10 @@ use RuntimeException;
 use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Helpers\Avatar;
+use ChiefTools\SDK\Auth\HasRemoteToken;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -26,8 +28,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  * @property \Carbon\Carbon      $created_at
  * @property \Carbon\Carbon      $updated_at
  */
-class Team extends Entity implements AuthenticatableContract
+class Team extends Entity implements AuthenticatableContract, AuthenticatesWithRemoteToken
 {
+    use HasRemoteToken;
+
     protected $table    = 'teams';
     protected $casts    = [
         'limits'           => AsArrayObject::class,

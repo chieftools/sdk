@@ -23,7 +23,7 @@ trait HasRemoteToken
         return $this->chiefRemoteAccessToken;
     }
 
-    public function withChiefRemoteAccessToken(ChiefRemoteAccessToken $accessToken): self
+    public function withChiefRemoteAccessToken(ChiefRemoteAccessToken $accessToken): static
     {
         $this->chiefRemoteAccessToken = $accessToken;
 

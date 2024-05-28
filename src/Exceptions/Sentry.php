@@ -2,7 +2,7 @@
 
 namespace ChiefTools\SDK\Exceptions;
 
-use Illuminate\Queue\Jobs\Job;
+use Illuminate\Contracts\Queue\Job;
 use Sentry\Tracing\SamplingContext;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\Request;

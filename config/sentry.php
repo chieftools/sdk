@@ -24,7 +24,7 @@ return [
     'send_default_pii' => false,
 
     'class_serializers' => [
-        Illuminate\Queue\Jobs\Job::class          => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeJob'],
+        Illuminate\Contracts\Queue\Job::class     => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeJob'],
         Illuminate\Database\Eloquent\Model::class => [ChiefTools\SDK\Exceptions\Sentry::class, 'serializeEloquentModel'],
     ],
 

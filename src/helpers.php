@@ -86,10 +86,10 @@ function user_now(): Carbon
  */
 function sync_user_timezone(ChiefTools\SDK\Entities\User|ChiefTools\SDK\Entities\Team|null $user = null): void
 {
-    $user = $user ?? auth()->user();
+    $user = $user ?? authenticated_user();
 
     config([
-        'app.timezone_user' => $user->timezone ?? null,
+        'app.timezone_user' => $user?->timezone ?? null,
     ]);
 }
 
@@ -623,4 +623,23 @@ function __set_class_property(object $object, string $propertyName, mixed $value
     $property->setAccessible(true);
 
     $property->setValue($object, $value);
+}
+
+function authenticated_user(): ?ChiefTools\SDK\Entities\User
+{
+    /** @var \ChiefTools\SDK\Entities\User|null $user */
+    $user = auth()->user();
+
+    return $user;
+}
+
+function authenticated_user_or_fail(): ChiefTools\SDK\Entities\User
+{
+    $user = authenticated_user();
+
+    if ($user === null) {
+        throw new RuntimeException('User is not authenticated.');
+    }
+
+    return $user;
 }

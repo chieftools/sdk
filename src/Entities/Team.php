@@ -7,7 +7,6 @@ use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\API\Client;
 use ChiefTools\SDK\Helpers\Avatar;
 use ChiefTools\SDK\Socialite\ChiefTeam;
-use ChiefTools\SDK\Auth\HasRemoteTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -29,8 +28,6 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  */
 class Team extends Entity implements AuthenticatableContract
 {
-    use HasRemoteTokens;
-
     protected $table    = 'teams';
     protected $casts    = [
         'limits'           => AsArrayObject::class,
@@ -84,7 +81,7 @@ class Team extends Entity implements AuthenticatableContract
     {
         return new Attribute(
             get: function () {
-                return auth()->user()?->default_team_id === $this->id;
+                return authenticated_user()?->default_team_id === $this->id;
             },
         );
     }
@@ -143,8 +140,9 @@ class Team extends Entity implements AuthenticatableContract
     {
         return static::query()->where('slug', '=', $slug)->firstOrFail();
     }
-    private static function newFromRemote(ChiefTeam $remote): static
+    protected static function newFromRemote(ChiefTeam $remote): static
     {
+        /** @phpstan-ignore new.static */
         $team = new static;
 
         $team->id   = $remote->id;
@@ -183,8 +181,7 @@ class Team extends Entity implements AuthenticatableContract
     }
     public function resolveRouteBinding($value, $field = null): ?static
     {
-        /** @var \ChiefTools\SDK\Entities\User|null $user */
-        $user = auth()->user();
+        $user = authenticated_user();
 
         if ($user === null) {
             throw new RuntimeException('Team cannot be resolved from route for guests.');
@@ -216,7 +213,7 @@ class Team extends Entity implements AuthenticatableContract
     }
     public function getAuthPassword(): string
     {
-        return $this->password;
+        return str_random();
     }
     public function getRememberToken(): string
     {

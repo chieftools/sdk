@@ -64,12 +64,7 @@ final class Chief
 
     public static function shouldRenderSupportWidget(): bool
     {
-        $default = static function () {
-            /** @var \ChiefTools\SDK\Entities\User|null $user */
-            $user = auth()->user();
-
-            return $user?->getPreference('enable_support_widget', true) ?? true;
-        };
+        $default = static fn () => authenticated_user()?->getPreference('enable_support_widget', true) ?? true;
 
         return value(self::$shouldRenderSupportWidgetResolver ?? $default);
     }

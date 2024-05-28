@@ -5,10 +5,10 @@
     "license": "MIT",
     "type": "library",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^11.5",
+        "laravel/framework": "^11.9",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",
@@ -27,7 +27,9 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.54",
+        "larastan/larastan": "^2.9",
         "laravel/passport": "^12",
+        "orchestra/testbench": "^9.1",
         "stayallive/laravel-passport-memoized": "^1.0"
     },
     "autoload": {
@@ -46,8 +48,18 @@
         }
     },
     "scripts": {
+        "cs": [
+            "@phpcs"
+        ],
+        "stan": "@phpstan",
+        "check": [
+            "@phpcs",
+            "@phpstan"
+        ],
         "phpcs": "vendor/bin/php-cs-fixer fix",
-        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
+        "phpstan:ci": "vendor/bin/phpstan analyse --memory-limit=2G --error-format github"
     },
     "config": {
         "allow-plugins": {

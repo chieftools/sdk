@@ -9,8 +9,7 @@ class SwitchActive
 {
     public function __invoke(Team $team): RedirectResponse
     {
-        /** @var \ChiefTools\SDK\Entities\User $user */
-        $user = auth()->user();
+        $user = authenticated_user_or_fail();
 
         $user->setCurrentTeam($team);
 

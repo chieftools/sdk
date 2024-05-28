@@ -1,0 +1,6 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+parameters:
+    level: 2
+    paths:
+        - src

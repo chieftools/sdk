@@ -5,7 +5,6 @@ namespace ChiefTools\SDK;
 use GuzzleHttp;
 use Pusher\Pusher;
 use RuntimeException;
-use ParagonIE\Certainty;
 use ChiefTools\SDK\API\Client;
 use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
@@ -85,11 +84,6 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->app->bind(GuzzleHttp\Client::class, static fn () => http());
 
         $this->app->singleton(Client::class, static fn () => new Client);
-
-        $this->app->singleton(Certainty\RemoteFetch::class, static function () {
-            return (new Certainty\RemoteFetch(storage_path('framework/cache')))
-                ->setChronicle(config('chief.chronicle.url'), config('chief.chronicle.pubkey'));
-        });
     }
 
     private function loadConfig(): void

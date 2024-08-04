@@ -157,14 +157,6 @@ return [
 
     ],
 
-    'chronicle' => [
-
-        'url' => 'https://chronicle.chief.tools/chronicle/replica/tiZovLY5eSPRMWQhos5bnSTtVEE628FOJV_vRIcG4QUl',
-
-        'pubkey' => 'sX5DuEBydKWJBUFInnlmDWML-1Cs_GMlr6-RiTWPaLI=',
-
-    ],
-
     'preferences' => [
 
         // 'preference_key' => [

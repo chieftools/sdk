@@ -226,14 +226,7 @@ function outside_reachable(): bool
  */
 function latest_ca_bundle_file_path(): string
 {
-    $certaintyPath = rescue(function () {
-        /** @var \ParagonIE\Certainty\RemoteFetch $fetch */
-        $fetch = app(ParagonIE\Certainty\RemoteFetch::class);
-
-        return $fetch->getLatestBundle()->getFilePath();
-    }, null, false);
-
-    return $certaintyPath ?? ChiefTools\SDK\ServiceProvider::basePath('files/cacert-2024-03-11.pem');
+    return ChiefTools\SDK\ServiceProvider::basePath('files/cacert-2024-07-02.pem');
 }
 
 /**

@@ -48,9 +48,9 @@ abstract class Mutation extends QueryResolver
 
     abstract public function mutate(): array|bool|null;
 
-    protected function abortUnless($test, string $field = 'id', int $status = 404): void
+    protected function abortUnless(bool $test, string $field = 'id', int $status = 404): void
     {
-        if ($test !== null || $test === true) {
+        if ($test) {
             return;
         }
 

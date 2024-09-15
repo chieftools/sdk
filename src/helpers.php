@@ -89,7 +89,7 @@ function sync_user_timezone(ChiefTools\SDK\Entities\User|ChiefTools\SDK\Entities
     $user = $user ?? authenticated_user();
 
     config([
-        'app.timezone_user' => $user?->timezone ?? null,
+        'app.timezone_user' => $user->timezone ?? null,
     ]);
 }
 
@@ -254,7 +254,7 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
     // We check if the subscription has any subscribers (which is a really cheap operation) before dispatching a job that we know to do nothing
     // The check can return `null` so we need to check for `false` explicitly to ensure we only skip if we are certain about the result
     if (does_subscription_have_subscribers($subscription, $root) === false) {
-        logger()?->debug("Skipping subscription:{$subscription} because there are no subscribers");
+        logger()->debug("Skipping subscription:{$subscription} because there are no subscribers");
 
         return;
     }
@@ -264,7 +264,7 @@ function dispatch_subscription(string $subscription, mixed $root, ?bool $shouldQ
         $root = $root->withoutRelations();
     }
 
-    logger()?->debug("Dispatching subscription:{$subscription}");
+    logger()->debug("Dispatching subscription:{$subscription}");
 
     Nuwave\Lighthouse\Execution\Utils\Subscription::broadcast($subscription, $root, $shouldQueue);
 }

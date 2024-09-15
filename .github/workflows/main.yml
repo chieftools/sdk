@@ -128,5 +128,15 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
+      - name: Cache PHPStan cache
+        uses: actions/cache@v4
+        id: phpstan-cache
+        with:
+          path: .tmp/phpstan
+          key: ${{ runner.os }}-phpstan-${{ github.ref }}-${{ hashFiles('phpstan.neon') }}
+          restore-keys: |
+            ${{ runner.os }}-phpstan-${{ github.ref }}-
+            ${{ runner.os }}-phpstan-
       - name: Run PHPStan
         run: composer phpstan:ci
+        timeout-minutes: 15

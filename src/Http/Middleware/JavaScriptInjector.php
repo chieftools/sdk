@@ -18,6 +18,8 @@ class JavaScriptInjector
             'CSRF'           => csrf_token(),
             'BASE'           => config('app.domain'),
             'HOME'           => url()->to('/'),
+            'USER'           => null,
+            'TEAM'           => null,
             'DEBUG'          => config('app.debug'),
             'SENTRY'         => [
                 'DSN'                       => $sentryDsn,
@@ -28,6 +30,13 @@ class JavaScriptInjector
                 'REPLAYS_ERROR_SAMPLE_RATE' => $sentryDsn !== null ? config('chief.analytics.sentry.replays.error_sample_rate') : 0,
             ],
             'VERSION'        => config('app.version'),
+            'REALTIME'       => [
+                'AUTH'    => url()->to('broadcasting/auth'),
+                'HOST'    => config('services.websockets.host'),
+                'APPID'   => config('services.websockets.key'),
+                'WSPORT'  => config('services.websockets.port'),
+                'ENABLED' => config('services.websockets.enabled'),
+            ],
             'VERSION_STRING' => config('app.versionString') . ' (' . config('app.version') . ')',
         ]);
 
@@ -36,22 +45,15 @@ class JavaScriptInjector
 
             /** @noinspection PhpMethodParametersCountMismatchInspection */
             JavaScript::put([
-                'USER'     => [
+                'USER' => [
                     'id'       => $user->id,
                     'name'     => $user->name,
                     'email'    => $user->email,
                     'chief_id' => $user->chief_id,
                 ],
-                'TEAM'     => config('chief.teams') ? [
+                'TEAM' => config('chief.teams') ? [
                     'slug' => $user->team?->slug,
-                ] : [],
-                'REALTIME' => [
-                    'AUTH'    => url()->to('broadcasting/auth'),
-                    'HOST'    => config('services.websockets.host'),
-                    'APPID'   => config('services.websockets.key'),
-                    'WSPORT'  => config('services.websockets.port'),
-                    'ENABLED' => config('services.websockets.enabled'),
-                ],
+                ] : null,
             ]);
         }
 

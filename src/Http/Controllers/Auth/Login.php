@@ -2,8 +2,8 @@
 
 namespace ChiefTools\SDK\Http\Controllers\Auth;
 
-use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Login
 {

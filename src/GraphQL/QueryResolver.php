@@ -103,7 +103,7 @@ abstract class QueryResolver
         return $this->context->user() === null;
     }
 
-    protected function userId(): int
+    protected function userId(): string
     {
         return $this->context->user()->id;
     }

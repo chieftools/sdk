@@ -15,7 +15,7 @@ class BuildExtensionsResponse
             return null;
         }
 
-        $socketId = request()?->header('chief-socket-id');
+        $socketId = request()->header('chief-socket-id');
 
         if (empty($socketId)) {
             return null;

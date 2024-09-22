@@ -12,7 +12,7 @@
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",
-        "nuwave/lighthouse": "^6.24",
+        "nuwave/lighthouse": "^6.45",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry": "^4.3",
         "sentry/sentry-laravel": "^4.5",

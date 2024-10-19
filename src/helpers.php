@@ -649,7 +649,7 @@ function base64decode_urlsafe(string $input): string
 
 function generate_og_image_url(array $params, string $slug, string $format = 'png', ?int $timestamp = null): Illuminate\Support\HtmlString
 {
-    $secretKey = config('services.chief-og.secret');
+    $secretKey = config('chief.og_generator.secret');
 
     if (empty($secretKey)) {
         throw new RuntimeException('Missing OG image secret key.');

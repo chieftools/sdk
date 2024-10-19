@@ -11,12 +11,18 @@
 
         @stack('head.meta')
 
-        <link rel="canonical" href="{{ url()->current() }}">
+        @if(isset($canonical) && $canonical)
+            <link rel="canonical" href="{{ $canonical }}">
+        @else
+            @php($currentPageNumber = is_numeric(request()->query('page')) ? (int)request()->query('page') : null)
+            <link rel="canonical" href="{{ url()->current() }}{{ $currentPageNumber > 1 ? "?page={$currentPageNumber}" : '' }}">
+        @endif
+
         <link rel="preconnect" href="{{ static_asset() }}" crossorigin="anonymous">
 
         @if(!isset($noTitle) || !$noTitle)
             @if(!empty($title))
-                <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>
+                <title>{{ implode(' - ', array_filter(array_map('strip_tags', $title))) }} - {{ config('app.title') }}</title>
             @else
                 <title>{{ config('app.title') }}</title>
             @endif

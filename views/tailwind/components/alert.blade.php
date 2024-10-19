@@ -29,9 +29,9 @@
         </div>
         <div class="ml-3">
             @if(!empty($heading))
-                <h3 class="text-sm font-medium {{ $headingColor }}">
+                <p class="text-sm font-medium {{ $headingColor }}">
                     {{ $heading }}
-                </h3>
+                </p>
             @endif
             <div class="{{ empty($heading) ? 'mt-0.5' : 'mt-2' }} text-sm {{ $textColor }}">
                 <p>

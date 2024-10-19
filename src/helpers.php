@@ -164,7 +164,7 @@ function chief_site_url(?string $path = null): string
     $base = rtrim(config('chief.site_url'), '/');
     $path = $path === null ? '' : ltrim($path, '/');
 
-    return "{$base}/{$path}";
+    return "{$base}/{$path}?ref=" . config('chief.id');
 }
 
 /**

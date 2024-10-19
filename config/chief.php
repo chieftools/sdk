@@ -191,4 +191,10 @@ return [
 
     'home_route_resolver' => ChiefTools\SDK\Helpers\HomeRouteResolver::class,
 
+    'og_generator' => [
+
+        'secret' => env('CHIEF_OG_SECRET_KEY'),
+
+    ],
+
 ];

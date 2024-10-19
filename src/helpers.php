@@ -636,3 +636,37 @@ function authenticated_user_or_fail(): ChiefTools\SDK\Entities\User
 
     return $user;
 }
+
+function base64encode_urlsafe(string $input): string
+{
+    return str_replace('=', '', strtr(base64_encode($input), '+/', '-_'));
+}
+
+function base64decode_urlsafe(string $input): string
+{
+    return base64_decode(str_pad(strtr($input, '-_', '+/'), strlen($input) % 4, '='));
+}
+
+function generate_og_image_url(array $params, string $slug, string $format = 'png', ?int $timestamp = null): Illuminate\Support\HtmlString
+{
+    $secretKey = config('services.chief-og.secret');
+
+    if (empty($secretKey)) {
+        throw new RuntimeException('Missing OG image secret key.');
+    }
+
+    $encodedParams = base64encode_urlsafe(json_encode($params, JSON_THROW_ON_ERROR));
+
+    $signature = base64encode_urlsafe(hash_hmac('sha256', $encodedParams, $secretKey, true));
+
+    $queryParams = http_build_query(array_filter([
+        'signature' => $signature,
+        'v'         => $timestamp,
+    ]));
+
+    return new Illuminate\Support\HtmlString(
+        static_asset(
+            sprintf('/og/%s/%s/%s.%s?%s', config('chief.id'), $encodedParams, $slug, $format, $queryParams),
+        ),
+    );
+}

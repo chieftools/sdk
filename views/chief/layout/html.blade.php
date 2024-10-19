@@ -22,7 +22,7 @@
 
         @if(!isset($noTitle) || !$noTitle)
             @if(!empty($title))
-                <title>{{ implode(' - ', array_map('strip_tags', $title)) }} - {{ config('app.title') }}</title>
+                <title>{{ implode(' - ', array_filter(array_map('strip_tags', $title))) }} - {{ config('app.title') }}</title>
             @else
                 <title>{{ config('app.title') }}</title>
             @endif

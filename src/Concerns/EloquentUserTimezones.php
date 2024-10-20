@@ -13,7 +13,7 @@ trait EloquentUserTimezones
     {
         $value = parent::asDateTime($value);
 
-        if (!request()?->is('nova*')) {
+        if ($this->isServingApplication()) {
             $timezone = config('app.timezone_user');
 
             if (!empty($timezone)) {
@@ -29,7 +29,7 @@ trait EloquentUserTimezones
      */
     public function fromDateTime($value): ?string
     {
-        if ($value instanceof Carbon && !request()?->is('nova*')) {
+        if ($value instanceof Carbon && $this->isServingApplication()) {
             $timezone = config('app.timezone_user');
 
             if (!empty($timezone)) {
@@ -38,5 +38,21 @@ trait EloquentUserTimezones
         }
 
         return parent::fromDateTime($value);
+    }
+
+    /**
+     * Admin panels and other tools that are not the application itself should not use user timezones.
+     */
+    private function isServingApplication(): bool
+    {
+        if (request()?->is('nova*')) {
+            return false;
+        }
+
+        if (function_exists('filament') && filament()->isServing()) {
+            return false;
+        }
+
+        return true;
     }
 }

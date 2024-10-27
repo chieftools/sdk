@@ -14,7 +14,7 @@ class LighthouseSubscriptionChannel
         $this->subscriptionAuthorizer = $subscriptionAuthorizer;
     }
 
-    public function join(User $user): bool
+    public function join(User|null $user): bool
     {
         return $this->subscriptionAuthorizer->authorize(request());
     }

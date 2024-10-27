@@ -2,10 +2,10 @@
 
 namespace ChiefTools\SDK\GraphQL\Listeners;
 
-use Pusher\Pusher;
 use Nuwave\Lighthouse\Execution\ExtensionsResponse;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionRegistry;
 use Nuwave\Lighthouse\Events\BuildExtensionsResponse as Event;
+use ChiefTools\SDK\GraphQL\Resolvers\AuthenticateBroadcastChannel;
 
 class BuildExtensionsResponse
 {
@@ -33,8 +33,14 @@ class BuildExtensionsResponse
             return null;
         }
 
+        $pusher = AuthenticateBroadcastChannel::resolvePusher();
+
+        if ($pusher === null) {
+            return null;
+        }
+
         return new ExtensionsResponse('chief_socket', [
-            'auth' => app(Pusher::class)->socketAuth($channel, $socketId),
+            'auth' => $pusher->authorizeChannel($channel, $socketId),
         ]);
     }
 }

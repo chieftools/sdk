@@ -3,8 +3,6 @@
 namespace ChiefTools\SDK;
 
 use GuzzleHttp;
-use Pusher\Pusher;
-use RuntimeException;
 use ChiefTools\SDK\API\Client;
 use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
@@ -23,14 +21,12 @@ use Illuminate\Support\Facades\Broadcast;
 use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Broadcasting\BroadcastManager;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
 use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
-use Illuminate\Broadcasting\Broadcasters\PusherBroadcaster;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
@@ -218,25 +214,6 @@ class ServiceProvider extends IlluminateServiceProvider
             Broadcast::channel('lighthouse-{id}-{time}', LighthouseSubscriptionChannel::class);
 
             Event::listen(LighthouseEvents\BuildExtensionsResponse::class, BuildExtensionsResponse::class);
-
-            $this->app->bind(Pusher::class, static function (Application $app) {
-                // Try the default driver first
-                $driver = $app->make(BroadcastManager::class)->driver();
-
-                if ($driver instanceof PusherBroadcaster) {
-                    return $driver->getPusher();
-                }
-
-                // Try the pusher driver second
-                $driver = $app->make(BroadcastManager::class)->driver('pusher');
-
-                if ($driver instanceof PusherBroadcaster) {
-                    return $driver->getPusher();
-                }
-
-                // Bail if we still can't find a Pusher broadcaster
-                throw new RuntimeException('Cannot resolve Pusher client from non Pusher broadcaster.');
-            });
         }
     }
 

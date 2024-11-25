@@ -53,8 +53,10 @@
             headers: {
                 'Accept':       'application/json',
                 'Content-Type': 'application/json',
-                'X-Chief-Team': window.TEAM.slug,
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                ...(window.TEAM && window.TEAM.slug ? {
+                    'X-Chief-Team': window.TEAM.slug,
+                } : {}),
             },
         });
 

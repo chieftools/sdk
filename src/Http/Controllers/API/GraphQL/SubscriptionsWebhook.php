@@ -4,13 +4,13 @@ namespace ChiefTools\SDK\Http\Controllers\API\GraphQL;
 
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Nuwave\Lighthouse\Subscriptions\BroadcastManager;
+use Nuwave\Lighthouse\Subscriptions\BroadcastDriverManager;
 
 class SubscriptionsWebhook
 {
-    private BroadcastManager $broadcastManager;
+    private BroadcastDriverManager $broadcastManager;
 
-    public function __construct(BroadcastManager $broadcastManager)
+    public function __construct(BroadcastDriverManager $broadcastManager)
     {
         $this->broadcastManager = $broadcastManager;
     }

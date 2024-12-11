@@ -26,7 +26,7 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.54",
-        "larastan/larastan": "^2.9",
+        "larastan/larastan": "^3.0",
         "laravel/passport": "^12",
         "orchestra/testbench": "^9.1",
         "stayallive/laravel-passport-memoized": "^1.0"

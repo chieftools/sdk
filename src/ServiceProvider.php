@@ -58,10 +58,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->configureDeveloperProtections();
 
-        if (is_running_on_vapor()) {
-            $this->ensureMixAndAssetUrlsAreConfigured();
-        }
-
         if ($this->app->runningInConsole()) {
             $this->loadCommands();
 
@@ -335,14 +331,6 @@ class ServiceProvider extends IlluminateServiceProvider
 
         // Except for this one, we don't want to mass assign anything in production either
         Model::preventSilentlyDiscardingAttributes();
-    }
-
-    private function ensureMixAndAssetUrlsAreConfigured(): void
-    {
-        config([
-            'app.mix_url'   => replace_custom_asset_domain($_ENV['MIX_URL'] ?? '/'),
-            'app.asset_url' => replace_custom_asset_domain($_ENV['ASSET_URL'] ?? '/'),
-        ]);
     }
 
     protected function mergeConfigFrom($path, $key, $force = false): void

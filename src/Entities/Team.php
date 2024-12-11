@@ -101,6 +101,7 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     }
 
     // Relations
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\ChiefTools\SDK\Entities\User, $this> */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)->withTimestamps()->orderBy('created_at');

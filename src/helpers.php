@@ -302,18 +302,6 @@ function does_subscription_have_subscribers(string $subscriptionField, mixed $ro
 }
 
 /**
- * Dispatch a job but retry it a few times in case SQS has issues.
- *
- * @param mixed $job
- *
- * @throws \Exception
- */
-function dispatch_vapor(mixed $job): void
-{
-    retry(10, static fn () => dispatch($job), 200);
-}
-
-/**
  * Get the user agent for the application.
  *
  * @return string
@@ -431,43 +419,6 @@ function internal_http(?string $baseUri = null, array $headers = [], int $timeou
         ], $options),
         $stackCallback,
     );
-}
-
-/**
- * Replace the Vapor asset domain with a custom asset domain.
- *
- * This should only be called from the `config/app.php` file.
- *
- * @param string|null $assetUrl
- *
- * @return string|null
- *
- * @noinspection LaravelFunctionsInspection
- */
-function replace_custom_asset_domain(?string $assetUrl): ?string
-{
-    if ($assetUrl === null) {
-        return $assetUrl;
-    }
-
-    $plainDomain  = env('VAPOR_ASSET_DOMAIN');
-    $customDomain = env('VAPOR_CUSTOM_ASSET_DOMAIN');
-
-    if ($plainDomain === null || $customDomain === null) {
-        return $assetUrl;
-    }
-
-    return str_replace($plainDomain, $customDomain, $assetUrl);
-}
-
-/**
- * Check if we are currently running on Laravel Vapor.
- *
- * @return bool
- */
-function is_running_on_vapor(): bool
-{
-    return isset($_SERVER['VAPOR_ARTIFACT_NAME']);
 }
 
 /**

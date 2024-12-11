@@ -20,8 +20,10 @@ final class Chief
 
     private static ?string $afterTeamUpdateJob = null;
 
+    /** @var \Closure(): bool|null */
     private static ?Closure $shouldRenderSupportWidgetResolver = null;
 
+    /** @var \Closure(): bool|null */
     private static ?Closure $shouldRenderAnalyticsTrackerResolver = null;
 
     private static ?Closure $validationExceptionJsonResponseHandler = null;
@@ -64,18 +66,16 @@ final class Chief
 
     public static function shouldRenderSupportWidget(): bool
     {
-        $default = static fn () => authenticated_user()?->getPreference('enable_support_widget', true) ?? true;
+        $default = static fn (): bool => authenticated_user()?->getPreference('enable_support_widget', true) ?? true;
 
-        return value(self::$shouldRenderSupportWidgetResolver ?? $default);
+        return (self::$shouldRenderSupportWidgetResolver ?? $default)();
     }
 
     public static function shouldRenderAnalyticsTracker(): bool
     {
-        $default = static function () {
-            return config('chief.analytics.fathom.site') !== null;
-        };
+        $default = static fn (): bool => config('chief.analytics.fathom.site') !== null;
 
-        return value(self::$shouldRenderAnalyticsTrackerResolver ?? $default);
+        return (self::$shouldRenderAnalyticsTrackerResolver ?? $default)();
     }
 
     public static function registerAfterUserUpdateJob(string $jobClass): void

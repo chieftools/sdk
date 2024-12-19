@@ -145,11 +145,17 @@ return [
 
             'public_tunnel' => env('SENTRY_PUBLIC_TUNNEL', 'https://visibility.on.chief.tools/ingest'),
 
+            'traces' => [
+
+                'sample_rate' => env('SENTRY_PUBLIC_TRACES_SAMPLE_RATE') === null ? null : (float)env('SENTRY_PUBLIC_TRACES_SAMPLE_RATE'),
+
+            ],
+
             'replays' => [
 
-                'sample_rate' => env('SENTRY_REPLAYS_SAMPLE_RATE') === null ? null : (float)env('SENTRY_REPLAYS_SAMPLE_RATE'),
+                'sample_rate' => env('SENTRY_PUBLIC_REPLAYS_SAMPLE_RATE') === null ? null : (float)env('SENTRY_PUBLIC_REPLAYS_SAMPLE_RATE'),
 
-                'error_sample_rate' => env('SENTRY_REPLAYS_ERROR_SAMPLE_RATE') === null ? null : (float)env('SENTRY_REPLAYS_ERROR_SAMPLE_RATE'),
+                'error_sample_rate' => env('SENTRY_PUBLIC_REPLAYS_ERROR_SAMPLE_RATE') === null ? null : (float)env('SENTRY_PUBLIC_REPLAYS_ERROR_SAMPLE_RATE'),
 
             ],
 

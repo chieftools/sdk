@@ -25,7 +25,7 @@ class JavaScriptInjector
                 'DSN'                       => $sentryDsn,
                 'TUNNEL'                    => config('chief.analytics.sentry.public_tunnel'),
                 'RELEASE'                   => config('sentry.release'),
-                'TRACES_SAMPLE_RATE'        => $sentryDsn !== null ? config('sentry.traces_sample_rate', 0) : 0,
+                'TRACES_SAMPLE_RATE'        => $sentryDsn !== null ? config('chief.analytics.sentry.traces.sample_rate') : 0,
                 'REPLAYS_SAMPLE_RATE'       => $sentryDsn !== null ? config('chief.analytics.sentry.replays.sample_rate') : 0,
                 'REPLAYS_ERROR_SAMPLE_RATE' => $sentryDsn !== null ? config('chief.analytics.sentry.replays.error_sample_rate') : 0,
             ],

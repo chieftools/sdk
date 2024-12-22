@@ -21,7 +21,7 @@
                                     @if($loop->last)
                                         <span class="ml-2 text-sm">{{ $breadcrumb['title'] ?? '???' }}</span>
                                     @else
-                                        <a href="{{ $breadcrumb['href'] ?? '#' }}" class="ml-2 text-sm text-brand-500 hover:text-brand-700">{{ $breadcrumb['title'] ?? '???' }}</a>
+                                        <a href="{{ $breadcrumb['href'] ?? '#' }}" class="ml-2 text-sm text-brand-500 hover:text-brand-700" {{ $breadcrumb['wire'] ?? false ? 'wire:navigate' : '' }}>{{ $breadcrumb['title'] ?? '???' }}</a>
                                     @endif
                                 </div>
                             </li>

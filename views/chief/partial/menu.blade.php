@@ -72,7 +72,7 @@
                                     @endif{{ $item['text'] }}
                                 </router-link>
                             @else
-                                <a href="{{ $item['href'] }}" @class(["group {$itemClass}", 'router-link-active' => $item['router-link-active'] ?? false]) @if(!empty($item['vue-href'])) vue-href='{{ $item['vue-href'] }}' @endif>
+                                <a href="{{ $item['href'] }}" @class(["group {$itemClass}", 'router-link-active' => $item['router-link-active'] ?? false]) @if(!empty($item['vue-href'])) vue-href='{{ $item['vue-href'] }}' @endif @if(isset($item['wire']) && $item['wire']) wire:navigate @endif>
                                     @if(isset($item['icon']))
                                         <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
                                     @endif{{ $item['text'] }}

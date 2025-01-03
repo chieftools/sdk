@@ -204,7 +204,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         }
 
         if ($this->is_admin) {
-            return $this->memoizedCurrentTeam = Team::query()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
+            return $this->memoizedCurrentTeam = Chief::teamModel()::query()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
         }
 
         return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();

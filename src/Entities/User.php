@@ -203,6 +203,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             return $this->memoizedCurrentTeam = $fromRequest;
         }
 
+        if ($this->is_admin) {
+            return $this->memoizedCurrentTeam = Team::query()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
+        }
+
         return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
     }
     public function setCurrentTeam(Team $team): void

@@ -12,7 +12,7 @@
             <x-slot name="actions">
                 <div class="mt-4">
                     <div class="-mx-2 -my-1.5 flex">
-                        <x-tw::button :href="chief_base_url('/account/profile')" type="white" size="sm">
+                        <x-tw::button :href="chief_base_url('/settings/profile')" type="white" size="sm">
                             <i class="fad fa-fw fa-external-link-square-alt"></i> Chief Tools
                         </x-tw::button>
                     </div>

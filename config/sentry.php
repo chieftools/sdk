@@ -38,6 +38,8 @@ return [
         'ip.chief.tools',
         'cert.chief.app',
         'deploy.chief.app',
+        'domain.chief.app',
+        'socket.chief.app',
         'account.chief.app',
 
     ],

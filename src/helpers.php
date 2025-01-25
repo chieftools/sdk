@@ -361,7 +361,7 @@ function http(?string $baseUri = null, array $headers = [], int $timeout = 10, a
     $stack = GuzzleHttp\HandlerStack::create();
 
     if (app()->bound(Sentry\State\HubInterface::class)) {
-        $stack->push(Sentry\Tracing\GuzzleTracingMiddleware::trace());
+        $stack->unshift(Sentry\Tracing\GuzzleTracingMiddleware::trace(), 'sentry');
     }
 
     if ($stackCallback !== null) {

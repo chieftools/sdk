@@ -318,6 +318,8 @@ function user_agent(): string
 /**
  * Get the user agent for the application used for internal requests.
  *
+ * This removed the word "Bot" from the user agent so tools like Sentry don't ignore the request.
+ *
  * @return string
  */
 function internal_user_agent(): string
@@ -337,7 +339,7 @@ function internal_user_agent(): string
 function crawler_user_agent(): string
 {
     return sprintf(
-        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/123.0.6312.58 Safari/537.36',
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/132.0.6834.111 Safari/537.36',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );

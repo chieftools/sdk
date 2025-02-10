@@ -50,6 +50,7 @@ return [
 
         'api' => [
 
+            'domain'     => env('CHIEF_API_DOMAIN', env('APP_DOMAIN')),
             'prefix'     => 'api',
             'middleware' => ['api'],
 
@@ -57,18 +58,18 @@ return [
 
         'web' => [
 
+            'domain'     => env('CHIEF_WEB_DOMAIN', env('APP_DOMAIN')),
             'middleware' => ['web'],
 
         ],
 
         'web-api' => [
 
+            'domain'     => env('CHIEF_WEB_API_DOMAIN', env('APP_DOMAIN')),
             'prefix'     => 'api',
             'middleware' => ['web', 'auth'],
 
         ],
-
-        'passport' => [],
 
     ],
 

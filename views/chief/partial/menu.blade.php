@@ -27,7 +27,9 @@
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
                 <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
-                    @if(config('chief.brand.brandIcon'))
+                    @if(config('chief.brand.logoUrl'))
+                        <img class="max-h-8 max-w-8" src="{{ config('chief.brand.logoUrl') }}" alt="{{ config('app.title') }}">
+                    @elseif(config('chief.brand.brandIcon'))
                         <span class="fa-stack text-brand">
                             <i class="fad {{ config('chief.brand.icon') }} fa-stack-2x"></i>
                             <i class="fab {{ config('chief.brand.brandIcon') }} fa-stack-1x" style="font-size: 8px;"></i>

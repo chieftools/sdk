@@ -20,6 +20,8 @@ return [
 
         'icon' => 'fa-bug',
 
+        'logoUrl' => null,
+
         'brandIcon' => null,
 
         'color' => '#34495e',

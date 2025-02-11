@@ -1,4 +1,4 @@
-@extendsfirst(['layout.html', 'chief::layout.html'], ['bodyClass' => $bodyClass ?? '', 'fullHeight' => true])
+@extendsfirst(['layout.default', 'chief::layout.html'], ['bodyClass' => $bodyClass ?? '', 'fullHeight' => true])
 
 @section('body')
     <div class="min-h-full pt-16 pb-12 flex flex-col bg-white">

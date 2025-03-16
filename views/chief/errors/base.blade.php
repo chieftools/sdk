@@ -1,4 +1,4 @@
-@extendsfirst(['layout.default', 'chief::layout.html'], ['bodyClass' => $bodyClass ?? '', 'fullHeight' => true])
+@extendsfirst(['layout.base', 'chief::layout.html'], ['bodyClass' => $bodyClass ?? '', 'fullHeight' => true])
 
 @section('body')
     <div class="min-h-full pt-16 pb-12 flex flex-col bg-white">
@@ -28,9 +28,9 @@
             </div>
         </main>
         <footer class="shrink-0 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-            @include('chief::partial.footer.app')
-
             @include('chief::partial.footer.links')
+
+            @include('chief::partial.footer.app')
 
             @include('chief::partial.footer.version')
         </footer>

@@ -1,6 +1,6 @@
 {
     "name": "chieftools/sdk",
-    "description": "Base functionality and helpers used for building for Chief Tools.",
+    "description": "Base functionality and helpers used for building Chief Tools.",
     "homepage": "https://chief.app",
     "license": "MIT",
     "type": "library",
@@ -8,7 +8,7 @@
         "php": "^8.3",
         "guzzlehttp/guzzle": "^7.5",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^11.44",
+        "laravel/framework": "^11.44|^12.3",
         "laravel/helpers": "^1.5",
         "laravel/socialite": "^5.5",
         "mll-lab/graphql-php-scalars": "^6.1",
@@ -28,7 +28,7 @@
         "friendsofphp/php-cs-fixer": "^3.54",
         "larastan/larastan": "^3.0",
         "laravel/passport": "^12",
-        "orchestra/testbench": "^9.1",
+        "orchestra/testbench": "^9.1|^10.1",
         "stayallive/laravel-passport-memoized": "^1.0"
     },
     "autoload": {

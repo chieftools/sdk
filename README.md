@@ -5,7 +5,9 @@
 [![Latest Stable Version](https://poser.pugx.org/chieftools/sdk/v/stable)](https://packagist.org/packages/chieftools/sdk)
 [![License](https://poser.pugx.org/chieftools/sdk/license)](https://packagist.org/packages/chieftools/sdk)
 
-Base functionality and helpers used for building for Chief Tools.
+Base functionality and helpers used for building Chief Tools.
+
+Keep in mind that this package is not meant to be used standalone, but as a base for building our own Chief Tools, this package is open-sourced for inspiration and to be used as a reference.
 
 ### Configures
 
@@ -28,34 +30,34 @@ Base functionality and helpers used for building for Chief Tools.
 #### Middleware
 
 - `ChiefTools\SDK\Middleware\AuthenticateChief`
-<br>Validates a request comes from [Chief Tools](https://chief.app/)
-<br>Requires `services.chief.webhook_secret` configuration to be set to a random string
+  <br>Validates a request comes from [Chief Tools](https://chief.app/)
+  <br>Requires `services.chief.webhook_secret` configuration to be set to a random string
 - `ChiefTools\SDK\Middleware\AutoAuthenticate`
-<br>Uses both the `api` and `web` guard and sets the first that is authenticated
+  <br>Uses both the `api` and `web` guard and sets the first that is authenticated
 - `ChiefTools\SDK\Middleware\ForceSecure`
-<br>Make sure the request is over `https://`
+  <br>Make sure the request is over `https://`
 - `ChiefTools\SDK\Middleware\MoveAccessTokenFromURLToHeader`
-<br>Move the access token from `access_token` GET paramater to the `Authorization` header
+  <br>Move the access token from `access_token` GET paramater to the `Authorization` header
 - `ChiefTools\SDK\Middleware\SecurityHeaders`
-<br>Adds a default set of security headers, can be configured by setting `chief.response.securityheaders` (array) in the app config
+  <br>Adds a default set of security headers, can be configured by setting `chief.response.securityheaders` (array) in the app config
 - `ChiefTools\SDK\Middleware\TrustProxiesOnVapor`
-<br>Configures `fideloper/proxy` to be used on [Laravel Vapor](https://vapor.laravel.com/)
+  <br>Configures `fideloper/proxy` to be used on [Laravel Vapor](https://vapor.laravel.com/)
 
 #### Validation rules
 
 - `ChiefTools\SDK\Rules\UUID`
-<br>Valites the input value is a UUIDv4
+  <br>Valites the input value is a UUIDv4
 
 #### Helpers
 
 - `active($whitelist = null, $blacklist = null, $active = 'active', $inactive = '')`
-<br>Get active state based on whitelist. Used to indicate active menu's
+  <br>Get active state based on whitelist. Used to indicate active menu's
 - `timezones(): array`
-<br>Return an key-value list of all timezones
+  <br>Return an key-value list of all timezones
 - `validate($fields, $rules): bool`
-<br>Validate fields against rules. Example `validate($id, new \ChiefTools\SDK\Rules\UUID)`
+  <br>Validate fields against rules. Example `validate($id, new \ChiefTools\SDK\Rules\UUID)`
 - `latest_ca_bundle_file_path(): string`
-<br>Get the path to the most up-to-date CA bundle file, uses [Certainty](https://github.com/paragonie/certainty) under the hood
+  <br>Get the path to the most up-to-date CA bundle file, uses [Certainty](https://github.com/paragonie/certainty) under the hood
 
 ### Installation
 

@@ -134,7 +134,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\ChiefTools\SDK\Entities\Team, $this<static>, \Illuminate\Database\Eloquent\Relations\Pivot> */
     public function teams(): BelongsToMany
     {
         $relation = $this->belongsToMany(Chief::teamModel())->withTimestamps();
@@ -153,7 +152,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         return $relation;
     }
-    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\ChiefTools\SDK\Entities\Team, $this> */
     public function defaultTeam(): BelongsTo
     {
         return $this->belongsTo(Chief::teamModel(), 'default_team_id');

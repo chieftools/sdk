@@ -24,6 +24,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
 use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
+use ChiefTools\SDK\Mail\ReportingFailoverTransport;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
@@ -43,6 +44,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->loadRoutes();
 
         $this->configureAuth();
+
+        $this->configureMail();
 
         $this->configureViews();
 
@@ -187,6 +190,11 @@ class ServiceProvider extends IlluminateServiceProvider
                 return $guard;
             });
         });
+    }
+
+    private function configureMail(): void
+    {
+        ReportingFailoverTransport::registerTransport();
     }
 
     private function configureViews(): void

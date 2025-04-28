@@ -63,7 +63,7 @@
                                    data-icon="fa-trash-alt"
                                    data-color="danger"
                                    data-toggle="tooltip"
-                                   class="inline-flex items-center shadow-sm px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
+                                   class="inline-flex items-center shadow-xs px-2.5 py-0.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50"
                                 >
                                     <i class="fa fa-fw fa-trash-alt text-sm"></i>
                                 </a>

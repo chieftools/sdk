@@ -8,7 +8,7 @@
         <i x-cloak x-bind:class="{'opacity-0': !open}" class="transition-opacity fad fa-fw fa-xmark !static" style="--fa-secondary-opacity: 1;"></i>
     </button>
 
-    <div x-cloak x-bind:class="{'opacity-0 pointer-events-none': !open}" class="select-none transition-opacity absolute right-0 bottom-0 mt-2 mb-[44px] w-64 rounded-sm bg-white shadow-sm ring-1 ring-black ring-opacity-5 focus:outline-none" tabindex="-1">
+    <div x-cloak x-bind:class="{'opacity-0 pointer-events-none': !open}" class="select-none transition-opacity absolute right-0 bottom-0 mt-2 mb-[44px] w-64 rounded-sm bg-white shadow-xs ring-1 ring-black/5 focus:outline-hidden" tabindex="-1">
         <div class="relative p-4">
             <p class="text-base p-1.5 pt-0">
                 Need help?

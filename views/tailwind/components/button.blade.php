@@ -8,7 +8,7 @@
 ])
 
 @php
-    $classes = 'inline-flex font-medium shadow-sm ';
+    $classes = 'inline-flex font-medium shadow-xs ';
 
     $classes .= match($size) {
         'xxs' => 'px-1.5 py-1 rounded ',

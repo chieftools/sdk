@@ -111,7 +111,7 @@
                     <textarea id="{{ $name }}"
                               name="{{ $name }}"
                               rows="{{ $rows }}"
-                              class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                              class="appearance-none block w-full border shadow-xs placeholder-gray-400 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                               {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                               {{ $disabled ? 'disabled' : '' }}
                               {{ $required ? 'required' : '' }}
@@ -124,7 +124,7 @@
                 @elseif($type === 'select')
                     <select id="{{ $name }}"
                             name="{{ $name }}"
-                            class="mt-1 block w-full bg-white border border-gray-300 shadow-sm py-2 px-3 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                            class="mt-1 block w-full bg-white border border-gray-300 shadow-xs py-2 px-3 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                             {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                             {{ $disabled ? 'disabled' : '' }}
                             {{ $required ? 'required' : '' }}
@@ -143,7 +143,7 @@
                            type="{{ $type }}"
                            {!! $type === 'password' && $togglePassword ? ':type="passwordReadable ? \'text\' : \'password\'"' : '' !!}
                            value="{{ $value }}"
-                           class="appearance-none block w-full border shadow-sm placeholder-gray-400 focus:outline-none {{ $sizeClass }} {{ $inputClass }}"
+                           class="appearance-none block w-full border shadow-xs placeholder-gray-400 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                            {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                            {{ $disabled ? 'disabled' : '' }}
                            {{ $required ? 'required' : '' }}
@@ -170,7 +170,7 @@
             </div>
 
             @if($copyable)
-                <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+                <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-hidden focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
                     <i class="fal fa-fw fa-copy"></i>
                 </button>
             @endif

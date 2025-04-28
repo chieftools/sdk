@@ -29,7 +29,7 @@
                 <i class="fad fa-fw fa-comment-dots text-brand group-hover:text-white"></i>&nbsp;&nbsp;Get in touch
             </a>
 
-            <hr class="my-2">
+            <hr class="my-2 bg-gray-200 border-0 h-px">
 
             <template x-if="loadLazy">
                 <iframe src="https://status.chief.tools/badge?theme=light" sandbox="allow-popups allow-top-navigation-by-user-activation" class="ml-0.5" width="250" height="30" frameborder="0" scrolling="no"></iframe>

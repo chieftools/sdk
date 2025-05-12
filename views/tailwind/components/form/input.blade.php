@@ -127,7 +127,7 @@
                 @elseif($type === 'select')
                     <select id="{{ $name }}"
                             name="{{ $name }}"
-                            class="mt-1 block w-full bg-white border border-gray-300 shadow-xs py-2 px-3 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
+                            class="block w-full bg-white border border-gray-300 shadow-xs py-2 px-3 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                             {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                             {{ $disabled ? 'disabled' : '' }}
                             {{ $required ? 'required' : '' }}

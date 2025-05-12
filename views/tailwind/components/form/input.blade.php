@@ -20,6 +20,7 @@
     'autocomplete' => null,
     'togglePassword' => false,
     'withoutUnchecked' => false,
+    'noPasswordManager' => false,
 ])
 
 @php
@@ -99,6 +100,7 @@
                                    {{ $readonly ? 'readonly' : '' }}
                                    {{ $autofocus ? 'autofocus' : '' }}
                                    {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                                   {{ $noPasswordManager ? 'data-1p-ignore' : '' }}
                             >
                         </div>
                         @if($label)
@@ -120,6 +122,7 @@
                               {!! $maxlength ? "maxlength='{$maxlength}' x-model.fill='val'" : '' !!}
                               {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                               {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                              {{ $noPasswordManager ? 'data-1p-ignore' : '' }}
                     >{{ $value }}</textarea>
                 @elseif($type === 'select')
                     <select id="{{ $name }}"
@@ -132,6 +135,7 @@
                             {{ $autofocus ? 'autofocus' : '' }}
                             {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                             {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                            {{ $noPasswordManager ? 'data-1p-ignore' : '' }}
                     >
                         @foreach($options as $optionValue => $option)
                             <option value="{{ $optionValue }}"{{ $optionValue === $value ? ' selected' : '' }}>{{ $option }}</option>
@@ -152,6 +156,7 @@
                            {!! $maxlength ? "maxlength='{$maxlength}' x-model.fill='val'" : '' !!}
                            {{ $placeholder ? new Illuminate\Support\HtmlString("placeholder='{$placeholder}'") : '' }}
                            {{ $autocomplete ? new Illuminate\Support\HtmlString("autocomplete='{$autocomplete}'") : '' }}
+                           {{ $noPasswordManager ? 'data-1p-ignore' : '' }}
                     >
 
                     @if($type === 'password' && $togglePassword)
@@ -159,7 +164,7 @@
                             <i class="fa fa-fw fa-eye text-gray-500" :class="{'block': !passwordReadable, 'hidden': passwordReadable}"></i>
                             <i class="fa fa-fw fa-eye-slash text-gray-500" :class="{'block': passwordReadable, 'hidden': !passwordReadable}"></i>
                         </div>
-                   @endif
+                    @endif
                 @endif
 
                 @if($hasError)

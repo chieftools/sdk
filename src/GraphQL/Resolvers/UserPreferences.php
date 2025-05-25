@@ -6,7 +6,7 @@ use ChiefTools\SDK\Entities\User;
 use ChiefTools\SDK\GraphQL\QueryResolver;
 
 /**
- * @extends QueryResolver<User>
+ * @extends QueryResolver<User|null>
  */
 class UserPreferences extends QueryResolver
 {

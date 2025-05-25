@@ -5,30 +5,24 @@
     "license": "MIT",
     "type": "library",
     "require": {
-        "php": "^8.3",
-        "guzzlehttp/guzzle": "^7.5",
+        "php": "^8.4",
+        "guzzlehttp/guzzle": "^7.9",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^11.44|^12.7",
-        "laravel/helpers": "^1.5",
-        "laravel/socialite": "^5.5",
-        "mll-lab/graphql-php-scalars": "^6.1",
-        "nuwave/lighthouse": "^6.47",
+        "laravel/framework": "^12.15",
+        "laravel/helpers": "^1.7",
+        "laravel/socialite": "^5.20",
+        "mll-lab/graphql-php-scalars": "^6.4",
+        "nuwave/lighthouse": "^6.57",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.13",
         "stayallive/laravel-eloquent-observable": "^1.0",
         "stayallive/laravel-eloquent-uuid": "^1.0",
         "stayallive/random-tokens": "^1.0"
     },
-    "suggest": {
-        "laravel/passport": "Passport is required when legacy OAuth personal access tokens are still in use.",
-        "stayallive/laravel-passport-memoized": "Memoizes Passport token validation to improve performance when using Laravel Passport."
-    },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.54",
         "larastan/larastan": "^3.0",
-        "laravel/passport": "^12",
-        "orchestra/testbench": "^9.1|^10.1",
-        "stayallive/laravel-passport-memoized": "^1.0"
+        "orchestra/testbench": "^9.1|^10.1"
     },
     "autoload": {
         "psr-4": {

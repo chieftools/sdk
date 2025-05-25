@@ -9,6 +9,7 @@ use Symfony\Component\Mime\RawMessage;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\FailoverTransport;
 use Symfony\Component\Mailer\Exception\TransportException;
+use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 use Symfony\Component\Mailer\Transport\TransportInterface;
 
 class ReportingFailoverTransport extends FailoverTransport
@@ -44,9 +45,21 @@ class ReportingFailoverTransport extends FailoverTransport
                 try {
                     return $this->transport->send($message, $envelope);
                 } catch (TransportException $e) {
-                    // @TODO: When all transports are exhausted, this exception will be reported once here and again
-                    //        by the original failover transport, we might want to find a way to avoid that
-                    report($e);
+                    if ($this->transport instanceof SmtpTransport) {
+                        $debugLines = explode("\n", $this->transport->getStream()->getDebug());
+
+                        foreach ($debugLines as $debugLine) {
+                            logger()->info($debugLine);
+                        }
+                    }
+
+                    context()->scope(function () use ($e) {
+                        // @TODO: When all transports are exhausted, this exception will be reported once here and again
+                        //        by the original failover transport, we might want to find a way to avoid that
+                        report($e);
+                    }, [
+                        'transport' => (string)$this->transport,
+                    ]);
 
                     throw $e;
                 }

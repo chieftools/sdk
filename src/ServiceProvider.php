@@ -4,7 +4,6 @@ namespace ChiefTools\SDK;
 
 use GuzzleHttp;
 use ChiefTools\SDK\API\Client;
-use Laravel\Passport\Passport;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
@@ -52,8 +51,6 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->configureEvents();
 
         $this->configureGraphQL();
-
-        $this->configurePassport();
 
         $this->configureMiddleware();
 
@@ -221,26 +218,6 @@ class ServiceProvider extends IlluminateServiceProvider
         }
     }
 
-    private function configurePassport(): void
-    {
-        // If the Passport package is not installed or not auth is enabled we can skip the setup
-        if (!class_exists(Passport::class) || !config('chief.auth')) {
-            return;
-        }
-
-        Passport::useTokenModel(Entities\Passport\Token::class);
-
-        if (!config('chief.auth.passport')) {
-            return;
-        }
-
-        Passport::ignoreRoutes();
-
-        Passport::tokensExpireIn(now()->addDays(7));
-        Passport::refreshTokensExpireIn(now()->addDays(31));
-        Passport::personalAccessTokensExpireIn(now()->addYears(20));
-    }
-
     private function configureMiddleware(): void
     {
         $router = $this->app['router'];
@@ -259,17 +236,11 @@ class ServiceProvider extends IlluminateServiceProvider
 
         $this->publishes([
             static::basePath('database/migrations') => database_path('migrations'),
-            ...(class_exists(Passport::class) && config('chief.auth.passport'))
-                ? [static::basePath('database/passport-migrations') => database_path('migrations')]
-                : [],
         ], 'chief-migrations');
 
         if (Chief::runsMigrations()) {
             $this->loadMigrationsFrom([
                 static::basePath('database/migrations'),
-                ...(class_exists(Passport::class) && config('chief.auth.passport'))
-                    ? [static::basePath('database/passport-migrations')]
-                    : [],
             ]);
         }
     }

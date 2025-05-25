@@ -4,7 +4,6 @@ namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
 use ChiefTools\SDK\Chief;
-use Laravel\Passport\Passport;
 use ChiefTools\SDK\Helpers\Avatar;
 use Illuminate\Support\Collection;
 use Illuminate\Auth\Authenticatable;
@@ -15,7 +14,6 @@ use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
@@ -155,27 +153,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     public function defaultTeam(): BelongsTo
     {
         return $this->belongsTo(Chief::teamModel(), 'default_team_id');
-    }
-
-    // Passport relations
-    public function personalAccessTokens(): HasMany
-    {
-        if (!class_exists(Passport::class) || !config('chief.auth.passport')) {
-            throw new RuntimeException('Passport is not installed/active!');
-        }
-
-        /** @var \Illuminate\Database\Eloquent\Model $clientModel */
-        $clientModel = app(Passport::clientModel());
-
-        /** @var \Illuminate\Database\Eloquent\Model $tokenModel */
-        $tokenModel = app(Passport::tokenModel());
-
-        return $this->hasMany(Passport::tokenModel(), 'user_id')
-                    ->select([$tokenModel->qualifyColumn('*')])
-                    ->join($clientModel->getTable(), $tokenModel->qualifyColumn('client_id'), '=', $clientModel->qualifyColumn('id'))
-                    ->where($clientModel->qualifyColumn('personal_access_client'), '=', 1)
-                    ->where($tokenModel->qualifyColumn('revoked'), '=', false)
-                    ->orderBy($tokenModel->qualifyColumn('created_at'), 'desc');
     }
 
     // Team helpers

@@ -1,8 +1,9 @@
 includes:
+    - ./phpstan-baseline.neon
     - ./vendor/larastan/larastan/extension.neon
     - ./vendor/phpstan/phpstan/conf/bleedingEdge.neon
 parameters:
-    level: 2
+    level: 4
     paths:
         - src
     tmpDir: .tmp/phpstan

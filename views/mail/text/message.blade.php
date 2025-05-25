@@ -21,7 +21,7 @@
 {{-- Footer --}}
 <x-slot:footer>
 <x-mail::footer>
-{{ config('app.name') }}. A Chief Tools product.
+{{ config('app.name') === 'Chief Tools' ? '' : (config('app.name') . '. ') }}A Chief Tools product.
 &copy; {{ date('Y') }} &mdash; {{ config('app.versionString') }} ({{ config('app.version') }})
 </x-mail::footer>
 </x-slot:footer>

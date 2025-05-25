@@ -21,7 +21,10 @@
 {{-- Footer --}}
 <x-slot:footer>
 <x-mail::footer>
-<a href="{{ config('app.url') }}">{{ config('app.name') }}</a>. A <a href="https://chief.app?ref={{ config('chief.id') }}-mail">Chief Tools</a> product.
+@if(config('app.name') !== 'Chief Tools')
+<a href="{{ config('app.url') }}">{{ config('app.name') }}</a>.
+@endif
+A <a href="https://chief.app?ref={{ config('chief.id') }}-mail">Chief Tools</a> product.
 
 &copy; {{ date('Y') }} &mdash; {{ config('app.versionString') }} ({{ config('app.version') }})
 </x-mail::footer>

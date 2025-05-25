@@ -29,7 +29,7 @@
         {{ $slot }}
     </div>
     @if($footer)
-        <div class="flex gap-x-3 justify-end py-4 px-5 bg-gray-50"  @if($collapsable) x-show="show" @endif>
+        <div class="flex gap-x-3 justify-end py-4 px-5 bg-gray-50 border-t border-gray-200"  @if($collapsable) x-show="show" @endif>
             {{ $footer }}
         </div>
     @endif

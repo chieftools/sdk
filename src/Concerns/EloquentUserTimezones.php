@@ -45,7 +45,7 @@ trait EloquentUserTimezones
      */
     private function isServingApplication(): bool
     {
-        if (request()?->is('nova*')) {
+        if (request()->is('nova*')) {
             return false;
         }
 

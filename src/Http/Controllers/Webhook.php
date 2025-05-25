@@ -21,7 +21,7 @@ class Webhook
                 throw new RuntimeException('Webhook handlers need to implement the Handler interface.');
             }
 
-            $return = $handler($request->json()?->all() ?? []);
+            $return = $handler($request->json()->all());
 
             if ($return !== null) {
                 return $return;

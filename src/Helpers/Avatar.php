@@ -61,10 +61,10 @@ final class Avatar
         }
 
         // Make sure we have no more than 2 characters (1 or 2 chars is supported) and they are ASCII
-        $initials = str($initials)->substr(0, 2)->ascii();
+        $initials = str($initials)->substr(0, 2)->ascii()->match('/^[[:alpha:]]*$/');
 
         // Default to empty if the initials contain non-alpha characters
-        if (!$initials->match('/^[[:alpha:]]*$/') || $initials->length() === 0) {
+        if ($initials->isEmpty()) {
             $initials = '';
         }
 

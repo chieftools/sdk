@@ -38,7 +38,6 @@ jobs:
           php-version: '8.4'
           extensions: zip
           coverage: none
-
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         id: composer-cache
@@ -81,7 +80,6 @@ jobs:
           php-version: '8.4'
           extensions: zip
           coverage: none
-
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         id: composer-cache
@@ -90,8 +88,20 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
+      - name: Cache php-cs-fixer cache
+        uses: actions/cache@v4
+        id: php-cs-fixer-cache
+        with:
+          path: .php-cs-fixer.cache
+          key: ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-${{ hashFiles('.php-cs-fixer.php') }}-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-${{ hashFiles('php-cs-fixer.php') }}-
+            ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-
+            ${{ runner.os }}-php-cs-fixer-
       - name: Validate code style
         run: composer phpcs:ci
+        env:
+          PHP_CS_FIXER_IGNORE_ENV: 1
 
   phpstan:
     name: phpstan
@@ -133,8 +143,9 @@ jobs:
         id: phpstan-cache
         with:
           path: .tmp/phpstan
-          key: ${{ runner.os }}-phpstan-${{ github.ref }}-${{ hashFiles('phpstan.neon') }}
+          key: ${{ runner.os }}-phpstan-${{ github.ref }}-${{ hashFiles('phpstan.neon') }}-${{ github.run_id }}
           restore-keys: |
+            ${{ runner.os }}-phpstan-${{ github.ref }}-${{ hashFiles('phpstan.neon') }}-
             ${{ runner.os }}-phpstan-${{ github.ref }}-
             ${{ runner.os }}-phpstan-
       - name: Run PHPStan

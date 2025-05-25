@@ -37,6 +37,12 @@ parameters:
 			path: src/GraphQL/AuthorizesRequests.php
 
 		-
+			message: '#^Call to method getDebug\(\) of internal class Symfony\\Component\\Mailer\\Transport\\Smtp\\Stream\\AbstractStream from outside its root namespace Symfony\.$#'
+			identifier: method.internalClass
+			count: 1
+			path: src/Mail/ReportingFailoverTransport.php
+
+		-
 			message: '#^Call to function is_null\(\) with GuzzleHttp\\Client will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1

@@ -1,4 +1,4 @@
-@extendsfirst(['layout.html', 'chief::layout.html'], ['title' => 'Playground - API'])
+@extendsfirst(['layout.base', 'chief::layout.html'], ['title' => 'Playground - API'])
 
 @push('head.meta')
     <meta name="robots" content="noindex, nofollow">

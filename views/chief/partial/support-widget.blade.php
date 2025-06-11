@@ -16,16 +16,16 @@
             <p class="p-1.5 pt-0 mb-1 text-xs text-muted">
                 We are happy to help you with any questions you might have.
             </p>
-            <a href="{{ chief_docs_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+            <a href="{{ chief_docs_url(config('chief.id') . '-support-widget') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-book text-brand group-hover:text-white"></i>&nbsp;&nbsp;Documentation
             </a>
-            <a href="{{ chief_roadmap_url() }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+            <a href="{{ chief_roadmap_url(config('chief.id') . '-support-widget') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-road text-brand group-hover:text-white"></i>&nbsp;&nbsp;Roadmap
             </a>
             <a x-show="showBugReportBtn" x-ref="sentryBugReportBtn" @click.prevent="open = false" href="#" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-bug text-brand group-hover:text-white"></i>&nbsp;&nbsp;Report a bug
             </a>
-            <a href="{{ chief_site_url('contact') }}?ref=support-widget-{{ config('chief.id') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 rounded" tabindex="-1">
+            <a href="{{ chief_site_url('contact', ref: config('chief.id') . '-support-widget') }}" target="_blank" rel="noopener" class="group text-gray-700 hover:bg-brand hover:text-white block text-sm p-1.5 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-comment-dots text-brand group-hover:text-white"></i>&nbsp;&nbsp;Get in touch
             </a>
 

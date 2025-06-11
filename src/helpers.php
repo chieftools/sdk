@@ -139,40 +139,30 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
 
 /**
  * Get the Chief account manager base url.
- *
- * @param string|null $path
- *
- * @return string
  */
-function chief_base_url(?string $path = null): string
+function chief_base_url(?string $path = null, ?string $ref = null): string
 {
     $base = rtrim(config('chief.base_url'), '/');
     $path = $path === null ? '' : ltrim($path, '/');
 
-    return "{$base}/{$path}";
+    return "{$base}/{$path}?ref=" . ($ref ?: config('chief.id'));
 }
 
 /**
  * Get the global Chief site url.
- *
- * @param string|null $path
- *
- * @return string
  */
-function chief_site_url(?string $path = null): string
+function chief_site_url(?string $path = null, ?string $ref = null): string
 {
     $base = rtrim(config('chief.site_url'), '/');
     $path = $path === null ? '' : ltrim($path, '/');
 
-    return "{$base}/{$path}?ref=" . config('chief.id');
+    return "{$base}/{$path}?ref=" . ($ref ?: config('chief.id'));
 }
 
 /**
  * Get the url to the Chief docs site for the current application.
- *
- * @return string
  */
-function chief_docs_url(): string
+function chief_docs_url(?string $ref = null): string
 {
     $base  = rtrim(config('chief.docs_url'), '/');
     $appId = config('chief.id');
@@ -181,15 +171,13 @@ function chief_docs_url(): string
         return $base;
     }
 
-    return "{$base}/{$appId}";
+    return "{$base}/{$appId}?ref=" . ($ref ?: $appId);
 }
 
 /**
  * Get the url to the Chief roadmap site for the current application.
- *
- * @return string
  */
-function chief_roadmap_url(): string
+function chief_roadmap_url(?string $ref = null): string
 {
     $base  = rtrim(config('chief.roadmap_url'), '/');
     $appId = config('chief.id');
@@ -198,7 +186,7 @@ function chief_roadmap_url(): string
         return $base;
     }
 
-    return "{$base}/projects/{$appId}";
+    return "{$base}/projects/{$appId}?ref=" . ($ref ?: $appId);
 }
 
 /**

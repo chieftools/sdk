@@ -327,7 +327,7 @@ function internal_user_agent(): string
 function crawler_user_agent(): string
 {
     return sprintf(
-        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/132.0.6834.111 Safari/537.36',
+        'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; %sBot/%s; +https://aka.chief.app/bot) Chrome/137.0.0.0 Safari/537.36',
         str_replace(' ', '', config('app.name')),
         config('app.version'),
     );

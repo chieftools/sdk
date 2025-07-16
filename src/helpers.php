@@ -140,53 +140,65 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
 /**
  * Get the Chief account manager base url.
  */
-function chief_base_url(?string $path = null, ?string $ref = null): string
+function chief_base_url(?string $path = null, ?string $ref = null, array $query = []): string
 {
     $base = rtrim(config('chief.base_url'), '/');
     $path = $path === null ? '' : ltrim($path, '/');
 
-    return "{$base}/{$path}?ref=" . ($ref ?: config('chief.id'));
+    return (string)Illuminate\Support\Uri::of(
+        "{$base}/{$path}",
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: config('chief.id'),
+    ]));
 }
 
 /**
  * Get the global Chief site url.
  */
-function chief_site_url(?string $path = null, ?string $ref = null): string
+function chief_site_url(?string $path = null, ?string $ref = null, array $query = []): string
 {
     $base = rtrim(config('chief.site_url'), '/');
     $path = $path === null ? '' : ltrim($path, '/');
 
-    return "{$base}/{$path}?ref=" . ($ref ?: config('chief.id'));
+    return (string)Illuminate\Support\Uri::of(
+        "{$base}/{$path}",
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: config('chief.id'),
+    ]));
 }
 
 /**
  * Get the url to the Chief docs site for the current application.
  */
-function chief_docs_url(?string $ref = null): string
+function chief_docs_url(?string $ref = null, array $query = []): string
 {
     $base  = rtrim(config('chief.docs_url'), '/');
     $appId = config('chief.id');
 
-    if (empty($appId)) {
-        return $base;
-    }
-
-    return "{$base}/{$appId}?ref=" . ($ref ?: $appId);
+    return (string)Illuminate\Support\Uri::of(
+        empty($appId)
+            ? $base
+            : "{$base}/{$appId}",
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: $appId,
+    ]));
 }
 
 /**
  * Get the url to the Chief roadmap site for the current application.
  */
-function chief_roadmap_url(?string $ref = null): string
+function chief_roadmap_url(?string $ref = null, array $query = []): string
 {
     $base  = rtrim(config('chief.roadmap_url'), '/');
     $appId = config('chief.id');
 
-    if (empty($appId)) {
-        return $base;
-    }
-
-    return "{$base}/projects/{$appId}?ref=" . ($ref ?: $appId);
+    return (string)Illuminate\Support\Uri::of(
+        empty($appId)
+            ? $base
+            : "{$base}/projects/{$appId}",
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: $appId,
+    ]));
 }
 
 /**

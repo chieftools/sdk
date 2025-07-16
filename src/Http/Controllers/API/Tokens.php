@@ -20,6 +20,6 @@ class Tokens
     {
         $queryParams = array_merge($request->query(), ['app' => config('chief.id')]);
 
-        return redirect()->away(chief_base_url('api/token/create') . '&' . http_build_query($queryParams));
+        return redirect()->away(chief_base_url('api/token/create', query: $queryParams));
     }
 }

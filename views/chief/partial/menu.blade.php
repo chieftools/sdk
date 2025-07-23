@@ -26,7 +26,7 @@
                 </button>
             </div>
             <div class="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text">
+                <a href="{{ $logoRedirect ?? home() }}" class="flex shrink-0 items-center text" aria-label="Back to home">
                     @if(config('chief.brand.logoUrl'))
                         <img class="max-h-8 max-w-8" src="{{ config('chief.brand.logoUrl') }}" alt="{{ config('app.title') }}">
                     @elseif(config('chief.brand.brandIcon'))

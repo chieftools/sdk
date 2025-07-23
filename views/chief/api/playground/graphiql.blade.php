@@ -5,8 +5,8 @@
 @endpush
 
 @push('head.style')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/graphiql/graphiql.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@graphiql/plugin-explorer/dist/style.css" />
+    <link rel="stylesheet" href="https://esm.sh/graphiql/dist/style.css" />
+    <link rel="stylesheet" href="https://esm.sh/@graphiql/plugin-explorer/dist/style.css" />
     <style>
         html, body {
             height: 100%;
@@ -35,20 +35,41 @@
 @endsection
 
 @push('body.script')
-    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/npm/graphiql/graphiql.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/npm/@graphiql/plugin-explorer/dist/index.umd.js" crossorigin></script>
-    <script>
+    <script type="importmap">
+        {
+          "imports": {
+            "react": "https://esm.sh/react@19.1.0",
+            "react/": "https://esm.sh/react@19.1.0/",
+
+            "react-dom": "https://esm.sh/react-dom@19.1.0",
+            "react-dom/": "https://esm.sh/react-dom@19.1.0/",
+
+            "graphiql": "https://esm.sh/graphiql?standalone&external=react,react-dom,@graphiql/react,graphql",
+            "graphiql/": "https://esm.sh/graphiql/",
+            "@graphiql/plugin-explorer": "https://esm.sh/@graphiql/plugin-explorer?standalone&external=react,@graphiql/react,graphql",
+            "@graphiql/react": "https://esm.sh/@graphiql/react?standalone&external=react,react-dom,graphql,@graphiql/toolkit,@emotion/is-prop-valid",
+
+            "@graphiql/toolkit": "https://esm.sh/@graphiql/toolkit?standalone&external=graphql",
+            "graphql": "https://esm.sh/graphql@16.11.0",
+            "@emotion/is-prop-valid": "data:text/javascript,"
+          }
+        }
+    </script>
+    <script type="module">
+        import React from 'react';
+        import ReactDOM from 'react-dom/client';
+        import {GraphiQL, HISTORY_PLUGIN} from 'graphiql';
+        import {createGraphiQLFetcher} from '@graphiql/toolkit';
+        import {explorerPlugin} from '@graphiql/plugin-explorer';
+        import 'graphiql/setup-workers/esm.sh';
+
         // Default the theme to 'light' to match the application style
         const storedTheme = localStorage.getItem('graphiql:theme');
         if (!storedTheme) {
             localStorage.setItem('graphiql:theme', 'light');
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('graphiql'));
-
-        const fetcher = GraphiQL.createFetcher({
+        const fetcher = createGraphiQLFetcher({
             url:     '{{ route('api.web') }}',
             headers: {
                 'Accept':       'application/json',
@@ -60,12 +81,10 @@
             },
         });
 
-        const explorerPlugin = GraphiQLPluginExplorer.explorerPlugin();
-
-        root.render(
-            React.createElement(GraphiQL, {
+        function App() {
+            return React.createElement(GraphiQL, {
                 fetcher,
-                plugins:                      [explorerPlugin],
+                plugins:                      [HISTORY_PLUGIN, explorerPlugin()],
                 defaultQuery:                 '{\n' +
                                                   '  viewer {\n' +
                                                   '    name\n' +
@@ -73,7 +92,12 @@
                                                   '}\n',
                 introspectionQueryName:       'playgroundIntrospectionQuery',
                 defaultEditorToolsVisibility: true,
-            }),
-        );
+            });
+        }
+
+        const container = document.getElementById('graphiql');
+        const root      = ReactDOM.createRoot(container);
+
+        root.render(React.createElement(App));
     </script>
 @endpush

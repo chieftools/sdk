@@ -3,7 +3,7 @@
      x-on:mouseover="loadLazy = true"
      x-init="$watch('loadLazy', () => showBugReportBtn = window.SENTRY_FEEDBACK && window.SENTRY_FEEDBACK.attachTo($refs.sentryBugReportBtn, {}) !== null)"
      class="fixed bottom-6 right-6 z-50">
-    <button x-on:click="open = !open; loadLazy = true" type="button" class="bg-brand hover:bg-brand-600 text-white px-2 py-1.5 rounded-md">
+    <button x-on:click="open = !open; loadLazy = true" type="button" class="bg-brand hover:bg-brand-600 text-white px-2 py-1.5 rounded-md" aria-label="Support" aria-expanded="false" aria-haspopup="true" x-bind:aria-expanded="open.toString()">
         <i x-bind:class="{'opacity-0': open}" class="transition-opacity fad fa-fw fa-messages-question !absolute mt-1"></i>
         <i x-cloak x-bind:class="{'opacity-0': !open}" class="transition-opacity fad fa-fw fa-xmark !static" style="--fa-secondary-opacity: 1;"></i>
     </button>

@@ -18,7 +18,7 @@ class DownloadPricing extends Command
         try {
             file_put_contents(
                 resource_path('views/site/pages/partial/_generated_pricing.blade.php'),
-                $mothership->appPricing(config('chief.id'))->toHtml(),
+                $mothership->appPricing(config('chief.id'), config('chief.pricing.without_featured'))->toHtml(),
             );
         } catch (Exception $e) {
             $this->error('Woops, something wen\'t wrong trying to get the pricing!');

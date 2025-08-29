@@ -50,18 +50,18 @@ class Client
 
     /**
      * Get the pricing HTML for an app by it's ID.
-     *
-     * @param string $id
-     *
-     * @return \Illuminate\Support\HtmlString
      */
-    public function appPricing(string $id): HtmlString
+    public function appPricing(string $id, bool $withoutFeatured = false): HtmlString
     {
         if (empty($id)) {
             throw new RuntimeException('The app ID cannot be empty!');
         }
 
-        $response = $this->http->get("/api/app/{$id}/pricing");
+        $response = $this->http->get("/api/app/{$id}/pricing", [
+            'query' => [
+                'without_featured' => $withoutFeatured ? '1' : '0',
+            ],
+        ]);
 
         if ($response->getStatusCode() !== 200) {
             throw new RuntimeException('Could not retrieve app pricing from API.');

@@ -86,11 +86,13 @@ function user_now(): Carbon
  */
 function sync_user_timezone(ChiefTools\SDK\Entities\User|ChiefTools\SDK\Entities\Team|null $user = null): void
 {
-    $user = $user ?? authenticated_user();
+    $user = $user ?? auth()->user();
 
-    config([
-        'app.timezone_user' => $user->timezone ?? null,
-    ]);
+    if ($user instanceof ChiefTools\SDK\Entities\User || $user instanceof ChiefTools\SDK\Entities\Team) {
+        config([
+            'app.timezone_user' => $user->timezone ?? null,
+        ]);
+    }
 }
 
 /**

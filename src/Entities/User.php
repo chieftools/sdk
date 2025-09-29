@@ -29,7 +29,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string                                                                       $email
  * @property string|null                                                                  $avatar_hash
  * @property string                                                                       $timezone
- * @property string                                                                       $chief_id
+ * @property string|null                                                                  $chief_id
  * @property string                                                                       $password
  * @property bool                                                                         $is_admin
  * @property string                                                                       $avatar_url

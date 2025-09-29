@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Broadcast;
 use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
 use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
@@ -49,6 +50,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->configureViews();
 
         $this->configureEvents();
+
+        $this->configureCookies();
 
         $this->configureGraphQL();
 
@@ -203,8 +206,14 @@ class ServiceProvider extends IlluminateServiceProvider
     private function configureEvents(): void
     {
         Event::listen(AuthEvents\Login::class, Listeners\Auth\Login::class);
+        Event::listen(AuthEvents\Logout::class, Listeners\Auth\Logout::class);
         Event::listen(AuthEvents\Authenticated::class, Listeners\Auth\Authenticated::class);
         Event::listen(MailEvents\MessageSending::class, Listeners\Mail\PreventAutoResponders::class);
+    }
+
+    private function configureCookies(): void
+    {
+        EncryptCookies::except(config('chief.id') . '_auth');
     }
 
     private function configureGraphQL(): void

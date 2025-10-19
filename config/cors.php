@@ -15,10 +15,11 @@ return [
     |
     */
 
+    // These routes are protected with token (not session) auth or public in general and are therefore CORS safe
     'paths' => [
-        // These routes are protected with token (not session) and are therefore CORS safe
         'horizon/*',
         'api/graphql',
+        '.well-known/*',
         'api/graphql/schema',
     ],
 

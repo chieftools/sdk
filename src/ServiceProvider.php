@@ -90,7 +90,7 @@ class ServiceProvider extends IlluminateServiceProvider
             return;
         }
 
-        $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors');
+        $this->mergeConfigFrom(static::basePath('config/cors.php'), 'cors', force: true);
         $this->mergeConfigFrom(static::basePath('config/chief.php'), 'chief');
         $this->mergeConfigFrom(static::basePath('config/sentry.php'), 'sentry');
         $this->mergeConfigFrom(static::basePath('config/session.php'), 'session', force: true);

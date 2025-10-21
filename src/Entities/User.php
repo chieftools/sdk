@@ -186,6 +186,9 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function setCurrentTeam(Team $team): void
     {
+        // Prevent lazy loading violations for the current team
+        $team->preventsLazyLoading = false;
+
         $this->memoizedCurrentTeam = $team;
 
         url()->defaults(['team_hint' => $team->slug]);

@@ -129,12 +129,12 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
     };
 
     return rescue(function () use ($cached, $authenticated, $retriever) {
-        $authenticatedCacheKeys = [null => 'all', true => 'authenticated', false => 'unauthenticated'];
-
-        $cacheKey = 'chief:apps:' . $authenticatedCacheKeys[$authenticated];
-
         return $cached
-            ? cache()->remember($cacheKey, now()->addHours(12), $retriever)
+            ? cache()->remember(match ($authenticated) {
+                null  => 'chief:apps:all',
+                true  => 'chief:apps:auth',
+                false => 'chief:apps:noauth',
+            }, now()->addHours(12), $retriever)
             : $retriever();
     });
 }
@@ -465,8 +465,7 @@ function js_json_encode(array $data): string
  */
 function with_custom_pagination_resolver(Closure $with, Closure $resolver): mixed
 {
-    $resolverProperty = (new ReflectionClass(Illuminate\Pagination\Paginator::class))->getProperty('currentPageResolver');
-    $resolverProperty->setAccessible(true);
+    $resolverProperty = new ReflectionClass(Illuminate\Pagination\Paginator::class)->getProperty('currentPageResolver');
 
     $currentResolver = $resolverProperty->getValue();
 
@@ -544,13 +543,7 @@ function capture_exception_to_sentry(Throwable $throwable, ?callable $contextCal
  */
 function __access_class_property(object $object, string $propertyName): mixed
 {
-    $reflection = new ReflectionClass($object);
-
-    $property = $reflection->getProperty($propertyName);
-
-    $property->setAccessible(true);
-
-    return $property->getValue($object);
+    return new ReflectionClass($object)->getProperty($propertyName)->getValue($object);
 }
 
 /**
@@ -564,13 +557,7 @@ function __access_class_property(object $object, string $propertyName): mixed
  */
 function __set_class_property(object $object, string $propertyName, mixed $value): void
 {
-    $reflection = new ReflectionClass($object);
-
-    $property = $reflection->getProperty($propertyName);
-
-    $property->setAccessible(true);
-
-    $property->setValue($object, $value);
+    new ReflectionClass($object)->getProperty($propertyName)->setValue($object, $value);
 }
 
 function authenticated_user(): ?ChiefTools\SDK\Entities\User

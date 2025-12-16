@@ -208,6 +208,6 @@ abstract class QueryResolver
         }
 
         $query->reorder($orderByField, $orderByDirection)
-              ->orderBy($query->getModel()->getQualifiedKeyName(), $orderByDirection);
+            ->orderBy($query->getModel()->getQualifiedKeyName(), $orderByDirection);
     }
 }

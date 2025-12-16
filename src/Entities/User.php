@@ -295,12 +295,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         /** @var \ChiefTools\SDK\Entities\User|null $local */
         $local = self::query()
-                     ->where('chief_id', '=', $remote->getId())
-                     ->orWhere(function (Builder $query) use ($remote) {
-                         $query->whereNull('chief_id')
-                               ->where('email', '=', $remote->getEmail());
-                     })
-                     ->first();
+            ->where('chief_id', '=', $remote->getId())
+            ->orWhere(function (Builder $query) use ($remote) {
+                $query->whereNull('chief_id')
+                    ->where('email', '=', $remote->getEmail());
+            })
+            ->first();
 
         if ($local === null) {
             $local = self::createFromRemote($remote);

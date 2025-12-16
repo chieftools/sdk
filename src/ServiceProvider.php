@@ -126,15 +126,15 @@ class ServiceProvider extends IlluminateServiceProvider
         if (!empty(config('chief.queue.monitor'))) {
             $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
                 $schedule->command(Commands\QueueHealthCheck::class)
-                         ->everyMinute()
-                         ->onOneServer()
-                         ->runInBackground();
+                    ->everyMinute()
+                    ->onOneServer()
+                    ->runInBackground();
 
                 if (config('chief.graphql.subscriptions.enabled')) {
                     $schedule->command(Commands\GraphQL\BroadcastPong::class)
-                             ->everyMinute()
-                             ->onOneServer()
-                             ->runInBackground();
+                        ->everyMinute()
+                        ->onOneServer()
+                        ->runInBackground();
                 }
             });
         }

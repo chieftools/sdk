@@ -38,12 +38,12 @@
                         <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand text-3xl sm:text-2xl"></i>
                     @endif
                     @if($menuLogoText)
-                        <span class="hidden sm:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
+                        <span class="hidden md:inline-block text-xl">&nbsp;{{ config('app.title') }}</span>
                     @endif
                 </a>
 
                 @unless(empty($menuItems))
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8 sm:ml-auto main-menu-items">
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-4 md:space-x-6 sm:ml-auto main-menu-items">
                         @foreach($menuItems as $item)
                             @php
                                 $item['router-link-active'] = false;
@@ -71,13 +71,13 @@
                                 <router-link v-bind:to="{!! $item['to'] ?? $item['href'] !!}" class="group {{ $itemClass }}">
                                     @if(isset($item['icon']))
                                         <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
-                                    @endif{{ $item['text'] }}
+                                    @endif<span class="hidden md:inline">{{ $item['text'] }}</span>
                                 </router-link>
                             @else
                                 <a href="{{ $item['href'] }}" @class(["group {$itemClass}", 'router-link-active' => $item['router-link-active'] ?? false]) @if(!empty($item['vue-href'])) vue-href='{{ $item['vue-href'] }}' @endif @if(isset($item['wire']) && $item['wire']) wire:navigate @endif>
                                     @if(isset($item['icon']))
                                         <i class="fa-fw {{ $item['icon'] }} {{ $iconClass }} mr-1.5"></i>
-                                    @endif{{ $item['text'] }}
+                                    @endif<span class="hidden md:inline">{{ $item['text'] }}</span>
                                 </a>
                             @endif
                         @endforeach

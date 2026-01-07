@@ -31,7 +31,7 @@ class Context implements GraphQLContext
     {
         if ($user instanceof User) {
             $this->user = $user;
-            $this->team = $user->team;
+            $this->team = $user->currentTeam($this->request);
         } elseif ($user instanceof Team) {
             $this->user = null;
             $this->team = $user;

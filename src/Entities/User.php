@@ -4,6 +4,7 @@ namespace ChiefTools\SDK\Entities;
 
 use RuntimeException;
 use ChiefTools\SDK\Chief;
+use Illuminate\Http\Request;
 use ChiefTools\SDK\Helpers\Avatar;
 use Illuminate\Support\Collection;
 use Illuminate\Auth\Authenticatable;
@@ -156,13 +157,13 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Team helpers
-    public function currentTeam(): Team
+    public function currentTeam(?Request $request = null): Team
     {
         if (isset($this->memoizedCurrentTeam)) {
             return $this->memoizedCurrentTeam;
         }
 
-        $request = request();
+        $request ??= request();
 
         $fromRequest = $request->attributes->get('team_hint') ??
                        $request->route('team_hint') ??

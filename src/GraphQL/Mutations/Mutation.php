@@ -86,7 +86,7 @@ abstract class Mutation extends QueryResolver
 
         $errorId = null;
 
-        if (!($exception instanceof GraphQLErrorResponse)) {
+        if (!$exception instanceof GraphQLErrorResponse) {
             $errorId = capture_exception_to_sentry($exception);
         }
 

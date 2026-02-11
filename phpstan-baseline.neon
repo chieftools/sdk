@@ -1,49 +1,49 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method ChiefTools\\SDK\\Entities\\Team\:\:resolveRouteBinding\(\) should return static\(ChiefTools\\SDK\\Entities\\Team\)\|null but returns \(Illuminate\\Database\\Eloquent\\Model&object\{pivot\: Illuminate\\Database\\Eloquent\\Relations\\Pivot\}\)\|null\.$#'
+			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
 			identifier: return.type
 			count: 1
 			path: src/Entities/Team.php
 
 		-
-			message: '#^Method ChiefTools\\SDK\\Entities\\Team\:\:resolveRouteBinding\(\) should return static\(ChiefTools\\SDK\\Entities\\Team\)\|null but returns ChiefTools\\SDK\\Entities\\Team\.$#'
+			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns ChiefTools\SDK\Entities\Team.'
 			identifier: return.type
 			count: 2
 			path: src/Entities/Team.php
 
 		-
-			message: '#^Method ChiefTools\\SDK\\Entities\\Team\:\:resolveRouteBinding\(\) should return static\(ChiefTools\\SDK\\Entities\\Team\)\|null but returns ChiefTools\\SDK\\Entities\\Team\|null\.$#'
+			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns ChiefTools\SDK\Entities\Team|null.'
 			identifier: return.type
-			count: 1
+			count: 2
 			path: src/Entities/Team.php
 
 		-
-			message: '#^Method ChiefTools\\SDK\\Entities\\User\:\:getTeamFromSession\(\) should return ChiefTools\\SDK\\Entities\\Team\|null but returns \(Illuminate\\Database\\Eloquent\\Model&object\{pivot\: Illuminate\\Database\\Eloquent\\Relations\\Pivot\}\)\|null\.$#'
+			rawMessage: 'Method ChiefTools\SDK\Entities\User::getTeamFromSession() should return ChiefTools\SDK\Entities\Team|null but returns (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
 			identifier: return.type
 			count: 1
 			path: src/Entities/User.php
 
 		-
-			message: '#^Property ChiefTools\\SDK\\Entities\\User\:\:\$memoizedCurrentTeam \(ChiefTools\\SDK\\Entities\\Team\|null\) does not accept \(Illuminate\\Database\\Eloquent\\Model&object\{pivot\: Illuminate\\Database\\Eloquent\\Relations\\Pivot\}\)\|null\.$#'
+			rawMessage: 'Property ChiefTools\SDK\Entities\User::$memoizedCurrentTeam (ChiefTools\SDK\Entities\Team|null) does not accept (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
 			identifier: assign.propertyType
 			count: 1
 			path: src/Entities/User.php
 
 		-
-			message: '#^Trait ChiefTools\\SDK\\GraphQL\\AuthorizesRequests is used zero times and is not analysed\.$#'
+			rawMessage: Trait ChiefTools\SDK\GraphQL\AuthorizesRequests is used zero times and is not analysed.
 			identifier: trait.unused
 			count: 1
 			path: src/GraphQL/AuthorizesRequests.php
 
 		-
-			message: '#^Call to method getDebug\(\) of internal class Symfony\\Component\\Mailer\\Transport\\Smtp\\Stream\\AbstractStream from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to method getDebug() of internal class Symfony\Component\Mailer\Transport\Smtp\Stream\AbstractStream from outside its root namespace Symfony.'
 			identifier: method.internalClass
 			count: 1
 			path: src/Mail/ReportingFailoverTransport.php
 
 		-
-			message: '#^Call to function is_null\(\) with GuzzleHttp\\Client will always evaluate to false\.$#'
+			rawMessage: 'Call to function is_null() with GuzzleHttp\Client will always evaluate to false.'
 			identifier: function.impossibleType
 			count: 1
 			path: src/Socialite/ChiefProvider.php

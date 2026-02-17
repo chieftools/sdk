@@ -329,6 +329,114 @@ class Client
     }
 
     /**
+     * Ensure a billing entity exists for the team with the given details.
+     *
+     * If the team already has a billing entity, this is a no-op.
+     *
+     * @param string      $teamSlug
+     * @param string      $name
+     * @param string      $email
+     * @param string      $addressLine1
+     * @param string      $addressCity
+     * @param string      $addressPostalCode
+     * @param string      $addressCountry    ISO 3166-1 alpha-2
+     * @param string|null $addressLine2
+     * @param string|null $addressState
+     * @param string|null $businessName
+     * @param string|null $businessVatId
+     *
+     * @return void
+     */
+    public function ensureCustomer(
+        string $teamSlug,
+        string $name,
+        string $email,
+        string $addressLine1,
+        string $addressCity,
+        string $addressPostalCode,
+        string $addressCountry,
+        ?string $addressLine2 = null,
+        ?string $addressState = null,
+        ?string $businessName = null,
+        ?string $businessVatId = null,
+    ): void {
+        $data = [
+            'name'    => $name,
+            'email'   => $email,
+            'address' => array_filter([
+                'line1'       => $addressLine1,
+                'line2'       => $addressLine2,
+                'city'        => $addressCity,
+                'state'       => $addressState,
+                'postal_code' => $addressPostalCode,
+                'country'     => $addressCountry,
+            ]),
+        ];
+
+        if ($businessName !== null) {
+            $data['business'] = array_filter([
+                'name'   => $businessName,
+                'vat_id' => $businessVatId,
+            ]);
+        }
+
+        $response = $this->http->put("/api/team/{$teamSlug}/billing/customer", [
+            'json'    => $data,
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not ensure Stripe customer for team.');
+        }
+    }
+
+    /**
+     * Create or update a draft invoice for a team.
+     *
+     * @param string                                          $teamSlug
+     * @param string                                          $reference
+     * @param array<int, \ChiefTools\SDK\API\DTO\InvoiceLine> $lines
+     *
+     * @return array{stripe_id: string, reference: string, status: string, total: int, currency: string}
+     */
+    public function createOrUpdateDraftInvoice(string $teamSlug, string $reference, array $lines): array
+    {
+        $response = $this->http->put("/api/team/{$teamSlug}/billing/invoice/{$reference}", [
+            'json'    => [
+                'lines' => collect($lines)->toArray(),
+            ],
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not create or update draft invoice.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Finalize a draft invoice for a team.
+     *
+     * @param string $teamSlug
+     * @param string $reference
+     *
+     * @return array{stripe_id: string, reference: string, status: string, total: int, currency: string, invoice_number: string|null}
+     */
+    public function finalizeDraftInvoice(string $teamSlug, string $reference): array
+    {
+        $response = $this->http->post("/api/team/{$teamSlug}/billing/invoice/{$reference}/finalize", [
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not finalize draft invoice.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * Report that there was activity on the team back to the mothership.
      *
      * @param \ChiefTools\SDK\Entities\Team $team

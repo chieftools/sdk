@@ -58,9 +58,11 @@ Route::group(config('chief.routes.web'), function () {
                 'middleware' => 'auth',
             ], function () {
                 Route::get('{team}/switch', Controllers\Team\SwitchActive::class)->name('switch');
+
                 Route::get('{team}/chief', Controllers\Team\Manage::class)->name('chief.manage');
+                Route::get('{team}/chief/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
                 Route::get('{team}/chief/manage', Controllers\Team\ManageSingle::class)->name('chief.manage.single');
-                Route::get('{team}/chief/manage/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
+                Route::get('{team}/chief/invoices', Controllers\Team\ManageInvoices::class)->name('chief.manage.invoices');
             });
         }
 

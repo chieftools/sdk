@@ -396,13 +396,15 @@ class Client
      * @param string                                          $teamSlug
      * @param string                                          $reference
      * @param array<int, \ChiefTools\SDK\API\DTO\InvoiceLine> $lines
+     * @param string|null                                     $memo
      *
      * @return array{stripe_id: string, reference: string, status: string, total: int, currency: string}
      */
-    public function createOrUpdateDraftInvoice(string $teamSlug, string $reference, array $lines): array
+    public function createOrUpdateDraftInvoice(string $teamSlug, string $reference, array $lines, ?string $memo): array
     {
         $response = $this->http->put("/api/team/{$teamSlug}/billing/invoice/{$reference}", [
             'json'    => [
+                'memo'  => $memo,
                 'lines' => collect($lines)->toArray(),
             ],
             'headers' => $this->internalAuthHeaders(),

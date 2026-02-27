@@ -36,7 +36,7 @@
         </div>
 
         @if(isset($actions))
-            <div class="mt-5 flex xl:mt-0 xl:ml-4">
+            <div class="mt-3 sm:mt-5 flex xl:mt-0 xl:ml-4">
                 {{ $actions }}
             </div>
         @endif

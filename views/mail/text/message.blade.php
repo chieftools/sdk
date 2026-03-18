@@ -22,7 +22,11 @@
 <x-slot:footer>
 <x-mail::footer>
 Mail sent by {{ config('app.name') }}.{{ config('app.name') === 'Chief Tools' ? '' : ' A Chief Tools product.' }}
-&copy; {{ date('Y') }} &mdash; {{ config('app.versionString') }} ({{ config('app.version') }})
+@if(Illuminate\Support\Str::startsWith(config('app.versionString'), date('Y') . '.'))
+© {{ config('app.versionString') }} ({{ config('app.version') }})
+@else
+© {{ date('Y') }} &mdash; {{ config('app.versionString') }} ({{ config('app.version') }})
+@endif
 </x-mail::footer>
 </x-slot:footer>
 </x-mail::layout>

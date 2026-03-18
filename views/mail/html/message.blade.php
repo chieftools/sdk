@@ -26,7 +26,11 @@ Mail sent by <a href="{{ config('app.url') }}">{{ config('app.name') }}</a>.
 <br/>A <a href="https://chief.app?ref={{ config('chief.id') }}-mail">Chief Tools</a> product.
 @endif
 
+@if(Illuminate\Support\Str::startsWith(config('app.versionString'), date('Y') . '.'))
+&copy; {{ config('app.versionString') }} ({{ config('app.version') }})
+@else
 &copy; {{ date('Y') }} &mdash; {{ config('app.versionString') }} ({{ config('app.version') }})
+@endif
 </x-mail::footer>
 </x-slot:footer>
 </x-mail::layout>

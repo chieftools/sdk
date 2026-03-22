@@ -21,8 +21,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  * @property string              $avatar_url
  * @property string|null         $avatar_hash
  * @property string|null         $gravatar_email
- * @property array               $limits
  * @property string              $timezone
+ * @property string|null         $plan_id
+ * @property bool|null           $plan_discounted
+ * @property array               $limits
  * @property bool                $is_default
  * @property \Carbon\Carbon|null $last_activity_at
  * @property \Carbon\Carbon      $created_at
@@ -35,6 +37,7 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     protected $table    = 'teams';
     protected $casts    = [
         'limits'           => AsArrayObject::class,
+        'plan_discounted'  => 'bool',
         'last_activity_at' => 'datetime',
     ];
     protected $fillable = [
@@ -109,11 +112,13 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     // Helpers
     public function updateFromRemote(ChiefTeam $remote): void
     {
-        $this->name           = $remote->name;
-        $this->limits         = $remote->limits;
-        $this->timezone       = $remote->timezone;
-        $this->avatar_hash    = $remote->avatarHash;
-        $this->gravatar_email = $remote->gravatarEmail;
+        $this->name            = $remote->name;
+        $this->limits          = $remote->limits;
+        $this->plan_id         = $remote->planId;
+        $this->timezone        = $remote->timezone;
+        $this->avatar_hash     = $remote->avatarHash;
+        $this->gravatar_email  = $remote->gravatarEmail;
+        $this->plan_discounted = $remote->planDiscounted;
 
         $this->save();
     }

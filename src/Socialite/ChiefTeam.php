@@ -11,10 +11,12 @@ class ChiefTeam
         public readonly int $id,
         public readonly string $slug,
         public readonly string $name,
-        public readonly array $limits,
         public readonly string $timezone,
         public readonly ?string $avatarHash,
         public readonly ?string $gravatarEmail,
+        public readonly array $limits,
+        public readonly ?string $planId,
+        public readonly ?bool $planDiscounted,
     ) {}
 
     public static function fromArray(array $team): self
@@ -24,9 +26,11 @@ class ChiefTeam
             slug: $team['slug'],
             name: $team['name'],
             limits: $team['limits'],
+            planId: $team['plan_id'] ?? null,
             timezone: $team['timezone'],
-            avatarHash: $team['avatar_hash'],
-            gravatarEmail: $team['gravatar_email'],
+            avatarHash: $team['avatar_hash'] ?? null,
+            gravatarEmail: $team['gravatar_email'] ?? null,
+            planDiscounted: $team['plan_discounted'] ?? null,
         );
     }
 }

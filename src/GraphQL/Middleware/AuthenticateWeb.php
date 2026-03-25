@@ -3,7 +3,6 @@
 namespace ChiefTools\SDK\GraphQL\Middleware;
 
 use RuntimeException;
-use Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication;
 
 class AuthenticateWeb extends AttemptAuthentication
 {

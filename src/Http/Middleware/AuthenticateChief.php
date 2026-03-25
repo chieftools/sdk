@@ -5,8 +5,9 @@ namespace ChiefTools\SDK\Http\Middleware;
 use Closure;
 use RuntimeException;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 
-class AuthenticateChief
+class AuthenticateChief implements AuthenticatesRequests
 {
     public function handle(Request $request, Closure $next): mixed
     {

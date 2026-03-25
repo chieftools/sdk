@@ -10,7 +10,7 @@ Route::group(config('chief.routes.api'), function () {
 
     Route::match(['get', 'post'], 'graphql', Controllers\API\GraphQL::class)->middleware([
         Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
-        Nuwave\Lighthouse\Http\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),
+        ChiefTools\SDK\GraphQL\Middleware\AttemptAuthentication::class . ':' . implode(',', config('chief.guards.api')),
     ])->name('api');
 
     if (config('chief.graphql.subscriptions.enabled')) {

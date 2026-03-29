@@ -22,7 +22,8 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.84",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^9.1|^10.1"
+        "orchestra/testbench": "^10.1",
+        "pestphp/pest": "^4.4"
     },
     "autoload": {
         "psr-4": {
@@ -31,6 +32,11 @@
         "files": [
             "src/helpers.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "extra": {
         "laravel": {
@@ -45,8 +51,25 @@
         ],
         "stan": "@phpstan",
         "check": [
+            "@test",
             "@phpcs",
             "@phpstan"
+        ],
+        "test": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/bin/pest --parallel --stop-on-failure"
+        ],
+        "test:ci": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/bin/pest --ci --parallel --compact"
+        ],
+        "test:unit": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/bin/pest --testsuite Unit --parallel --stop-on-failure"
+        ],
+        "test:feature": [
+            "Composer\\Config::disableProcessTimeout",
+            "vendor/bin/pest --testsuite Feature --parallel --stop-on-failure"
         ],
         "phpcs": "vendor/bin/php-cs-fixer fix",
         "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff",
@@ -55,7 +78,8 @@
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": false
+            "php-http/discovery": false,
+            "pestphp/pest-plugin": true
         },
         "sort-packages": true,
         "preferred-install": "dist",

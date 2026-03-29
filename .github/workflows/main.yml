@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP cache
         uses: shivammathur/cache-extensions@v1
@@ -27,7 +27,7 @@ jobs:
           extensions: zip
           key: php84-cache
       - name: Cache PHP extensions
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.php-ext-cache.outputs.dir }}
           key: ${{ steps.php-ext-cache.outputs.key }}
@@ -39,7 +39,7 @@ jobs:
           extensions: zip
           coverage: none
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: composer-cache
         with:
           path: vendor
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP cache
         uses: shivammathur/cache-extensions@v1
@@ -69,7 +69,7 @@ jobs:
           extensions: zip
           key: php84-cache
       - name: Cache PHP extensions
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.php-ext-cache.outputs.dir }}
           key: ${{ steps.php-ext-cache.outputs.key }}
@@ -81,7 +81,7 @@ jobs:
           extensions: zip
           coverage: none
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: composer-cache
         with:
           path: vendor
@@ -89,7 +89,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Cache php-cs-fixer cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: php-cs-fixer-cache
         with:
           path: .php-cs-fixer.cache
@@ -109,7 +109,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP cache
         uses: shivammathur/cache-extensions@v1
@@ -119,7 +119,7 @@ jobs:
           extensions: zip
           key: php84-cache
       - name: Cache PHP extensions
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ steps.php-ext-cache.outputs.dir }}
           key: ${{ steps.php-ext-cache.outputs.key }}
@@ -131,7 +131,7 @@ jobs:
           extensions: zip
           coverage: none
       - name: Cache Composer dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: composer-cache
         with:
           path: vendor
@@ -139,7 +139,7 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Cache PHPStan cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: phpstan-cache
         with:
           path: .tmp/phpstan
@@ -150,4 +150,43 @@ jobs:
             ${{ runner.os }}-phpstan-
       - name: Run PHPStan
         run: composer phpstan:ci
+        timeout-minutes: 15
+
+  tests:
+    name: tests
+    needs: composer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+
+      - name: Setup PHP cache
+        uses: shivammathur/cache-extensions@v1
+        id: php-ext-cache
+        with:
+          php-version: '8.4'
+          extensions: zip
+          key: php84-cache
+      - name: Cache PHP extensions
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.php-ext-cache.outputs.dir }}
+          key: ${{ steps.php-ext-cache.outputs.key }}
+          restore-keys: ${{ steps.php-ext-cache.outputs.key }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: zip
+          coverage: none
+      - name: Cache Composer dependencies
+        uses: actions/cache@v5
+        id: composer-cache
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Run tests
+        run: composer test:ci
         timeout-minutes: 15

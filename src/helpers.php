@@ -120,15 +120,21 @@ function validate(mixed $fields, string|array|Illuminate\Contracts\Validation\Ru
  */
 function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illuminate\Support\Collection
 {
-    $retriever = function () use ($authenticated) {
+    $retriever = function () use ($authenticated): array {
         /** @var \ChiefTools\SDK\API\Client $api */
         $api = app(ChiefTools\SDK\API\Client::class);
 
         // Retrieve all apps (except the current) that require authentication
-        return $api->apps(config('chief.id'), null, $authenticated);
+        return $api->apps(config('chief.id'), null, $authenticated)->toArray();
     };
 
-    return rescue(function () use ($cached, $authenticated, $retriever) {
+    $cacheKey = match ($authenticated) {
+        null  => 'chief:apps:all',
+        true  => 'chief:apps:auth',
+        false => 'chief:apps:noauth',
+    };
+
+    $apps = rescue(function () use ($cached, $authenticated, $retriever) {
         return $cached
             ? cache()->remember(match ($authenticated) {
                 null  => 'chief:apps:all',
@@ -137,6 +143,14 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
             }, now()->addHours(12), $retriever)
             : $retriever();
     });
+
+    if ($apps instanceof __PHP_Incomplete_Class) {
+        cache()->forget($cacheKey);
+
+        return chief_apps($authenticated, $cached);
+    }
+
+    return collect($apps);
 }
 
 /**

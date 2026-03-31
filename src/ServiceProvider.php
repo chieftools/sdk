@@ -168,7 +168,7 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         Auth::resolved(function (AuthManager $auth) {
-            $auth->extend('chief_remote_user', static function (Application $app, string $name) {
+            $auth->extend('chief_remote_user', function (Application $app, string $name) {
                 $guard = new RequestGuard(
                     new RemoteUserAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
                     request(),
@@ -179,7 +179,7 @@ class ServiceProvider extends IlluminateServiceProvider
                 return $guard;
             });
 
-            $auth->extend('chief_remote_team', static function (Application $app, string $name) {
+            $auth->extend('chief_remote_team', function (Application $app, string $name) {
                 $guard = new RequestGuard(
                     new RemoteTeamAccessTokenGuard($name, $app->make(Client::class), $app->make('cache')),
                     request(),
@@ -265,17 +265,14 @@ class ServiceProvider extends IlluminateServiceProvider
             static function (Application $app) {
                 $app->register(SubscriptionServiceProvider::class);
 
-                $app->extend(
-                    StoresSubscriptions::class,
-                    static function (StoresSubscriptions $storage) {
-                        // Replace the Lighthouse storage manager with our own implementation
-                        if ($storage instanceof LighthouseRedisStorageManager) {
-                            return app(RedisStorageManager::class);
-                        }
+                $app->extend(StoresSubscriptions::class, function (StoresSubscriptions $storage) {
+                    // Replace the Lighthouse storage manager with our own implementation
+                    if ($storage instanceof LighthouseRedisStorageManager) {
+                        return app(RedisStorageManager::class);
+                    }
 
-                        return $storage;
-                    },
-                );
+                    return $storage;
+                });
             },
         );
     }
@@ -294,10 +291,9 @@ class ServiceProvider extends IlluminateServiceProvider
         /** @noinspection PhpUnhandledExceptionInspection */
         $socialite = $this->app->make(Socialite::class);
 
-        $socialite->extend(
-            'chief',
-            static fn ($app) => $socialite->buildProvider(ChiefProvider::class, config('services.chief')),
-        );
+        $socialite->extend('chief', function () use ($socialite) {
+            return $socialite->buildProvider(ChiefProvider::class, config('services.chief'));
+        });
     }
 
     private function configureDeveloperProtections(): void

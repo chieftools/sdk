@@ -144,6 +144,7 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
             : $retriever();
     });
 
+    // @phpstan-ignore-next-line This can happen when we upgrade to Laravel 13
     if ($apps instanceof __PHP_Incomplete_Class) {
         cache()->forget($cacheKey);
 

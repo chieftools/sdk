@@ -383,6 +383,7 @@ class Client
         $response = $this->http->put("/api/team/{$teamSlug}/billing/customer", [
             'json'    => $data,
             'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
         ]);
 
         if ($response->getStatusCode() !== 204) {
@@ -408,6 +409,7 @@ class Client
                 'lines' => collect($lines)->toArray(),
             ],
             'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
         ]);
 
         if ($response->getStatusCode() !== 200) {
@@ -429,6 +431,7 @@ class Client
     {
         $response = $this->http->post("/api/team/{$teamSlug}/billing/invoice/{$reference}/finalize", [
             'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
         ]);
 
         if ($response->getStatusCode() !== 200) {

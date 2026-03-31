@@ -8,11 +8,11 @@
         "php": "^8.4",
         "guzzlehttp/guzzle": "^7.9",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^12.20",
+        "laravel/framework": "^12.20|^13.2",
         "laravel/helpers": "^1.7",
         "laravel/socialite": "^5.20",
         "mll-lab/graphql-php-scalars": "^6.4",
-        "nuwave/lighthouse": "^6.57",
+        "nuwave/lighthouse": "^6.66",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^4.15",
         "stayallive/laravel-eloquent-observable": "^1.1",
@@ -22,7 +22,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.84",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^10.1",
+        "orchestra/testbench": "^10.1|^11",
         "pestphp/pest": "^4.4"
     },
     "autoload": {

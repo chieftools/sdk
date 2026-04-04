@@ -17,6 +17,7 @@ class ChiefTeam
         public readonly array $limits,
         public readonly ?string $planId,
         public readonly ?bool $planDiscounted,
+        public readonly int $actionableInvoicesCount,
     ) {}
 
     public static function fromArray(array $team): self
@@ -31,6 +32,7 @@ class ChiefTeam
             avatarHash: $team['avatar_hash'] ?? null,
             gravatarEmail: $team['gravatar_email'] ?? null,
             planDiscounted: $team['plan_discounted'] ?? null,
+            actionableInvoicesCount: $team['actionable_invoices_count'] ?? 0,
         );
     }
 }

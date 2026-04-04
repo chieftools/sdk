@@ -24,6 +24,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
  * @property string              $timezone
  * @property string|null         $plan_id
  * @property bool|null           $plan_discounted
+ * @property int                 $actionable_invoices_count
  * @property array               $limits
  * @property bool                $is_default
  * @property \Carbon\Carbon|null $last_activity_at
@@ -112,13 +113,14 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     // Helpers
     public function updateFromRemote(ChiefTeam $remote): void
     {
-        $this->name            = $remote->name;
-        $this->limits          = $remote->limits;
-        $this->plan_id         = $remote->planId;
-        $this->timezone        = $remote->timezone;
-        $this->avatar_hash     = $remote->avatarHash;
-        $this->gravatar_email  = $remote->gravatarEmail;
-        $this->plan_discounted = $remote->planDiscounted;
+        $this->name                      = $remote->name;
+        $this->limits                    = $remote->limits;
+        $this->plan_id                   = $remote->planId;
+        $this->timezone                  = $remote->timezone;
+        $this->avatar_hash               = $remote->avatarHash;
+        $this->gravatar_email            = $remote->gravatarEmail;
+        $this->plan_discounted           = $remote->planDiscounted;
+        $this->actionable_invoices_count = $remote->actionableInvoicesCount;
 
         $this->save();
     }

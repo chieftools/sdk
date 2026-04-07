@@ -9,6 +9,7 @@ use ChiefTools\SDK\Entities\Team;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 use GuzzleHttp\Client as HttpClient;
+use ChiefTools\SDK\Enums\TokenPrefix;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
@@ -208,6 +209,9 @@ class Client
             $data = json_decode($response->getBody()->getContents(), true);
 
             return new ChiefRemoteAccessToken(
+                id: $data['id'],
+                name: $data['name'],
+                prefix: TokenPrefix::OAUTH_ACCESS_TOKEN->value,
                 scopes: $data['scopes'],
                 userId: $data['user_id'],
                 teamId: $data['team_id'],

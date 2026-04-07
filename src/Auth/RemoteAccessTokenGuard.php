@@ -63,13 +63,18 @@ abstract readonly class RemoteAccessTokenGuard
             return null;
         }
 
-        $expires = empty($response['expires_at']) ? false : Carbon::createFromTimestamp($response['expires_at']);
+        $expires = empty($response['expires_at'])
+            ? false
+            : Carbon::createFromTimestamp($response['expires_at']);
 
         if ($expires instanceof Carbon && $expires->isPast()) {
             return null;
         }
 
         $remoteToken = new ChiefRemoteAccessToken(
+            id: $response['id'] ?? 'unknown',
+            name: $response['name'] ?? 'unnamed token',
+            prefix: $randomToken->prefix,
             scopes: $response['scopes'],
             userId: $response['user_id'] ?? null,
             teamId: $response['team_id'] ?? null,

@@ -18,7 +18,7 @@ class TokenScopesDirective extends BaseDirective implements FieldMiddleware
             fn (callable $resolver) => function (mixed $root, array $args, Context $context, ResolveInfo $resolveInfo) use ($resolver) {
                 // Throw in case of an invalid schema definition to remind the developer
                 $scopes = $this->directiveArgValue('scopes')
-                          ?? throw new DefinitionException("Missing argument 'scopes' for directive '@tokenScope'.");
+                          ?? throw new DefinitionException("Missing argument 'scopes' for directive '@tokenScopes'.");
 
                 if ($context->user() === null) {
                     return null;

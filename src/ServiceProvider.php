@@ -12,6 +12,7 @@ use ChiefTools\SDK\Http\Middleware;
 use ChiefTools\SDK\Console\Commands;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Events as AuthEvents;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Broadcast;
 use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
@@ -189,6 +191,18 @@ class ServiceProvider extends IlluminateServiceProvider
 
                 return $guard;
             });
+        });
+
+        Authenticate::redirectUsing(function () {
+            if (Route::has('auth.login')) {
+                return route('auth.login');
+            }
+
+            if (Route::has('login')) {
+                return route('login');
+            }
+
+            return null;
         });
     }
 

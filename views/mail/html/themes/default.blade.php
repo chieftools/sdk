@@ -6,6 +6,8 @@
     $mailSuccessButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::successButtonText();
     $mailErrorColor = \ChiefTools\SDK\Helpers\MailBrandColor::error();
     $mailErrorButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::errorButtonText();
+    $mailWarningColor = '#b45309';
+    $mailMutedColor = '#4b5563';
 @endphp
 
 /* Base */
@@ -175,13 +177,64 @@ img {
 /* Subcopy */
 
 .subcopy {
-    border-top: 1px solid #e8e5ef;
-    margin-top: 25px;
-    padding-top: 25px;
+    margin: 0;
 }
 
 .subcopy p {
     font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.subcopy p:last-child {
+    margin-bottom: 0;
+}
+
+.subcopy-card {
+    margin-top: 12px;
+}
+
+.content-cell.subcopy-card-content {
+    padding: 18px 32px;
+}
+
+/* Quick Links */
+
+.quick-links-card {
+    margin-top: 12px;
+}
+
+.content-cell.quick-links-card-content {
+    padding: 12px 32px;
+}
+
+.quick-links {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    width: 100%;
+}
+
+.quick-links-label {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+    padding-right: 12px;
+    white-space: nowrap;
+    width: 1%;
+}
+
+.quick-links-items {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.quick-links-items a {
+    font-weight: normal;
+}
+
+.quick-links-separator {
+    color: #9ca3af;
 }
 
 /* Footer */
@@ -229,6 +282,49 @@ img {
     line-height: 18px;
     margin: 0;
     padding: 10px 0;
+}
+
+/* Dividers */
+
+.divider {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+    margin: 12px auto;
+    width: 100%;
+}
+
+.divider-line {
+    font-size: 0;
+    line-height: 0;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.divider-rule {
+    border-top: 1px solid #e5e7eb;
+    font-size: 0;
+    line-height: 0;
+}
+
+.divider-label {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 0 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    width: 1%;
+}
+
+.divider-label p {
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.2;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .content-cell {
@@ -290,6 +386,69 @@ img {
     border-right: 18px solid {{ $mailErrorColor }};
     border-top: 8px solid {{ $mailErrorColor }};
     color: {{ $mailErrorButtonTextColor }};
+}
+
+/* Bands */
+
+.band {
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: calc(100% + 64px);
+    margin: 24px 0;
+    margin-left: -32px;
+    margin-right: -32px;
+    width: calc(100% + 64px);
+}
+
+.band-content {
+    background-color: {{ $mailBrandButtonColor }};
+    color: {{ $mailBrandButtonTextColor }};
+    padding: 20px 32px;
+}
+
+.band-content h1,
+.band-content h2,
+.band-content h3,
+.band-content p,
+.band-content ul,
+.band-content ol,
+.band-content li,
+.band-content strong,
+.band-content a {
+    color: inherit;
+}
+
+.band-content p {
+    margin-bottom: 8px;
+}
+
+.band-content > *:last-child,
+.band-content p:last-child {
+    margin-bottom: 0;
+}
+
+.band-content a {
+    text-decoration: underline;
+}
+
+.band-success .band-content {
+    background-color: {{ $mailSuccessColor }};
+    color: {{ $mailSuccessButtonTextColor }};
+}
+
+.band-error .band-content {
+    background-color: {{ $mailErrorColor }};
+    color: {{ $mailErrorButtonTextColor }};
+}
+
+.band-warning .band-content {
+    background-color: {{ $mailWarningColor }};
+    color: #ffffff;
+}
+
+.band-muted .band-content {
+    background-color: {{ $mailMutedColor }};
+    color: #ffffff;
 }
 
 /* Panels */

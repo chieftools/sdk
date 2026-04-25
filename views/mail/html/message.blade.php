@@ -1,3 +1,15 @@
+@props([
+    'quickLinks' => [],
+])
+@php
+    $quickLinks = collect($quickLinks)
+        ->filter(fn ($link) => is_array($link) && filled($link['title'] ?? null) && filled($link['url'] ?? null))
+        ->map(fn ($link) => [
+            'title' => (string) $link['title'],
+            'url'   => (string) $link['url'],
+        ])
+        ->values();
+@endphp
 <x-mail::layout>
 {{-- Header --}}
 <x-slot:header>
@@ -8,6 +20,13 @@
 
 {{-- Body --}}
 {{ $slot }}
+
+{{-- Quick Links --}}
+@if($quickLinks->isNotEmpty())
+<x-slot:quickLinks>
+<x-mail::quick-links :links="$quickLinks" />
+</x-slot:quickLinks>
+@endif
 
 {{-- Subcopy --}}
 @isset($subcopy)

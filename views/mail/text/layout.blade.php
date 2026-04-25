@@ -5,5 +5,9 @@
 
 {!! strip_tags($subcopy) !!}
 @endisset
+@isset($quickLinks)
+
+{!! strip_tags($quickLinks) !!}
+@endisset
 
 {!! strip_tags($footer ?? '') !!}

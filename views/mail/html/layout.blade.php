@@ -125,7 +125,28 @@
                 }
 
                 .subcopy {
+                    color: #d1d5db !important;
+                }
+
+                .subcopy p {
+                    color: #d1d5db !important;
+                }
+
+                .quick-links-label,
+                .quick-links-items {
+                    color: #d1d5db !important;
+                }
+
+                .quick-links-separator {
+                    color: #6b7280 !important;
+                }
+
+                .divider-rule {
                     border-top-color: #374151 !important;
+                }
+
+                .divider-label, .divider-label p {
+                    color: #9aa1ae !important;
                 }
 
                 .panel {
@@ -139,6 +160,19 @@
 
                 .panel-content p {
                     color: #d1d5db !important;
+                }
+
+                .band-content,
+                .band-content h1,
+                .band-content h2,
+                .band-content h3,
+                .band-content p,
+                .band-content ul,
+                .band-content ol,
+                .band-content li,
+                .band-content strong,
+                .band-content a {
+                    color: inherit !important;
                 }
 
                 blockquote {
@@ -229,7 +263,28 @@
             }
 
             [data-ogsc] .subcopy {
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] .subcopy p {
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] .quick-links-label,
+            [data-ogsc] .quick-links-items {
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] .quick-links-separator {
+                color: #6b7280 !important;
+            }
+
+            [data-ogsc] .divider-rule {
                 border-top-color: #374151 !important;
+            }
+
+            [data-ogsc] .divider-label, [data-ogsc] .divider-label p {
+                color: #9aa1ae !important;
             }
 
             [data-ogsc] .panel {
@@ -243,6 +298,19 @@
 
             [data-ogsc] .panel-content p {
                 color: #d1d5db !important;
+            }
+
+            [data-ogsc] .band-content,
+            [data-ogsc] .band-content h1,
+            [data-ogsc] .band-content h2,
+            [data-ogsc] .band-content h3,
+            [data-ogsc] .band-content p,
+            [data-ogsc] .band-content ul,
+            [data-ogsc] .band-content ol,
+            [data-ogsc] .band-content li,
+            [data-ogsc] .band-content strong,
+            [data-ogsc] .band-content a {
+                color: inherit !important;
             }
 
             [data-ogsc] blockquote {
@@ -298,11 +366,27 @@
                                     <tr>
                                         <td class="content-cell">
                                             {{ Illuminate\Mail\Markdown::parse($slot) }}
-
-                                            {{ $subcopy ?? '' }}
                                         </td>
                                     </tr>
                                 </table>
+                                @isset($subcopy)
+                                <table class="inner-body subcopy-card" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                                    <tr>
+                                        <td class="content-cell subcopy-card-content">
+                                            {{ $subcopy }}
+                                        </td>
+                                    </tr>
+                                </table>
+                                @endisset
+                                @isset($quickLinks)
+                                <table class="inner-body quick-links-card" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                                    <tr>
+                                        <td class="content-cell quick-links-card-content">
+                                            {{ $quickLinks }}
+                                        </td>
+                                    </tr>
+                                </table>
+                                @endisset
                             </td>
                         </tr>
 

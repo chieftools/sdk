@@ -1,3 +1,13 @@
+@php
+    $mailBrandColor = \ChiefTools\SDK\Helpers\MailBrandColor::primary();
+    $mailBrandButtonColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButton();
+    $mailBrandButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButtonText();
+    $mailSuccessColor = \ChiefTools\SDK\Helpers\MailBrandColor::success();
+    $mailSuccessButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::successButtonText();
+    $mailErrorColor = \ChiefTools\SDK\Helpers\MailBrandColor::error();
+    $mailErrorButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::errorButtonText();
+@endphp
+
 /* Base */
 
 body,
@@ -27,7 +37,7 @@ blockquote {
 }
 
 a {
-    color: #3869d4;
+    color: {{ $mailBrandColor }};
 }
 
 a img {
@@ -63,6 +73,21 @@ p {
     line-height: 1.5em;
     margin-top: 0;
     text-align: left;
+}
+
+blockquote {
+    background-color: transparent;
+    border-left: 3px solid {{ $mailBrandColor }};
+    color: #6b7280;
+    font-style: italic;
+    margin: 24px 0;
+    padding: 4px 0 4px 16px;
+}
+
+blockquote p {
+    color: #6b7280;
+    font-style: italic;
+    margin-bottom: 0;
 }
 
 p.sub {
@@ -239,35 +264,38 @@ img {
 
 .button-blue,
 .button-primary {
-    background-color: #3498db;
-    border-bottom: 8px solid #3498db;
-    border-left: 18px solid #3498db;
-    border-right: 18px solid #3498db;
-    border-top: 8px solid #3498db;
+    background-color: {{ $mailBrandButtonColor }};
+    border-bottom: 8px solid {{ $mailBrandButtonColor }};
+    border-left: 18px solid {{ $mailBrandButtonColor }};
+    border-right: 18px solid {{ $mailBrandButtonColor }};
+    border-top: 8px solid {{ $mailBrandButtonColor }};
+    color: {{ $mailBrandButtonTextColor }};
 }
 
 .button-green,
 .button-success {
-    background-color: #48bb78;
-    border-bottom: 8px solid #48bb78;
-    border-left: 18px solid #48bb78;
-    border-right: 18px solid #48bb78;
-    border-top: 8px solid #48bb78;
+    background-color: {{ $mailSuccessColor }};
+    border-bottom: 8px solid {{ $mailSuccessColor }};
+    border-left: 18px solid {{ $mailSuccessColor }};
+    border-right: 18px solid {{ $mailSuccessColor }};
+    border-top: 8px solid {{ $mailSuccessColor }};
+    color: {{ $mailSuccessButtonTextColor }};
 }
 
 .button-red,
 .button-error {
-    background-color: #e53e3e;
-    border-bottom: 8px solid #e53e3e;
-    border-left: 18px solid #e53e3e;
-    border-right: 18px solid #e53e3e;
-    border-top: 8px solid #e53e3e;
+    background-color: {{ $mailErrorColor }};
+    border-bottom: 8px solid {{ $mailErrorColor }};
+    border-left: 18px solid {{ $mailErrorColor }};
+    border-right: 18px solid {{ $mailErrorColor }};
+    border-top: 8px solid {{ $mailErrorColor }};
+    color: {{ $mailErrorButtonTextColor }};
 }
 
 /* Panels */
 
 .panel {
-    border-left: #2d3748 solid 4px;
+    border-left: {{ $mailBrandColor }} solid 4px;
     margin: 21px 0;
 }
 

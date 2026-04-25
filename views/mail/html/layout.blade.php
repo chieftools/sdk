@@ -1,3 +1,16 @@
+@php
+    $mailBrandColor = \ChiefTools\SDK\Helpers\MailBrandColor::primary();
+    $mailBrandButtonColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButton();
+    $mailBrandButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButtonText();
+    $mailBrandHoverColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryHover();
+    $mailBrandButtonHoverColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButtonHover();
+    $mailBrandButtonHoverTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryButtonHoverText();
+    $mailBrandDarkHoverColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryDarkHover();
+    $mailBrandDarkButtonHoverColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryDarkButtonHover();
+    $mailBrandDarkButtonHoverTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::primaryDarkButtonHoverText();
+    $mailSuccessButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::successButtonText();
+    $mailErrorButtonTextColor = \ChiefTools\SDK\Helpers\MailBrandColor::errorButtonText();
+@endphp
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -10,6 +23,27 @@
             :root {
                 color-scheme: light dark;
                 supported-color-schemes: light dark;
+            }
+
+            a:hover {
+                color: {{ $mailBrandHoverColor }} !important;
+            }
+
+            a.button-primary:hover, a.button-blue:hover {
+                background-color: {{ $mailBrandButtonHoverColor }} !important;
+                border-bottom: 8px solid {{ $mailBrandButtonHoverColor }} !important;
+                border-left: 18px solid {{ $mailBrandButtonHoverColor }} !important;
+                border-right: 18px solid {{ $mailBrandButtonHoverColor }} !important;
+                border-top: 8px solid {{ $mailBrandButtonHoverColor }} !important;
+                color: {{ $mailBrandButtonHoverTextColor }} !important;
+            }
+
+            a.button-success:hover, a.button-green:hover {
+                color: {{ $mailSuccessButtonTextColor }} !important;
+            }
+
+            a.button-error:hover, a.button-red:hover {
+                color: {{ $mailErrorButtonTextColor }} !important;
             }
 
             @media only screen and (max-width: 600px) {
@@ -42,20 +76,46 @@
                     background-color: #262728 !important;
                 }
 
-                h1, a.button {
+                h1, h2, h3 {
                     color: #ffffff !important;
                 }
 
-                a {
-                    color: #7698ff !important;
+                p, ul, ol, blockquote {
+                    color: #e5e7eb !important;
                 }
 
-                a.button {
-                    background-color: #016baa !important;
-                    border-bottom: 8px solid #016baa !important;
-                    border-left: 18px solid #016baa !important;
-                    border-right: 18px solid #016baa !important;
-                    border-top: 8px solid #016baa !important;
+                a {
+                    color: {{ $mailBrandColor }} !important;
+                }
+
+                a.button-primary, a.button-blue {
+                    background-color: {{ $mailBrandButtonColor }} !important;
+                    border-bottom: 8px solid {{ $mailBrandButtonColor }} !important;
+                    border-left: 18px solid {{ $mailBrandButtonColor }} !important;
+                    border-right: 18px solid {{ $mailBrandButtonColor }} !important;
+                    border-top: 8px solid {{ $mailBrandButtonColor }} !important;
+                    color: {{ $mailBrandButtonTextColor }} !important;
+                }
+
+                a.button-success, a.button-green, a.button-success:hover, a.button-green:hover {
+                    color: {{ $mailSuccessButtonTextColor }} !important;
+                }
+
+                a.button-error, a.button-red, a.button-error:hover, a.button-red:hover {
+                    color: {{ $mailErrorButtonTextColor }} !important;
+                }
+
+                a:hover {
+                    color: {{ $mailBrandDarkHoverColor }} !important;
+                }
+
+                a.button-primary:hover, a.button-blue:hover {
+                    background-color: {{ $mailBrandDarkButtonHoverColor }} !important;
+                    border-bottom: 8px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                    border-left: 18px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                    border-right: 18px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                    border-top: 8px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                    color: {{ $mailBrandDarkButtonHoverTextColor }} !important;
                 }
 
                 .inner-body {
@@ -64,12 +124,40 @@
                     box-shadow: 0 2px 0 rgba(36, 37, 45, 0.025), 2px 4px 0 rgba(36, 37, 45, 0.015) !important;
                 }
 
+                .subcopy {
+                    border-top-color: #374151 !important;
+                }
+
+                .panel {
+                    border-left-color: {{ $mailBrandColor }} !important;
+                }
+
+                .panel-content {
+                    background-color: #2b2c2f !important;
+                    color: #d1d5db !important;
+                }
+
+                .panel-content p {
+                    color: #d1d5db !important;
+                }
+
+                blockquote {
+                    background-color: transparent !important;
+                    border-left-color: {{ $mailBrandColor }} !important;
+                    color: #d1d5db !important;
+                }
+
+                blockquote p {
+                    color: #d1d5db !important;
+                }
+
                 .table td, .footer p, .footer a {
                     color: #9aa1ae !important;
                 }
 
                 .table th {
                     border-bottom: 1px solid #262728 !important;
+                    color: #e5e7eb !important;
                 }
             }
 
@@ -86,20 +174,52 @@
                 background-color: #262728 !important;
             }
 
-            [data-ogsc] h1, [data-ogsc] a.button {
+            [data-ogsc] h1, [data-ogsc] h2, [data-ogsc] h3 {
                 color: #ffffff !important;
             }
 
-            [data-ogsc] a {
-                color: #7698ff !important;
+            [data-ogsc] p, [data-ogsc] ul, [data-ogsc] ol, [data-ogsc] blockquote {
+                color: #e5e7eb !important;
             }
 
-            [data-ogsc] a.button {
-                background-color: #016baa !important;
-                border-bottom: 8px solid #016baa !important;
-                border-left: 18px solid #016baa !important;
-                border-right: 18px solid #016baa !important;
-                border-top: 8px solid #016baa !important;
+            [data-ogsc] a {
+                color: {{ $mailBrandColor }} !important;
+            }
+
+            [data-ogsc] a.button-primary, [data-ogsc] a.button-blue {
+                background-color: {{ $mailBrandButtonColor }} !important;
+                border-bottom: 8px solid {{ $mailBrandButtonColor }} !important;
+                border-left: 18px solid {{ $mailBrandButtonColor }} !important;
+                border-right: 18px solid {{ $mailBrandButtonColor }} !important;
+                border-top: 8px solid {{ $mailBrandButtonColor }} !important;
+                color: {{ $mailBrandButtonTextColor }} !important;
+            }
+
+            [data-ogsc] a.button-success,
+            [data-ogsc] a.button-green,
+            [data-ogsc] a.button-success:hover,
+            [data-ogsc] a.button-green:hover {
+                color: {{ $mailSuccessButtonTextColor }} !important;
+            }
+
+            [data-ogsc] a.button-error,
+            [data-ogsc] a.button-red,
+            [data-ogsc] a.button-error:hover,
+            [data-ogsc] a.button-red:hover {
+                color: {{ $mailErrorButtonTextColor }} !important;
+            }
+
+            [data-ogsc] a:hover {
+                color: {{ $mailBrandDarkHoverColor }} !important;
+            }
+
+            [data-ogsc] a.button-primary:hover, [data-ogsc] a.button-blue:hover {
+                background-color: {{ $mailBrandDarkButtonHoverColor }} !important;
+                border-bottom: 8px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                border-left: 18px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                border-right: 18px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                border-top: 8px solid {{ $mailBrandDarkButtonHoverColor }} !important;
+                color: {{ $mailBrandDarkButtonHoverTextColor }} !important;
             }
 
             [data-ogsc] .inner-body {
@@ -108,12 +228,40 @@
                 box-shadow: 0 2px 0 rgba(36, 37, 45, 0.025), 2px 4px 0 rgba(36, 37, 45, 0.015) !important;
             }
 
+            [data-ogsc] .subcopy {
+                border-top-color: #374151 !important;
+            }
+
+            [data-ogsc] .panel {
+                border-left-color: {{ $mailBrandColor }} !important;
+            }
+
+            [data-ogsc] .panel-content {
+                background-color: #2b2c2f !important;
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] .panel-content p {
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] blockquote {
+                background-color: transparent !important;
+                border-left-color: {{ $mailBrandColor }} !important;
+                color: #d1d5db !important;
+            }
+
+            [data-ogsc] blockquote p {
+                color: #d1d5db !important;
+            }
+
             [data-ogsc] .table td, [data-ogsc] .footer p, [data-ogsc] .footer a {
                 color: #9aa1ae !important;
             }
 
             [data-ogsc] .table th {
                 border-bottom: 1px solid #262728 !important;
+                color: #e5e7eb !important;
             }
 
             @font-face {

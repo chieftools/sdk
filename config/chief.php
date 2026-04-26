@@ -28,6 +28,24 @@ return [
 
     ],
 
+    'shell' => [
+
+        'theme' => 'light',
+
+        'variant' => 'legacy',
+
+        'theme_cookie' => 'chief_shell_theme',
+
+        'app_switcher' => true,
+
+        'theme_selector' => true,
+
+        'command_palette' => true,
+
+        'command_palette_providers' => [],
+
+    ],
+
     'teams' => true,
 
     'queue' => [

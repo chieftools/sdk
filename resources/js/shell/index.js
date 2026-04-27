@@ -70,11 +70,17 @@ function chiefShell() {
         applyTheme() {
             const theme = this.resolvedTheme();
             const shellElement = this.shellElement || this.$root || this.$el;
+            const rootElement = document.documentElement;
 
             shellElement.dataset.theme = theme;
             shellElement.dataset.themePreference = this.theme;
             shellElement.classList.toggle('dark', theme === 'dark');
             shellElement.style.colorScheme = theme;
+
+            rootElement.dataset.theme = theme;
+            rootElement.dataset.themePreference = this.theme;
+            rootElement.classList.toggle('dark', theme === 'dark');
+            rootElement.style.colorScheme = theme;
         },
 
         setTheme(theme) {
@@ -101,10 +107,10 @@ function chiefShell() {
 
         themeButtonClasses(theme) {
             if (this.theme === theme) {
-                return 'bg-white text-gray-950 shadow-sm dark:bg-gray-900 dark:text-gray-100 dark:shadow-black/30';
+                return 'bg-surface-raised text-fg shadow-sm';
             }
 
-            return 'text-gray-500 hover:text-gray-950 dark:text-gray-400 dark:hover:text-gray-100';
+            return 'text-fg-subtle hover:text-fg';
         },
 
         openPalette(query = '') {
@@ -127,6 +133,37 @@ function chiefShell() {
             this.activeIndex = 0;
             this.remoteSearchAbort?.abort();
             this.remoteLoading = false;
+        },
+
+        togglePalette(mode = 'empty') {
+            const query = mode === 'switcher' ? 'Chief Tools > ' : '';
+
+            // Mode is inferred from the current query so that the filter
+            // chips and manual typing stay consistent with the keyboard
+            // shortcuts. Cmd+K means "I want the empty palette"; if we're
+            // already there, close. If we're in switcher mode, swap to empty
+            // without closing. Same logic mirrored for Cmd+J / 'switcher'.
+            if (this.paletteOpen) {
+                const currentMode = this.paletteQuery.startsWith('Chief Tools > ') ? 'switcher' : 'empty';
+
+                if (currentMode === mode) {
+                    this.closePalette();
+                    return;
+                }
+
+                this.paletteQuery = query;
+                this.activeIndex = 0;
+                this.$nextTick(() => {
+                    this.$refs.paletteSearch?.focus();
+                    this.$refs.paletteSearch?.setSelectionRange(query.length, query.length);
+                    this.syncPaletteActive();
+                    this.queueRemoteSearch();
+                });
+
+                return;
+            }
+
+            this.openPalette(query);
         },
 
         closePanels() {

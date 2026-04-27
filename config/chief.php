@@ -30,7 +30,7 @@ return [
 
     'shell' => [
 
-        'theme' => 'light',
+        'theme' => 'system',
 
         'variant' => 'legacy',
 
@@ -41,6 +41,8 @@ return [
         'theme_selector' => true,
 
         'command_palette' => true,
+
+        'theme_cookie_domain' => env('CHIEF_THEME_COOKIE_DOMAIN'),
 
         'command_palette_providers' => [],
 

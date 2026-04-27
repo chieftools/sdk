@@ -19,7 +19,7 @@
                                 <div class="flex items-center">
                                     <i class="fas fa-fw fa-chevron-right text-muted text-xs"></i>
                                     @if($loop->last)
-                                        <span class="ml-2 text-sm">{{ $breadcrumb['title'] ?? '???' }}</span>
+                                        <span class="ml-2 text-sm text-fg-muted">{{ $breadcrumb['title'] ?? '???' }}</span>
                                     @else
                                         <a href="{{ $breadcrumb['href'] ?? '#' }}" class="ml-2 text-sm text-brand-500 hover:text-brand-700" {{ $breadcrumb['wire'] ?? false ? 'wire:navigate' : '' }}>{{ $breadcrumb['title'] ?? '???' }}</a>
                                     @endif
@@ -30,7 +30,7 @@
                 </nav>
             @endunless
 
-            <h1 class="mt-2 text-2xl leading-7 text-gray-600 sm:truncate">
+            <h1 class="mt-2 text-2xl leading-7 text-fg sm:truncate">
                 {{ $slot }}
             </h1>
         </div>

@@ -3,12 +3,12 @@
 @endphp
 
 <a href="{{ $href }}"
-   class="group flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-950 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+   class="group flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg"
    @if(!empty($target)) target="{{ $target }}" @endif
    @if(!empty($target) && $target === '_blank') rel="noopener" @endif
 >
     @if($icon)
-        <i class="fa-fw {{ $icon }} text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-200"></i>
+        <i class="fa-fw {{ $icon }} text-fg-faint group-hover:text-fg-muted"></i>
     @endif
     <span class="min-w-0 flex-1 truncate">{{ $label }}</span>
 </a>

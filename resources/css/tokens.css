@@ -1,0 +1,312 @@
+/*
+  Chief Tools dark-mode design tokens. See darkmode.md for the philosophy
+  and conversion table. Apps consume this via:
+
+      @import '@chieftools/sdk/tokens.css';
+
+  Per-app brand color is supplied via `--brand-color` (set as an inline
+  style attr on <html> by chief::layout.html). Apps may also override
+  `--accent` directly in their own CSS.
+*/
+
+:root {
+    color-scheme: light;
+
+    --bg: oklch(98.6% 0.003 250);
+    --surface: oklch(100% 0 0);
+    --surface-2: oklch(97.2% 0.004 250);
+    --surface-3: oklch(94.8% 0.006 250);
+    --surface-raised: oklch(100% 0 0);
+
+    --line: oklch(91.5% 0.006 250);
+    --line-strong: oklch(86% 0.008 250);
+
+    --fg: oklch(22% 0.01 250);
+    --fg-muted: oklch(48% 0.012 250);
+    --fg-subtle: oklch(62% 0.012 250);
+    --fg-faint: oklch(74% 0.01 250);
+
+    --shadow-sm: 0 1px 2px oklch(20% 0.03 250 / 0.08);
+    --shadow-md: 0 12px 24px oklch(20% 0.03 250 / 0.12);
+    --shadow-lg: 0 24px 48px oklch(20% 0.03 250 / 0.16);
+
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+
+    --green: oklch(64% 0.15 155);
+    --red: oklch(60% 0.2 25);
+    --amber: oklch(72% 0.16 75);
+    --blue: oklch(60% 0.15 240);
+
+    --accent: var(--brand-color, oklch(62% 0.18 255));
+    --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
+    --accent-fg: oklch(100% 0 0);
+}
+
+html.dark,
+html[data-theme='dark'] {
+    color-scheme: dark;
+
+    --bg: oklch(22% 0.011 250);
+    --surface: oklch(25.5% 0.012 250);
+    --surface-2: oklch(29% 0.013 250);
+    --surface-3: oklch(33% 0.014 250);
+    --surface-raised: oklch(33% 0.014 250);
+
+    --line: oklch(35% 0.014 250);
+    --line-strong: oklch(42% 0.016 250);
+
+    --fg: oklch(96% 0.005 250);
+    --fg-muted: oklch(75% 0.012 250);
+    --fg-subtle: oklch(62% 0.013 250);
+    --fg-faint: oklch(48% 0.011 250);
+
+    --shadow-sm: 0 1px 2px oklch(10% 0.03 250 / 0.24);
+    --shadow-md: 0 12px 24px oklch(10% 0.03 250 / 0.32);
+    --shadow-lg: 0 24px 48px oklch(10% 0.03 250 / 0.42);
+
+    --green: oklch(72% 0.15 155);
+    --red: oklch(70% 0.2 25);
+    --amber: oklch(80% 0.16 75);
+    --blue: oklch(70% 0.15 240);
+
+    --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+}
+
+/*
+  wire:navigate FOIT bridge for `system` preference users.
+
+  The server can't detect OS preference, so for `system` users it always renders
+  `data-theme="light"` (no `.dark` class). On initial load the inline bootstrap
+  script in chief::layout.html flips this to dark before paint, but on every
+  wire:navigate Livewire morphs the new server response back to the light values
+  for one frame — that's the flash.
+
+  `data-theme-preference` is preserved across morphing (the cookie didn't
+  change), so gating the dark tokens on the preference attribute + the OS
+  media query keeps them active throughout the morph. Once the bootstrap or
+  shell JS catches up, `data-theme="dark"` and `.dark` come back, but the
+  surface/fg tokens never went light.
+*/
+@media (prefers-color-scheme: dark) {
+    html[data-theme-preference='system'] {
+        color-scheme: dark;
+
+        --bg: oklch(22% 0.011 250);
+        --surface: oklch(25.5% 0.012 250);
+        --surface-2: oklch(29% 0.013 250);
+        --surface-3: oklch(33% 0.014 250);
+        --surface-raised: oklch(33% 0.014 250);
+
+        --line: oklch(35% 0.014 250);
+        --line-strong: oklch(42% 0.016 250);
+
+        --fg: oklch(96% 0.005 250);
+        --fg-muted: oklch(75% 0.012 250);
+        --fg-subtle: oklch(62% 0.013 250);
+        --fg-faint: oklch(48% 0.011 250);
+
+        --shadow-sm: 0 1px 2px oklch(10% 0.03 250 / 0.24);
+        --shadow-md: 0 12px 24px oklch(10% 0.03 250 / 0.32);
+        --shadow-lg: 0 24px 48px oklch(10% 0.03 250 / 0.42);
+
+        --green: oklch(72% 0.15 155);
+        --red: oklch(70% 0.2 25);
+        --amber: oklch(80% 0.16 75);
+        --blue: oklch(70% 0.15 240);
+
+        --accent-soft: color-mix(in oklch, var(--accent) 20%, transparent);
+    }
+}
+
+/*
+  Each tool defines its own --accent (and dark-mode lift) in its own app.css.
+  The SDK only provides the fallback: --accent reads `--brand-color` set as
+  inline style on <html> by chief::layout.html, which sources it from
+  config('chief.brand.color'). Tools that need a richer dark-mode treatment
+  override --accent / --accent-fg in their own `html[data-theme="dark"]` block.
+  See darkmode.md for the recommended per-tool values.
+*/
+
+.chief-layout-app {
+    color: var(--fg);
+    background: var(--bg);
+}
+
+/*
+  Tailwind theme color aliases. Apps that @import this file get
+  utilities like `bg-surface`, `text-fg`, `border-line`, `text-accent` for
+  free — no per-app @theme block needed.
+*/
+@theme {
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-surface-3: var(--surface-3);
+    --color-surface-raised: var(--surface-raised);
+    --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
+    --color-fg: var(--fg);
+    --color-fg-muted: var(--fg-muted);
+    --color-fg-subtle: var(--fg-subtle);
+    --color-fg-faint: var(--fg-faint);
+    --color-accent: var(--accent);
+    --color-accent-soft: var(--accent-soft);
+    --color-accent-fg: var(--accent-fg);
+    --color-green: var(--green);
+    --color-red: var(--red);
+    --color-amber: var(--amber);
+    --color-blue: var(--blue);
+}
+
+/* Restore the cursor: pointer behavior Tailwind v4's preflight no longer applies. */
+button:not(:disabled),
+[role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+}
+
+/*
+  Tippy.js popover overrides — by default tippy paints `.tippy-box` with a
+  hardcoded `#333` background which blends against `--surface` in dark mode.
+  Inverting against `--fg` keeps tooltips legible (dark on light, light on dark).
+*/
+.tippy-box {
+    background-color: var(--fg);
+    color: var(--bg);
+}
+
+.tippy-arrow {
+    color: var(--fg);
+}
+
+/*
+  Repoint @tailwindcss/typography prose output at our tokens in dark mode.
+  Imported package CSS cannot reliably override the plugin's `--tw-prose-*`
+  variables after bundling, so these target the generated prose elements
+  directly while preserving the same token mapping.
+*/
+html.dark .prose,
+html[data-theme='dark'] .prose {
+    color: var(--fg-muted);
+}
+
+html.dark .prose :where(h1, h2, h3, h4, strong, blockquote, code):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(h1, h2, h3, h4, strong, blockquote, code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--fg);
+}
+
+html.dark .prose :where([class~='lead']):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where([class~='lead']):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--fg-muted);
+}
+
+html.dark .prose :where(figcaption):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(figcaption):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--fg-subtle);
+}
+
+html.dark .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--accent);
+}
+
+html.dark .prose :where(ol > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker,
+html[data-theme='dark'] .prose :where(ol > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker {
+    color: var(--fg-subtle);
+}
+
+html.dark .prose :where(ul > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker,
+html[data-theme='dark'] .prose :where(ul > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker {
+    color: var(--fg-faint);
+}
+
+html.dark .prose :where(hr, blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(hr, blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    border-color: var(--line);
+}
+
+html.dark .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--fg);
+    background-color: var(--surface-2);
+}
+
+html.dark .prose :where(thead th):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(thead th):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    color: var(--fg);
+    border-bottom-color: var(--line-strong);
+}
+
+html.dark .prose :where(tbody tr):not(:where([class~='not-prose'], [class~='not-prose'] *)),
+html[data-theme='dark'] .prose :where(tbody tr):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+    border-bottom-color: var(--line);
+}
+
+@media (prefers-color-scheme: dark) {
+    html[data-theme-preference='system'] .prose {
+        color: var(--fg-muted);
+    }
+
+    html[data-theme-preference='system'] .prose :where(h1, h2, h3, h4, strong, blockquote, code):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--fg);
+    }
+
+    html[data-theme-preference='system'] .prose :where([class~='lead']):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--fg-muted);
+    }
+
+    html[data-theme-preference='system'] .prose :where(figcaption):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--fg-subtle);
+    }
+
+    html[data-theme-preference='system'] .prose :where(a):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--accent);
+    }
+
+    html[data-theme-preference='system'] .prose :where(ol > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker {
+        color: var(--fg-subtle);
+    }
+
+    html[data-theme-preference='system'] .prose :where(ul > li):not(:where([class~='not-prose'], [class~='not-prose'] *))::marker {
+        color: var(--fg-faint);
+    }
+
+    html[data-theme-preference='system'] .prose :where(hr, blockquote):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        border-color: var(--line);
+    }
+
+    html[data-theme-preference='system'] .prose :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--fg);
+        background-color: var(--surface-2);
+    }
+
+    html[data-theme-preference='system'] .prose :where(thead th):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        color: var(--fg);
+        border-bottom-color: var(--line-strong);
+    }
+
+    html[data-theme-preference='system'] .prose :where(tbody tr):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+        border-bottom-color: var(--line);
+    }
+}
+
+/*
+  Safelist for classes injected at runtime by SDK JS (confirm.js, etc.).
+  Tailwind's prod build scans `vendor/chieftools/sdk/**` via the symlink and
+  picks these up, but the dev-mode incremental scanner sometimes misses
+  classes behind a symlinked package. Listing them here keeps the dev CSS
+  in sync with prod.
+*/
+@source inline('bg-black/50 backdrop-blur-sm');
+@source inline('bg-surface bg-surface-2 bg-surface-raised hover:bg-surface-3');
+@source inline('border-line text-fg text-fg-subtle');
+@source inline('bg-accent-soft text-accent text-accent-fg');
+@source inline('focus:ring-offset-surface focus:ring-fg-subtle focus:ring-brand-500');
+@source inline('bg-{green,amber,red,blue}');
+@source inline('bg-{green,amber,red,blue}/15');
+@source inline('hover:bg-{green,amber,red,blue}/85');
+@source inline('text-{green,amber,red,blue}');
+@source inline('focus:ring-{green,amber,red,blue}');

@@ -8,7 +8,7 @@
 ])
 
 @php
-    $classes = 'inline-flex font-medium shadow-xs ';
+    $classes = 'inline-flex items-center font-medium shadow-xs ';
 
     $classes .= match($size) {
         'xxs' => 'px-1.5 py-1 rounded ',
@@ -24,9 +24,9 @@
     };
     $classes .= $disabled ? '' : 'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 ';
     $classes .= match($type) {
-        'white' => 'text-gray-700 hover:text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 hover:bg-gray-50 ',
-        'outline' => 'text-gray-700 bg-white hover:text-white hover:bg-brand-700 border border-brand-600 ',
-        default => 'text-white hover:text-white bg-brand-600 hover:bg-brand-700 border border-transparent ',
+        'white' => 'text-fg hover:text-fg bg-surface-2 hover:bg-surface-3 border border-line ',
+        'outline' => 'text-fg bg-transparent hover:bg-accent hover:text-accent-fg border border-accent ',
+        default => 'text-accent-fg hover:text-accent-fg bg-brand-600 hover:bg-brand-700 border border-transparent ',
     };
 
     if ($disabled) {

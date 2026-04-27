@@ -1,13 +1,44 @@
 @if(!empty($title) && !is_array($title))
-    @php($title = [$title])
+@php
+    $title = [$title];
+@endphp
 @endif
-<!DOCTYPE html>
-<html lang="{{ config('app.locale') }}" class="antialiased {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
+@php
+    $themePreference = ChiefTools\SDK\Chief::themePreference();
+    $theme = ChiefTools\SDK\Chief::theme();
+@endphp
+    <!DOCTYPE html>
+<html lang="{{ config('app.locale') }}"
+      data-theme="{{ $theme }}"
+      data-theme-preference="{{ $themePreference }}"
+      data-tool="{{ config('chief.id', 'chief') }}"
+      style="--brand-color: {{ config('chief.brand.color', '#2ecc71') }}"
+    @class([
+        'antialiased',
+        'dark' => $theme === 'dark',
+        'h-full' => ($fullHeight ?? false) === true,
+    ])>
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="theme-color" content="{{ config('chief.brand.color', '#2ecc71') }}">
+        <meta name="theme-color" content="{{ config('chief.brand.color') }}">
+        <meta name="color-scheme" content="light dark">
+        <meta name="supported-color-schemes" content="light dark">
+
+        @if($themePreference === 'system')
+            <script>
+                (function(root) {
+                    try {
+                        var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                        root.classList.toggle('dark', dark);
+                        root.dataset.theme = dark ? 'dark' : 'light';
+                    } catch (error) {
+                    }
+                })(document.documentElement);
+            </script>
+        @endif
 
         @stack('head.meta')
 
@@ -48,7 +79,7 @@
         @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
-        <div id="app" class="{{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen bg-gray-100 pb-16' }} border-t-4 border-brand">
+        <div id="app" class="chief-layout-app {{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen pb-16' }} border-t-4 border-brand">
             @yield('body')
         </div>
 

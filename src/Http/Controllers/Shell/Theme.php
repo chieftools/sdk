@@ -18,7 +18,7 @@ class Theme
                 $theme,
                 60 * 24 * 365 * 5,
                 '/',
-                config('session.domain'),
+                config('chief.shell.theme_cookie_domain') ?? config('session.domain'),
                 config('session.secure'),
                 true,
                 false,

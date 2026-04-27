@@ -1,5 +1,5 @@
-<p class="mt-8 text-center leading-6 text-sm text-gray-500">
-    <a href="{{ route('chief.about') }}" class="text-gray-500 hover:text-brand">
+<p class="mt-8 text-center leading-6 text-sm text-fg-subtle">
+    <a href="{{ route('chief.about') }}" class="text-fg-subtle hover:text-brand">
         @if(config('chief.brand.logoUrl'))
             <img class="max-h-4 max-w-4 inline align-text-top" src="{{ config('chief.brand.logoUrl') }}" alt="{{ config('app.title') }}">
         @else

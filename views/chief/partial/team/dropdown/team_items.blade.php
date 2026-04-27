@@ -6,7 +6,7 @@
     $_current_team = auth()->user()->team;
 @endphp
 
-<div @class(['py-1' => config('chief.shell.variant') !== 'modern', 'border-t border-gray-200 p-1.5 dark:border-white/10' => config('chief.shell.variant') === 'modern']) role="none">
+<div @class(['py-1' => config('chief.shell.variant') !== 'modern', 'border-t border-line p-1.5' => config('chief.shell.variant') === 'modern']) role="none">
     @foreach($_chief_teams as $_chief_team)
         @continue($_chief_team->is($_current_team))
         <x-chief::account.dropdown-link :href="route('team.switch', [$_chief_team])">

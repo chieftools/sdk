@@ -227,7 +227,10 @@ class ServiceProvider extends IlluminateServiceProvider
 
     private function configureCookies(): void
     {
-        EncryptCookies::except(config('chief.id') . '_auth');
+        EncryptCookies::except([
+            config('chief.id') . '_auth',
+            config('chief.shell.theme_cookie', 'chief_shell_theme'),
+        ]);
     }
 
     private function configureGraphQL(): void

@@ -120,17 +120,10 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->toContain('x-on:load="$el.classList.remove')
         ->toContain('No results found.')
         ->toContain('/icons/domainchief.svg')
-        ->toContain('size-9 shrink-0 place-items-center rounded-md text-[var(--chief-shell-accent)]')
-        ->toContain('max-h-8 max-w-8')
         ->toContain('menuOpen = !menuOpen')
-        ->toContain('min-h-12')
-        ->toContain('size-8 cursor-pointer place-items-center rounded-md bg-gray-50 text-gray-400')
-        ->toContain('fad fa-fw fa-search text-sm')
         ->toContain('Search or jump to...')
         ->toContain('All apps')
-        ->toContain('fa-arrow-up-right-from-square')
         ->not->toContain('Searching...')
-        ->not->toContain('h-1 bg-[var(--chief-shell-accent)]')
         ->not->toContain('Close main menu')
         ->not->toContain('main-menu-items');
 

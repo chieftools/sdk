@@ -13,7 +13,9 @@
         "./dom": "./resources/js/dom.js",
         "./livewire": "./resources/js/livewire.js",
         "./tooltips": "./resources/js/tooltips.js",
-        "./shell": "./resources/js/shell/index.js"
+        "./shell": "./resources/js/shell/index.js",
+        "./tokens.css": "./resources/css/tokens.css",
+        "./vite": "./resources/js/vite.js"
     },
     "sideEffects": [
         "./resources/js/clipboard.js",

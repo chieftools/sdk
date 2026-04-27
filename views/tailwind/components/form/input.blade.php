@@ -28,11 +28,11 @@
     $errorMessage = isset($errors) ? ($errors->get($name)[0] ?? null) : null;
 
     $labelClass = $hasError
-        ? 'text-red-700'
-        : 'text-gray-700';
+        ? 'text-red'
+        : 'text-fg-muted';
     $inputClass = $hasError
-        ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
-        : 'border-gray-300 focus:ring-brand-500 focus:border-brand-500';
+        ? 'bg-surface border-red text-fg placeholder-red/60 focus:ring-red focus:border-red'
+        : 'bg-surface text-fg border-line-strong placeholder-fg-faint focus:ring-brand-500 focus:border-brand-500';
 
     if ($disabled) {
         $inputClass .= ' opacity-50 cursor-not-allowed';
@@ -92,7 +92,7 @@
                                    type="checkbox"
                                    name="{{ $name }}"
                                    value="{{ $value ?? '1' }}"
-                                   class="h-4 w-4 text-brand-600 border-gray-300 focus:ring-brand-500 rounded {{ $inputClass }}"
+                                   class="h-4 w-4 text-brand-600 bg-surface border-line-strong focus:ring-brand-500 rounded {{ $inputClass }}"
                                    {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                                    {{ $checked ? 'checked' : '' }}
                                    {{ $disabled ? 'disabled' : '' }}
@@ -105,7 +105,7 @@
                         </div>
                         @if($label)
                             <div class="ml-3 text-sm">
-                                <label for="{{ $name }}" class="text-gray-700">{{ $label }}</label>
+                                <label for="{{ $name }}" class="text-fg-muted">{{ $label }}</label>
                             </div>
                         @endif
                     </div>
@@ -113,7 +113,7 @@
                     <textarea id="{{ $name }}"
                               name="{{ $name }}"
                               rows="{{ $rows }}"
-                              class="appearance-none block w-full border shadow-xs placeholder-gray-400 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
+                              class="appearance-none block w-full border shadow-xs focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                               {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                               {{ $disabled ? 'disabled' : '' }}
                               {{ $required ? 'required' : '' }}
@@ -127,7 +127,7 @@
                 @elseif($type === 'select')
                     <select id="{{ $name }}"
                             name="{{ $name }}"
-                            class="block w-full bg-white border border-gray-300 shadow-xs py-2 px-3 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
+                            class="block w-full border shadow-xs py-2 px-3 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                             {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                             {{ $disabled ? 'disabled' : '' }}
                             {{ $required ? 'required' : '' }}
@@ -147,7 +147,7 @@
                            type="{{ $type }}"
                            {!! $type === 'password' && $togglePassword ? ':type="passwordReadable ? \'text\' : \'password\'"' : '' !!}
                            value="{{ $value }}"
-                           class="appearance-none block w-full border shadow-xs placeholder-gray-400 focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
+                           class="appearance-none block w-full border shadow-xs focus:outline-hidden {{ $sizeClass }} {{ $inputClass }}"
                            {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                            {{ $disabled ? 'disabled' : '' }}
                            {{ $required ? 'required' : '' }}
@@ -161,32 +161,32 @@
 
                     @if($type === 'password' && $togglePassword)
                         <div class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5" @click="passwordReadable = !passwordReadable">
-                            <i class="fa fa-fw fa-eye text-gray-500" :class="{'block': !passwordReadable, 'hidden': passwordReadable}"></i>
-                            <i class="fa fa-fw fa-eye-slash text-gray-500" :class="{'block': passwordReadable, 'hidden': !passwordReadable}"></i>
+                            <i class="fa fa-fw fa-eye text-fg-subtle" :class="{'block': !passwordReadable, 'hidden': passwordReadable}"></i>
+                            <i class="fa fa-fw fa-eye-slash text-fg-subtle" :class="{'block': passwordReadable, 'hidden': !passwordReadable}"></i>
                         </div>
                     @endif
                 @endif
 
                 @if($hasError)
                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i class="fa fa-fw fa-exclamation-circle text-red-500"></i>
+                        <i class="fa fa-fw fa-exclamation-circle text-red"></i>
                     </div>
                 @endif
             </div>
 
             @if($copyable)
-                <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-gray-300 text-sm font-medium rounded-r-md text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-hidden focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
+                <button data-clipboard="#{{ $name }}" type="button" class="-ml-px relative inline-flex items-center space-x-2 px-4 py-2 border border-line-strong text-sm font-medium rounded-r-md text-fg-muted bg-surface-2 hover:bg-surface-3 focus:outline-hidden focus:ring-1 focus:ring-brand-500 focus:border-brand-500">
                     <i class="fal fa-fw fa-copy"></i>
                 </button>
             @endif
         </div>
 
         @if(isset($slot) && ($slot instanceof Illuminate\Support\HtmlString || $slot instanceof Illuminate\View\ComponentSlot) && $slot->isNotEmpty())
-            <p class="mt-1 text-sm text-gray-500">{{ $slot }}</p>
+            <p class="mt-1 text-sm text-fg-subtle">{{ $slot }}</p>
         @endif
 
         @if($hasError)
-            <p class="mt-2 text-sm text-red-600">{{ $errorMessage }}</p>
+            <p class="mt-2 text-sm text-red">{{ $errorMessage }}</p>
         @endif
     </div>
 @endif

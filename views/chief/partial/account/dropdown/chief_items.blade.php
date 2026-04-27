@@ -1,6 +1,6 @@
 @php($_chief_apps = chief_apps())
 
-@if($_chief_apps !== null && $_chief_apps->isNotEmpty())
+@if(config('chief.shell.variant') !== 'modern' && $_chief_apps !== null && $_chief_apps->isNotEmpty())
     <div class="py-1" role="none">
         @foreach($_chief_apps->take(6) as $_chief_app)
             <x-chief::account.dropdown-link :href="$_chief_app['base_url']" :icon="$_chief_app['icon']" iconType="fad" :iconColor="$_chief_app['color']" target="_blank">

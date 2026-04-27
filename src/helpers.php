@@ -129,18 +129,14 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
     };
 
     $cacheKey = match ($authenticated) {
-        null  => 'chief:apps:all',
-        true  => 'chief:apps:auth',
-        false => 'chief:apps:noauth',
+        null  => 'chief:apps:v2:all',
+        true  => 'chief:apps:v2:auth',
+        false => 'chief:apps:v2:noauth',
     };
 
-    $apps = rescue(function () use ($cached, $authenticated, $retriever) {
+    $apps = rescue(function () use ($cached, $cacheKey, $retriever) {
         return $cached
-            ? cache()->remember(match ($authenticated) {
-                null  => 'chief:apps:all',
-                true  => 'chief:apps:auth',
-                false => 'chief:apps:noauth',
-            }, now()->addHours(12), $retriever)
+            ? cache()->remember($cacheKey, now()->addHours(12), $retriever)
             : $retriever();
     });
 

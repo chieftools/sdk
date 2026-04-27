@@ -6,10 +6,10 @@
 
 @php
     [$bgColor, $hoverBgColor, $headingColor, $textColor, $focusRingColor, $focusRingOffsetColor] = [
-        'info'    => ['bg-blue-50', 'hover:bg-blue-100', 'text-blue-800', 'text-blue-700', 'focus:ring-blue-600', 'focus:ring-offset-blue-50'],
-        'danger'  => ['bg-red-50', 'hover:bg-red-100', 'text-red-800', 'text-red-700', 'focus:ring-red-600', 'focus:ring-offset-red-50'],
-        'success' => ['bg-green-50', 'hover:bg-green-100', 'text-green-800', 'text-green-700', 'focus:ring-green-600', 'focus:ring-offset-green-50'],
-        'warning' => ['bg-yellow-50', 'hover:bg-yellow-100', 'text-yellow-800', 'text-yellow-700', 'focus:ring-yellow-600', 'focus:ring-offset-yellow-50'],
+        'info'    => ['bg-blue/10', 'hover:bg-blue/15', 'text-blue', 'text-blue', 'focus:ring-blue', 'focus:ring-offset-surface'],
+        'danger'  => ['bg-red/10', 'hover:bg-red/15', 'text-red', 'text-red', 'focus:ring-red', 'focus:ring-offset-surface'],
+        'success' => ['bg-green/10', 'hover:bg-green/15', 'text-green', 'text-green', 'focus:ring-green', 'focus:ring-offset-surface'],
+        'warning' => ['bg-amber/10', 'hover:bg-amber/15', 'text-amber', 'text-amber', 'focus:ring-amber', 'focus:ring-offset-surface'],
     ][$type];
 
     if ($icon === null) {

@@ -141,4 +141,49 @@ final class Chief
     {
         self::$authenticationExceptionJsonResponseHandler = $handler;
     }
+
+    /**
+     * Read the visitor's theme preference from the shell cookie.
+     *
+     * Returns one of `'light'`, `'dark'`, or `'system'`. When the cookie is
+     * missing or invalid, falls back to `config('chief.shell.theme', 'system')`
+     * — defaulting to `'system'` so first-time visitors get OS-respecting
+     * dark/light without an explicit pick.
+     */
+    public static function themePreference(): string
+    {
+        $cookieName = config('chief.shell.theme_cookie', 'chief_shell_theme');
+        $default    = config('chief.shell.theme', 'system');
+        $default    = in_array($default, ['light', 'dark', 'system'], true) ? $default : 'system';
+
+        $preference = request()->cookie($cookieName, $default);
+
+        return in_array($preference, ['light', 'dark', 'system'], true) ? $preference : $default;
+    }
+
+    /**
+     * Resolve the visitor's theme preference to a concrete `'light'` or `'dark'`.
+     *
+     * `'system'` resolves to `'light'` since OS preference cannot be detected
+     * server-side; the shell's bootstrap script flips the document theme on the
+     * client when needed.
+     */
+    public static function theme(): string
+    {
+        return self::themePreference() === 'dark' ? 'dark' : 'light';
+    }
+
+    /**
+     * Get the explicit theme choice, or `null` when the user wants OS-detected.
+     *
+     * Returns `'light'` or `'dark'` for explicit picks, or `null` when the
+     * preference is `'system'`. Useful for embeds and external widgets that
+     * auto-detect via `prefers-color-scheme` when no theme attr is supplied.
+     */
+    public static function explicitTheme(): ?string
+    {
+        $preference = self::themePreference();
+
+        return in_array($preference, ['light', 'dark'], true) ? $preference : null;
+    }
 }

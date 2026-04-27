@@ -1,4 +1,6 @@
 /.tmp
 /vendor
+yarn.lock
+node_modules
 composer.lock
 .php-cs-fixer.cache

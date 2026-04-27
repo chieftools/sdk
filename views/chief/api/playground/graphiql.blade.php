@@ -63,11 +63,10 @@
         import {explorerPlugin} from '@graphiql/plugin-explorer';
         import 'graphiql/setup-workers/esm.sh';
 
-        // Default the theme to 'light' to match the application style
-        const storedTheme = localStorage.getItem('graphiql:theme');
-        if (!storedTheme) {
-            localStorage.setItem('graphiql:theme', 'light');
-        }
+        // Match GraphiQL's theme to the Chief shell theme. The shell sets `data-theme`
+        // on <html> (resolving 'system' to a concrete value before paint), so reading
+        // it here keeps the playground in sync with the rest of the app.
+        localStorage.setItem('graphiql:theme', document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
 
         const fetcher = createGraphiQLFetcher({
             url:     '{{ route('api.web') }}',

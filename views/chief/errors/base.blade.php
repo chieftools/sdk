@@ -1,7 +1,7 @@
 @extendsfirst(['layout.base', 'chief::layout.html'], ['bodyClass' => $bodyClass ?? '', 'fullHeight' => true])
 
 @section('body')
-    <div class="min-h-full pt-16 pb-12 flex flex-col bg-white">
+    <div class="min-h-full pt-16 pb-12 flex flex-col bg-bg text-fg">
         <main class="flex grow flex-col justify-center max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-center text-brand">
                 @if(config('chief.brand.logoUrl'))

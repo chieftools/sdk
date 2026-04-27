@@ -1,4 +1,4 @@
-<p class="mt-2 text-center font-mono text-xs text-gray-500">
+<p class="mt-2 text-center font-mono text-xs text-fg-subtle">
     @if(Illuminate\Support\Str::startsWith(config('app.versionString'), date('Y') . '.'))
         &copy; {{ config('app.versionString') }} ({{ config('app.version') }})
     @else

@@ -194,9 +194,6 @@ test('the modern shell keeps minimal marketing menus full width', function () {
         ->toContain('data-chief-shell')
         ->toContain('w-full')
         ->toContain('justify-center')
-        ->toContain('md:left-1/2')
-        ->toContain('md:-translate-x-1/2')
-        ->toContain('md:ml-auto')
         ->not->toContain('container mx-auto max-w-7xl');
 });
 

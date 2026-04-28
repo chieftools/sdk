@@ -43,7 +43,7 @@ const modalHTML = `
                         <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 class="text-lg leading-6 font-medium text-fg">__TITLE__</h3>
                             <div class="mt-2">
-                                <p class="text-sm text-fg-subtle">__TEXT__</p>
+                                __BODY__
                             </div>
                         </div>
                     </div>
@@ -103,10 +103,12 @@ function classForIcon(color) {
 }
 
 export function confirmDialog(options) {
+    const body = options.html || `<p class="text-sm text-fg-subtle">${options.text ?? ''}</p>`;
+
     const dialog = htmlToElement(
         modalHTML
             .replace('__ICON__', `${options.icon || 'fa-exclamation-circle'} ${classForIcon(options.color)}`)
-            .replace('__TEXT__', options.text)
+            .replace('__BODY__', body)
             .replace('__TITLE__', options.title)
             .replace('__ICON_BG__', classForIconBackground(options.color))
             .replace('__CONFIRM_BTN_CLASS__', classesForConfirmButton(options.color))
@@ -141,6 +143,8 @@ export function confirmDialog(options) {
     document.body.appendChild(dialog);
 
     window.requestAnimationFrame(() => triggerEvent(dialog, 'open'));
+
+    return dialog;
 }
 
 document.querySelectorAll('[data-confirm]').forEach(node => {

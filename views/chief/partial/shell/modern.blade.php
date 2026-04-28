@@ -175,10 +175,31 @@
             @unless($menuItems->isEmpty())
                 <div class="hidden w-px self-center bg-line md:block"></div>
 
-                <div @class([
-                    'hidden min-w-0 flex-1 items-stretch overflow-x-auto md:flex',
-                    'justify-center md:absolute md:inset-y-0 md:left-1/2 md:w-max md:max-w-[calc(100%-2rem)] md:-translate-x-1/2 md:flex-none md:overflow-x-visible' => $fullwidthMenu,
-                ])>
+                <div
+                    x-data="{
+                        scrolledFromStart: false,
+                        scrolledToEnd: false,
+                        updateScrollState() {
+                            this.scrolledFromStart = this.$el.scrollLeft > 0;
+                            this.scrolledToEnd = Math.ceil(this.$el.scrollLeft + this.$el.clientWidth) < this.$el.scrollWidth;
+                        },
+                    }"
+                    x-init="
+                        updateScrollState();
+                        const observer = new ResizeObserver(() => updateScrollState());
+                        observer.observe($el);
+                        for (const child of $el.children) observer.observe(child);
+                    "
+                    x-on:scroll.passive="updateScrollState()"
+                    :style="{
+                        '--mask-start': scrolledFromStart ? '1.5rem' : '0px',
+                        '--mask-end': scrolledToEnd ? 'calc(100% - 1.5rem)' : '100%',
+                    }"
+                    @class([
+                        'hidden min-w-0 flex-1 items-stretch overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent_0,black_var(--mask-start,0px),black_var(--mask-end,100%),transparent_100%)] md:flex',
+                        'md:justify-center-safe' => $fullwidthMenu,
+                    ])
+                >
                     @foreach($menuItems as $item)
                         @include('chief::partial.shell.nav-item', ['item' => $item])
                     @endforeach
@@ -192,10 +213,7 @@
                 <span class="min-w-0 truncate text-sm font-medium text-fg">{{ $mobileTitle }}</span>
             </div>
 
-            <div @class([
-                'flex items-center gap-1 self-center',
-                'md:ml-auto' => $fullwidthMenu,
-            ])>
+            <div class="flex items-center gap-1 self-center">
                 @if(config('chief.shell.command_palette'))
                     <button type="button"
                             class="hidden h-8 min-w-52 cursor-pointer items-center gap-2 rounded-md border border-line bg-surface-2 px-2 text-xs text-fg-subtle transition hover:border-line-strong hover:bg-surface-3 hover:text-fg-muted lg:flex"

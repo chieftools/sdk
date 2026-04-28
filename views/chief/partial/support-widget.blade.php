@@ -1,4 +1,5 @@
-<div x-data="{ open: false, loadLazy: false, showBugReportBtn: false, statusTheme: null }"
+<div x-cloak
+     x-data="{ open: false, loadLazy: false, showBugReportBtn: false, statusTheme: null }"
      x-on:click.away="open = false"
      x-on:mouseover="loadLazy = true"
      x-init="$watch('loadLazy', () => {

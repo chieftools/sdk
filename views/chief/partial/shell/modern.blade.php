@@ -7,12 +7,12 @@
     $tool = array_merge([
         'id' => config('chief.id', 'chief'),
         'name' => config('app.title', config('app.name', 'Chief Tools')),
+        'href' => $logoRedirect ?? home(),
+        'icon' => config('chief.brand.icon'),
+        'color' => config('chief.brand.color'),
         'short' => config('app.name', config('app.title', 'Chief')),
-        'icon' => config('chief.brand.icon', 'fa-toolbox'),
-        'color' => config('chief.brand.color', '#34495e'),
         'logoUrl' => config('chief.brand.logoUrl'),
         'logoColorUrl' => config('chief.brand.logoColorUrl', config('chief.brand.logoUrl')),
-        'href' => $logoRedirect ?? home(),
     ], $shellTool ?? []);
 
     $toolLogoUrl = $tool['logoColorUrl'] ?? $tool['logoUrl'] ?? null;
@@ -87,7 +87,7 @@
         ->values();
 
     $activeMenuItem = $menuItems->first(fn (array $item): bool => $item['active'] ?? false);
-    $mobileTitle = $activeMenuItem['text'] ?? $activeMenuItem['label'] ?? $tool['name'];
+    $mobileTitle = $activeMenuItem['text'] ?? $activeMenuItem['label'] ?? $tool['title'] ?? $tool['name'];
     $mobileIcon = $activeMenuItem['icon'] ?? $tool['icon'];
     $allAppsUrl = function_exists('chief_base_url') ? chief_base_url(ref: config('chief.id') . '-app-switcher') : '#';
     $commandPaletteSearchUrl = \Illuminate\Support\Facades\Route::has('chief.shell.commands.search')
@@ -156,7 +156,7 @@
                             <i class="fad fa-fw {{ $tool['icon'] }} text-2xl"></i>
                         @endif
                     </span>
-                    <span class="hidden max-w-48 truncate text-sm font-semibold md:block">{{ $tool['name'] }}</span>
+                    <span class="hidden max-w-48 truncate text-sm font-semibold md:block">{{ $tool['title'] ?? $tool['name'] }}</span>
                 </a>
                 @if(config('chief.shell.app_switcher') && config('chief.shell.command_palette'))
                     <button type="button"

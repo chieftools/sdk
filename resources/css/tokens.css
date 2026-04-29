@@ -12,7 +12,7 @@
 :root {
     color-scheme: light;
 
-    --bg: oklch(98.6% 0.003 250);
+    --bg: oklch(96.8% 0.004 250);
     --surface: oklch(100% 0 0);
     --surface-2: oklch(97.2% 0.004 250);
     --surface-3: oklch(94.8% 0.006 250);

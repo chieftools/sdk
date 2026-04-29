@@ -30,12 +30,6 @@
     --shadow-md: 0 12px 24px oklch(20% 0.03 250 / 0.12);
     --shadow-lg: 0 24px 48px oklch(20% 0.03 250 / 0.16);
 
-    --radius-sm: 6px;
-    --radius: 8px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
-    --radius-xl: 20px;
-
     --green: oklch(64% 0.15 155);
     --red: oklch(60% 0.2 25);
     --amber: oklch(72% 0.16 75);

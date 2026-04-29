@@ -469,7 +469,7 @@
                                 @if($app['logoUrl'])
                                     <img src="{{ $app['logoUrl'] }}" alt="" class="max-h-6 max-w-6">
                                 @else
-                                    <i class="fad fa-fw {{ $app['icon'] }} text-sm"></i>
+                                    <i class="fad fa-fw {{ $app['icon'] }} text-xl"></i>
                                 @endif
                             </span>
                             <span class="min-w-0 flex-1">

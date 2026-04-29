@@ -28,19 +28,61 @@
      `clipboard` ships only `dist/clipboard.js` (no `module` field) and the
      browser cannot synthesize a default export from raw CommonJS.
 
+   - Copies the shared Sentry replay worker from the SDK package to
+     `<projectRoot>/public/js/sentry/replay-worker.min.js` on every
+     dev server start and production build, so apps don't need to
+     vendor the file themselves. The path matches the `workerUrl`
+     configured in `@chieftools/sdk/sentry`.
+
   If the SDK picks up new CJS-only peer deps in the future, extend the
   `include` list here so every consuming app inherits the fix.
 */
+import {copyFileSync, existsSync, mkdirSync, statSync} from 'node:fs';
+import {dirname, join, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const sdkRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const replayWorkerSource = join(sdkRoot, 'files', 'sentry', 'replay-worker.min.js');
+const replayWorkerRelativeDest = join('public', 'js', 'sentry', 'replay-worker.min.js');
+
+function syncReplayWorker(projectRoot) {
+    if (!existsSync(replayWorkerSource)) {
+        return;
+    }
+
+    const dest = join(projectRoot, replayWorkerRelativeDest);
+
+    if (existsSync(dest)) {
+        const sourceStat = statSync(replayWorkerSource);
+        const destStat = statSync(dest);
+
+        if (sourceStat.size === destStat.size && sourceStat.mtimeMs <= destStat.mtimeMs) {
+            return;
+        }
+    }
+
+    mkdirSync(dirname(dest), {recursive: true});
+    copyFileSync(replayWorkerSource, dest);
+}
+
 export default function chiefSdk() {
+    let projectRoot = process.cwd();
+
     return {
         name: '@chieftools/sdk:vite',
-        config() {
+        config(_, env) {
             return {
                 optimizeDeps: {
                     exclude: ['@chieftools/sdk'],
                     include: ['clipboard'],
                 },
             };
+        },
+        configResolved(resolvedConfig) {
+            projectRoot = resolvedConfig.root;
+        },
+        buildStart() {
+            syncReplayWorker(projectRoot);
         },
     };
 }

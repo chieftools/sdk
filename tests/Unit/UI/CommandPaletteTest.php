@@ -340,7 +340,7 @@ test('command palette manager ignores short unscoped terms', function () {
 
 test('command palette search requires authentication', function () {
     config([
-        'app.key' => 'base64:MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=',
+        'app.key'                               => 'base64:MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=',
         'chief.shell.command_palette_providers' => [
             new class implements Provider
             {

@@ -47,7 +47,7 @@ test('the modern shell renders configured menu and app switcher data', function 
         'name'  => 'Alex',
         'email' => 'alex@example.com',
     ]));
-    request()->attributes->set('team_hint', (new Team())->forceFill([
+    request()->attributes->set('team_hint', (new Team)->forceFill([
         'name' => 'Current team',
         'slug' => 'current',
     ]));
@@ -238,7 +238,7 @@ test('the modern shell can hide the account menu theme selector', function () {
         'name'  => 'Alex',
         'email' => 'alex@example.com',
     ]));
-    request()->attributes->set('team_hint', (new Team())->forceFill([
+    request()->attributes->set('team_hint', (new Team)->forceFill([
         'name' => 'Current team',
         'slug' => 'current',
     ]));

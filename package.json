@@ -12,6 +12,7 @@
         "./confirm": "./resources/js/confirm.js",
         "./dom": "./resources/js/dom.js",
         "./livewire": "./resources/js/livewire.js",
+        "./modal": "./resources/js/modal.js",
         "./tooltips": "./resources/js/tooltips.js",
         "./shell": "./resources/js/shell/index.js",
         "./tokens.css": "./resources/css/tokens.css",
@@ -21,6 +22,7 @@
         "./resources/js/clipboard.js",
         "./resources/js/confirm.js",
         "./resources/js/livewire.js",
+        "./resources/js/modal.js",
         "./resources/js/tooltips.js"
     ],
     "devDependencies": {

@@ -1,4 +1,5 @@
 const registeredAlpineInstances = new WeakSet();
+const shellMenuCenteredClasses = ['md:absolute', 'md:inset-y-0', 'md:left-1/2', 'md:w-max', 'md:-translate-x-1/2', 'md:flex-none', 'md:justify-center-safe'];
 
 function normalize(value) {
     return String(value || '')
@@ -39,6 +40,12 @@ function chiefShell() {
         systemThemeQuery: null,
         systemThemeHandler: null,
         shellElement: null,
+        shellChromeObserver: null,
+        shellResizeHandler: null,
+        shellLayoutFrame: null,
+        shellMenuCentered: false,
+        menuScrolledFromStart: false,
+        menuScrolledToEnd: false,
 
         init() {
             this.shellElement = this.$el;
@@ -53,10 +60,20 @@ function chiefShell() {
             };
             this.systemThemeQuery.addEventListener?.('change', this.systemThemeHandler);
             this.applyTheme();
+            this.$nextTick(() => this.watchShellChrome());
         },
 
         destroy() {
             this.systemThemeQuery?.removeEventListener?.('change', this.systemThemeHandler);
+            this.shellChromeObserver?.disconnect();
+
+            if (this.shellResizeHandler) {
+                window.removeEventListener('resize', this.shellResizeHandler);
+            }
+
+            if (this.shellLayoutFrame) {
+                cancelAnimationFrame(this.shellLayoutFrame);
+            }
         },
 
         resolvedTheme() {
@@ -111,6 +128,86 @@ function chiefShell() {
             }
 
             return 'text-fg-subtle hover:text-fg';
+        },
+
+        watchShellChrome() {
+            const elements = [this.$refs.shellHeader, this.$refs.shellLeft, this.$refs.shellActions].filter(Boolean);
+
+            if (!elements.length || typeof ResizeObserver === 'undefined') {
+                this.scheduleShellMenuLayout();
+                return;
+            }
+
+            this.shellResizeHandler = () => this.scheduleShellMenuLayout();
+            this.shellChromeObserver = new ResizeObserver(this.shellResizeHandler);
+            elements.forEach(element => this.shellChromeObserver.observe(element));
+            window.addEventListener('resize', this.shellResizeHandler, {passive: true});
+            document.fonts?.ready?.then(() => this.scheduleShellMenuLayout());
+            this.scheduleShellMenuLayout();
+        },
+
+        scheduleShellMenuLayout() {
+            if (this.shellLayoutFrame) {
+                return;
+            }
+
+            this.shellLayoutFrame = requestAnimationFrame(() => {
+                this.shellLayoutFrame = null;
+                this.updateShellMenuLayout();
+                this.$nextTick(() => this.updateShellMenuScrollState());
+            });
+        },
+
+        updateShellMenuLayout() {
+            const header = this.$refs.shellHeader;
+            const left = this.$refs.shellLeft;
+            const menu = this.$refs.shellMenu;
+            const right = this.$refs.shellActions;
+
+            if (!header || !left || !menu || !right) {
+                this.shellMenuCentered = false;
+                return;
+            }
+
+            if (menu.dataset.shellMenuAutoCenter !== 'true') {
+                this.shellMenuCentered = false;
+                this.applyShellMenuCentering(false);
+                return;
+            }
+
+            const headerRect = header.getBoundingClientRect();
+            const leftRect = left.getBoundingClientRect();
+            const rightRect = right.getBoundingClientRect();
+            const center = headerRect.left + headerRect.width / 2;
+            const gutter = 16;
+            const centeredWidth = Math.max(0, Math.min(center - leftRect.right - gutter, rightRect.left - center - gutter) * 2);
+            const menuItemsWidth = Array.from(menu.children).reduce((width, item) => width + item.getBoundingClientRect().width, 0);
+
+            this.shellMenuCentered = menuItemsWidth <= Math.floor(centeredWidth);
+            this.applyShellMenuCentering(this.shellMenuCentered);
+        },
+
+        applyShellMenuCentering(centered) {
+            const menu = this.$refs.shellMenu;
+
+            if (!menu) {
+                return;
+            }
+
+            shellMenuCenteredClasses.forEach(className => menu.classList.toggle(className, centered));
+        },
+
+        updateShellMenuScrollState() {
+            const menu = this.$refs.shellMenu;
+
+            if (!menu) {
+                this.menuScrolledFromStart = false;
+                this.menuScrolledToEnd = false;
+                return;
+            }
+
+            this.menuScrolledFromStart = menu.scrollLeft > 0;
+            this.menuScrolledToEnd = Math.ceil(menu.scrollLeft + menu.clientWidth) < menu.scrollWidth;
         },
 
         openPalette(query = '') {

@@ -163,6 +163,16 @@ button:not(:disabled),
 }
 
 /*
+  Tailwind v4's preflight resets `<hr>` to `color: inherit; border-top-width: 1px`,
+  which means the rule color comes from `currentColor` — i.e. the body text color.
+  In light mode that's near-black and in dark mode near-white, both far too strong.
+  Anchor it to `--line` instead so it matches every other 1px border in the system.
+*/
+hr {
+    border-color: var(--line);
+}
+
+/*
   Tippy.js popover overrides — by default tippy paints `.tippy-box` with a
   hardcoded `#333` background which blends against `--surface` in dark mode.
   Inverting against `--fg` keeps tooltips legible (dark on light, light on dark).

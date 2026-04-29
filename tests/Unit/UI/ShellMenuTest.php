@@ -1,6 +1,7 @@
 <?php
 
 use Tests\TestCase;
+use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,15 @@ test('the modern shell renders configured menu and app switcher data', function 
         'chief.brand.icon'    => 'fa-globe',
         'chief.brand.color'   => '#3498db',
     ]);
+
+    auth()->setUser(new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]));
+    request()->attributes->set('team_hint', (new Team)->forceFill([
+        'name' => 'Current team',
+        'slug' => 'current',
+    ]));
 
     $html = view('chief::partial.menu', [
         'logoRedirect' => '/',
@@ -137,6 +147,26 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->and(substr_count($html, 'data-shell-title="profile"'))->toBe(1);
 });
 
+test('the modern shell does not expose dynamic command search to guests', function () {
+    if (!Route::has('chief.shell.commands.search')) {
+        Route::get('chief/ui/commands/search', static fn (): array => [])->name('chief.shell.commands.search');
+    }
+
+    config([
+        'chief.shell.variant' => 'modern',
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-chief-shell')
+        ->not->toContain('data-command-palette-search-url="')
+        ->not->toContain('chief/ui/commands/search');
+});
+
 test('the modern shell renders the saved dark theme before javascript hydration', function () {
     request()->cookies->set('chief_shell_theme', 'dark');
 
@@ -207,6 +237,10 @@ test('the modern shell can hide the account menu theme selector', function () {
     auth()->setUser(new User([
         'name'  => 'Alex',
         'email' => 'alex@example.com',
+    ]));
+    request()->attributes->set('team_hint', (new Team)->forceFill([
+        'name' => 'Current team',
+        'slug' => 'current',
     ]));
 
     $html = view('chief::partial.menu', [

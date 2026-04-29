@@ -337,3 +337,36 @@ test('command palette manager ignores short unscoped terms', function () {
 
     expect(app(Manager::class)->search(new Query('d', 8)))->toHaveCount(0);
 });
+
+test('command palette search requires authentication', function () {
+    config([
+        'app.key' => 'base64:MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=',
+        'chief.shell.command_palette_providers' => [
+            new class implements Provider
+            {
+                public function key(): string
+                {
+                    return 'domainchief.domains';
+                }
+
+                public function label(): string
+                {
+                    return 'Domains';
+                }
+
+                public function scopes(): array
+                {
+                    return ['Domains'];
+                }
+
+                public function search(Query $query): iterable
+                {
+                    throw new RuntimeException('Guest searches should not reach dynamic command providers.');
+                }
+            },
+        ],
+    ]);
+
+    $this->getJson('/api/chief/ui/commands/search?q=domains')
+        ->assertUnauthorized();
+});

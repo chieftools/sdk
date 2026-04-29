@@ -90,7 +90,7 @@
     $mobileTitle = $activeMenuItem['text'] ?? $activeMenuItem['label'] ?? $tool['title'] ?? $tool['name'];
     $mobileIcon = $activeMenuItem['icon'] ?? $tool['icon'];
     $allAppsUrl = function_exists('chief_base_url') ? chief_base_url(ref: config('chief.id') . '-app-switcher') : '#';
-    $commandPaletteSearchUrl = \Illuminate\Support\Facades\Route::has('chief.shell.commands.search')
+    $commandPaletteSearchUrl = auth()->check() && \Illuminate\Support\Facades\Route::has('chief.shell.commands.search')
         ? route('chief.shell.commands.search', [], false)
         : null;
     $themeUpdateUrl = \Illuminate\Support\Facades\Route::has('chief.shell.theme')

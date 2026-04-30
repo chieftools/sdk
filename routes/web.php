@@ -4,6 +4,8 @@ use ChiefTools\SDK\Http\Controllers;
 use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Http\Middleware\AuthenticateChief;
 
+Route::get('chief/navigate-track.css', Controllers\Shell\NavigateTrack::class)->name('chief.navigate-track');
+
 Route::redirect('.well-known/security.txt', chief_site_url('.well-known/security.txt'))->name('well-known.security');
 Route::redirect('.well-known/change-password', chief_base_url('account/password'))->name('well-known.change-password');
 
@@ -76,7 +78,6 @@ Route::group(config('chief.routes.web'), function () {
 
                 Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
                 Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');
-                Route::post('token/{id}/delete', [Controllers\API\Tokens::class, 'delete'])->name('tokens.delete');
             });
         }
     }

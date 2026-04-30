@@ -62,6 +62,8 @@
         <link rel="icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.svg') }}" type="image/svg+xml">
         <link rel="alternate icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.ico') }}" sizes="32x32">
 
+        <link rel="stylesheet" href="{{ url('/chief/navigate-track.css') }}?id={{ rawurlencode((string)config('app.version', '@dev')) }}" data-navigate-track>
+
         @hasSection('styles')
             @yield('styles')
         @else

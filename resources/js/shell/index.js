@@ -1,3 +1,4 @@
+let registrationBridgeRegistered = false;
 const registeredAlpineInstances = new WeakSet();
 const shellMenuCenteredClasses = ['md:absolute', 'md:inset-y-0', 'md:left-1/2', 'md:w-max', 'md:-translate-x-1/2', 'md:flex-none', 'md:justify-center-safe'];
 
@@ -19,6 +20,25 @@ function commandParts(query) {
         scope: scoped ? parts.slice(0, -1).filter(Boolean).join(' > ') : '',
         term: scoped ? parts.at(-1) : query,
     };
+}
+
+function currentAlpine() {
+    if (typeof window === 'undefined') {
+        return null;
+    }
+
+    return window.Alpine || null;
+}
+
+function registerChiefShellBridge() {
+    if (registrationBridgeRegistered || typeof document === 'undefined') {
+        return;
+    }
+
+    document.addEventListener('alpine:init', () => registerChiefShell(currentAlpine()));
+    document.addEventListener('livewire:navigating', () => registerChiefShell(currentAlpine()));
+
+    registrationBridgeRegistered = true;
 }
 
 function chiefShell() {
@@ -516,13 +536,17 @@ function chiefShell() {
     };
 }
 
-export function registerChiefShell(Alpine) {
+export function registerChiefShell(Alpine = currentAlpine()) {
+    registerChiefShellBridge();
+
     if (!Alpine || registeredAlpineInstances.has(Alpine)) {
-        return;
+        return false;
     }
 
     Alpine.data('chiefShell', chiefShell);
     registeredAlpineInstances.add(Alpine);
+
+    return true;
 }
 
 export {chiefShell};

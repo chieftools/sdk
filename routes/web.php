@@ -78,7 +78,6 @@ Route::group(config('chief.routes.web'), function () {
 
                 Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
                 Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');
-                Route::post('token/{id}/delete', [Controllers\API\Tokens::class, 'delete'])->name('tokens.delete');
             });
         }
     }

@@ -71,6 +71,7 @@ test('the modern shell renders configured menu and app switcher data', function 
                 'id'           => 'accountchief',
                 'name'         => 'Account Chief',
                 'icon'         => 'fa-toolbox',
+                'brandIcon'    => 'fa-github',
                 'color'        => '#34495e',
                 'href'         => 'https://account.chief.app',
                 'url_template' => 'https://account.chief.app/team/{team}',
@@ -117,6 +118,7 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->toContain('Switch to Acme team')
         ->toContain('Domain Chief &gt; Teams &gt; Acme')
         ->toContain('Account Chief')
+        ->toContain('fa-github')
         ->toContain('Chief Tools &gt; Account Chief')
         ->toContain('x-data="chiefShell"')
         ->toContain('data-theme-update-url="')
@@ -145,6 +147,28 @@ test('the modern shell renders configured menu and app switcher data', function 
 
     expect(substr_count($html, 'data-shell-title="dashboard"'))->toBe(1)
         ->and(substr_count($html, 'data-shell-title="profile"'))->toBe(1);
+});
+
+test('the modern shell renders the configured brand icon when no logo is configured', function () {
+    config([
+        'chief.id'              => 'billdo',
+        'chief.shell.variant'   => 'modern',
+        'chief.brand.icon'      => 'fa-money-bill',
+        'chief.brand.brandIcon' => 'fa-digital-ocean',
+        'chief.brand.color'     => '#3d82f7',
+        'chief.brand.logoUrl'   => null,
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'shellTool'    => [
+            'name' => 'Billdo',
+        ],
+    ])->render();
+
+    expect($html)
+        ->toContain('fa-money-bill')
+        ->toContain('fa-digital-ocean');
 });
 
 test('the modern shell does not expose dynamic command search to guests', function () {

@@ -9,6 +9,7 @@
         'name' => config('app.title', config('app.name', 'Chief Tools')),
         'href' => $logoRedirect ?? home(),
         'icon' => config('chief.brand.icon'),
+        'brandIcon' => config('chief.brand.brandIcon'),
         'color' => config('chief.brand.color'),
         'short' => config('app.name', config('app.title', 'Chief')),
         'logoUrl' => config('chief.brand.logoUrl'),
@@ -60,6 +61,7 @@
                 'name' => data_get($app, 'name') ?? data_get($app, 'id') ?? 'Chief Tool',
                 'short' => data_get($app, 'short') ?? data_get($app, 'name') ?? data_get($app, 'id') ?? 'Tool',
                 'icon' => data_get($app, 'icon') ?? 'fa-toolbox',
+                'brandIcon' => data_get($app, 'brandIcon') ?? data_get($app, 'brand_icon'),
                 'color' => data_get($app, 'color') ?? '#34495e',
                 'href' => $resolveAppUrl($app),
                 'logoUrl' => data_get($app, 'logo.white') ?? data_get($app, 'logoUrl') ?? data_get($app, 'logo.color') ?? null,
@@ -146,13 +148,20 @@
                 <div class="relative flex items-center">
                     <a href="{{ $tool['href'] }}"
                        @class([
-                           'text flex h-10 items-center gap-2 px-1 pr-2 text-fg transition hover:bg-surface-2',
+                           'text flex h-10 items-center px-1 pr-2 text-fg transition hover:bg-surface-2',
+                           'gap-3' => empty($toolLogoUrl) && !empty($tool['brandIcon']),
+                           'gap-2' => !empty($toolLogoUrl) || empty($tool['brandIcon']),
                            'rounded-l-lg' => config('chief.shell.app_switcher') && config('chief.shell.command_palette'),
                            'rounded-lg' => !(config('chief.shell.app_switcher') && config('chief.shell.command_palette')),
                        ])>
                         <span class="grid size-9 shrink-0 place-items-center rounded-md text-accent">
                             @if(!empty($toolLogoUrl))
                                 <img src="{{ $toolLogoUrl }}" alt="" class="max-h-8 max-w-8">
+                            @elseif(!empty($tool['brandIcon']))
+                                <span class="fa-stack text-[1rem] leading-none">
+                                    <i class="fad {{ $tool['icon'] }} fa-stack-2x"></i>
+                                    <i class="fab {{ $tool['brandIcon'] }} fa-stack-1x" style="font-size: 8px;"></i>
+                                </span>
                             @else
                                 <i class="fad fa-fw {{ $tool['icon'] }} text-2xl"></i>
                             @endif
@@ -463,6 +472,11 @@
                             <span class="grid size-8 place-items-center rounded-md text-white" style="background-color: {{ $app['color'] }};">
                                 @if($app['logoUrl'])
                                     <img src="{{ $app['logoUrl'] }}" alt="" class="max-h-6 max-w-6">
+                                @elseif($app['brandIcon'])
+                                    <span class="fa-stack text-[1rem] leading-none">
+                                        <i class="fad {{ $app['icon'] }} fa-stack-2x"></i>
+                                        <i class="fab {{ $app['brandIcon'] }} fa-stack-1x" style="font-size: 8px;"></i>
+                                    </span>
                                 @else
                                     <i class="fad fa-fw {{ $app['icon'] }} text-xl"></i>
                                 @endif

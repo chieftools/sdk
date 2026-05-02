@@ -37,10 +37,11 @@ test('the modern shell renders configured menu and app switcher data', function 
     }
 
     config([
-        'chief.id'            => 'domainchief',
-        'chief.shell.variant' => 'modern',
-        'chief.brand.icon'    => 'fa-globe',
-        'chief.brand.color'   => '#3498db',
+        'chief.id'                              => 'domainchief',
+        'chief.shell.variant'                   => 'modern',
+        'chief.shell.command_palette_providers' => ['domainchief.domains'],
+        'chief.brand.icon'                      => 'fa-globe',
+        'chief.brand.color'                     => '#3498db',
     ]);
 
     auth()->setUser(new User([
@@ -149,6 +150,33 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->and(substr_count($html, 'data-shell-title="profile"'))->toBe(1);
 });
 
+test('the modern shell does not render a dynamic command search url without providers', function () {
+    if (!Route::has('chief.shell.commands.search')) {
+        Route::get('chief/ui/commands/search', static fn (): array => [])->name('chief.shell.commands.search');
+    }
+
+    config([
+        'chief.teams'                            => false,
+        'chief.shell.variant'                    => 'modern',
+        'chief.shell.command_palette_providers'  => [],
+    ]);
+
+    auth()->setUser(new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]));
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-chief-shell')
+        ->not->toContain('data-command-palette-search-url="')
+        ->not->toContain('chief/ui/commands/search');
+});
+
 test('the modern shell renders the configured brand icon when no logo is configured', function () {
     config([
         'chief.id'              => 'billdo',
@@ -189,6 +217,70 @@ test('the modern shell does not expose dynamic command search to guests', functi
         ->toContain('data-chief-shell')
         ->not->toContain('data-command-palette-search-url="')
         ->not->toContain('chief/ui/commands/search');
+});
+
+test('the modern shell renders a guest theme selector when theme route exists', function () {
+    if (!Route::has('chief.shell.theme')) {
+        Route::get('chief/ui/theme/{theme}', static fn (): array => [])->name('chief.shell.theme');
+    }
+
+    config([
+        'chief.shell.variant'        => 'modern',
+        'chief.shell.theme_selector' => true,
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [],
+    ])->render();
+
+    expect($html)
+        ->toContain('aria-label="Theme"')
+        ->toContain('themeOpen = !themeOpen')
+        ->toContain("resolvedTheme() === 'dark' ? 'fa-moon' : 'fa-sun-bright'")
+        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'light' }\"")
+        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'dark' }\"")
+        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'system' }\"")
+        ->toContain('Switch to light theme')
+        ->toContain('Switch to dark theme')
+        ->toContain('Use system theme')
+        ->toContain("theme !== 'light'")
+        ->toContain("theme !== 'dark'")
+        ->toContain("theme !== 'system'")
+        ->toContain("setTheme('light'); themeOpen = false")
+        ->toContain("setTheme('dark'); themeOpen = false")
+        ->toContain("setTheme('system'); themeOpen = false")
+        ->toContain('chief/ui/theme/__theme__')
+        ->not->toContain("theme === 'system' ? 'fa-display'");
+});
+
+test('the shell theme route stores guest preferences without authentication', function () {
+    $this->getJson('/api/chief/ui/theme/dark')
+        ->assertOk()
+        ->assertJson(['theme' => 'dark'])
+        ->assertPlainCookie('chief_shell_theme', 'dark');
+});
+
+test('the modern shell can hide the guest theme selector', function () {
+    if (!Route::has('chief.shell.theme')) {
+        Route::get('chief/ui/theme/{theme}', static fn (): array => [])->name('chief.shell.theme');
+    }
+
+    config([
+        'chief.shell.variant'        => 'modern',
+        'chief.shell.theme_selector' => false,
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-chief-shell')
+        ->not->toContain('aria-label="Theme"')
+        ->not->toContain('Switch to light theme')
+        ->not->toContain('themeOpen = !themeOpen');
 });
 
 test('the modern shell renders the saved dark theme before javascript hydration', function () {

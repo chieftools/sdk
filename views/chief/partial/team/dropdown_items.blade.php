@@ -6,11 +6,7 @@
         $_current_team = auth()->user()->team;
     @endphp
 
-    <div class="px-4 py-3" role="none">
-        <div class="text-[10px] font-semibold uppercase text-fg-faint">Team</div>
-    </div>
-
-    <div class="px-1.5 pb-1.5" role="none">
+    <div class="p-1.5" role="none">
         @foreach($_chief_teams as $_chief_team)
             @php($_active_team = $_chief_team->is($_current_team))
 

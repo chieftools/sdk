@@ -46,6 +46,7 @@ function chiefShell() {
         menuOpen: false,
         accountOpen: false,
         teamOpen: false,
+        themeOpen: false,
         paletteOpen: false,
         paletteQuery: '',
         activeIndex: 0,
@@ -236,6 +237,7 @@ function chiefShell() {
             this.menuOpen = false;
             this.accountOpen = false;
             this.teamOpen = false;
+            this.themeOpen = false;
             this.paletteOpen = true;
             this.$nextTick(() => {
                 this.$refs.paletteSearch?.focus();
@@ -286,6 +288,7 @@ function chiefShell() {
         closePanels() {
             this.accountOpen = false;
             this.teamOpen = false;
+            this.themeOpen = false;
             this.closePalette();
         },
 

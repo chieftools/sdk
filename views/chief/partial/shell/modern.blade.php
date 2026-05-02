@@ -87,12 +87,35 @@
         ->reject(static fn (array $command): bool => in_array($commandKey($command['category'], $command['label']), $menuCommandKeys, true))
         ->unique(static fn (array $command): string => $commandKey($command['category'], $command['label']))
         ->values();
+    $themeCommands = collect([
+        [
+            'theme' => 'light',
+            'label' => 'Switch to light theme',
+            'icon' => 'fad fa-sun-bright',
+            'description' => 'Use the light appearance',
+        ],
+        [
+            'theme' => 'dark',
+            'label' => 'Switch to dark theme',
+            'icon' => 'fad fa-moon',
+            'description' => 'Use the dark appearance',
+        ],
+        [
+            'theme' => 'system',
+            'label' => 'Use system theme',
+            'icon' => 'fad fa-display',
+            'description' => 'Follow the device appearance',
+        ],
+    ]);
 
     $activeMenuItem = $menuItems->first(fn (array $item): bool => $item['active'] ?? false);
     $mobileTitle = $activeMenuItem['text'] ?? $activeMenuItem['label'] ?? $tool['title'] ?? $tool['name'];
     $mobileIcon = $activeMenuItem['icon'] ?? $tool['icon'];
     $allAppsUrl = function_exists('chief_base_url') ? chief_base_url(ref: config('chief.id') . '-app-switcher') : '#';
-    $commandPaletteSearchUrl = auth()->check() && \Illuminate\Support\Facades\Route::has('chief.shell.commands.search')
+    $hasDynamicCommandProviders = collect(config('chief.shell.command_palette_providers', []))
+        ->filter()
+        ->isNotEmpty();
+    $commandPaletteSearchUrl = $hasDynamicCommandProviders && auth()->check() && \Illuminate\Support\Facades\Route::has('chief.shell.commands.search')
         ? route('chief.shell.commands.search', [], false)
         : null;
     $themeUpdateUrl = \Illuminate\Support\Facades\Route::has('chief.shell.theme')
@@ -136,7 +159,7 @@
         ])>
             <button type="button"
                     class="grid size-9 cursor-pointer place-items-center self-center rounded-md text-fg-subtle transition hover:bg-surface-2 hover:text-fg md:hidden"
-                    x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; closePalette()"
+                    x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; themeOpen = false; closePalette()"
                     aria-controls="chief-shell-mobile-menu"
                     x-bind:aria-expanded="menuOpen.toString()">
                 <span class="sr-only">Toggle main menu</span>
@@ -235,12 +258,68 @@
                     </button>
                 @endif
 
+                @guest
+                    @if(config('chief.shell.theme_selector', true) && $themeUpdateUrl)
+                        <div class="relative">
+                            <button type="button"
+                                    class="relative grid size-9 cursor-pointer place-items-center rounded-lg text-fg-subtle transition hover:bg-surface-2 hover:text-fg"
+                                    x-on:click="themeOpen = !themeOpen; menuOpen = false; accountOpen = false; teamOpen = false; closePalette()"
+                                    x-bind:aria-expanded="themeOpen.toString()"
+                                    aria-haspopup="menu"
+                                    aria-label="Theme">
+                                <i class="fad fa-fw text-sm" x-bind:class="resolvedTheme() === 'dark' ? 'fa-moon' : 'fa-sun-bright'"></i>
+                            </button>
+
+                            <div x-cloak
+                                 x-show="themeOpen"
+                                 x-on:click.away="themeOpen = false"
+                                 x-transition.origin.top.right
+                                 class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
+                                 role="menu"
+                                 aria-label="Theme">
+                                <div class="p-1.5" role="none">
+                                    <button type="button"
+                                            class="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg"
+                                            x-bind:class="{ 'bg-surface-2 text-fg': theme === 'light' }"
+                                            x-on:click="setTheme('light'); themeOpen = false">
+                                        <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                            <i class="fad fa-fw fa-sun-bright text-[11px]"></i>
+                                        </span>
+                                        <span class="min-w-0 flex-1 truncate">Light</span>
+                                        <i x-show="theme === 'light'" class="fa fa-fw fa-check text-xs text-accent"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg"
+                                            x-bind:class="{ 'bg-surface-2 text-fg': theme === 'dark' }"
+                                            x-on:click="setTheme('dark'); themeOpen = false">
+                                        <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                            <i class="fad fa-fw fa-moon text-[11px]"></i>
+                                        </span>
+                                        <span class="min-w-0 flex-1 truncate">Dark</span>
+                                        <i x-show="theme === 'dark'" class="fa fa-fw fa-check text-xs text-accent"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg"
+                                            x-bind:class="{ 'bg-surface-2 text-fg': theme === 'system' }"
+                                            x-on:click="setTheme('system'); themeOpen = false">
+                                        <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                            <i class="fad fa-fw fa-display text-[11px]"></i>
+                                        </span>
+                                        <span class="min-w-0 flex-1 truncate">System</span>
+                                        <i x-show="theme === 'system'" class="fa fa-fw fa-check text-xs text-accent"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endguest
+
                 @auth
                     @if(config('chief.teams') && auth()->user()->team)
                         <div class="relative">
                             <button type="button"
                                     class="relative grid size-9 cursor-pointer place-items-center rounded-lg transition hover:bg-surface-2"
-                                    x-on:click="teamOpen = !teamOpen; accountOpen = false; menuOpen = false; closePalette()"
+                                    x-on:click="teamOpen = !teamOpen; accountOpen = false; themeOpen = false; menuOpen = false; closePalette()"
                                     x-bind:aria-expanded="teamOpen.toString()"
                                     aria-haspopup="menu">
                                 <span class="sr-only">Open team menu</span>
@@ -262,7 +341,7 @@
                     <div class="relative">
                         <button type="button"
                                 class="relative grid size-9 cursor-pointer place-items-center rounded-lg transition hover:bg-surface-2"
-                                x-on:click="accountOpen = !accountOpen; teamOpen = false; menuOpen = false; closePalette()"
+                                x-on:click="accountOpen = !accountOpen; teamOpen = false; themeOpen = false; menuOpen = false; closePalette()"
                                 x-bind:aria-expanded="accountOpen.toString()"
                                 aria-haspopup="menu">
                             <span class="sr-only">Open account menu</span>
@@ -455,6 +534,30 @@
                             <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint group-hover:text-fg-subtle"></i>
                         </a>
                     @endforeach
+
+                    @if(config('chief.shell.theme_selector', true))
+                        @foreach($themeCommands as $themeCommand)
+                            <button type="button"
+                                    class="group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                                    data-shell-command
+                                    data-shell-category="Theme"
+                                    data-shell-title="{{ strtolower($themeCommand['label']) }}"
+                                    data-shell-body="{{ strtolower($themeCommand['description']) }}"
+                                    x-show="theme !== @js($themeCommand['theme']) && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                                    x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
+                                    x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                                    x-on:click="setTheme(@js($themeCommand['theme'])); closePalette()">
+                                <span class="grid size-7 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                    <i class="fa-fw {{ $themeCommand['icon'] }} text-sm"></i>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-sm font-medium">{{ $themeCommand['label'] }}</span>
+                                    <span class="block truncate text-xs text-fg-subtle">Theme &gt; {{ $themeCommand['description'] }}</span>
+                                </span>
+                                <i class="fa fa-fw fa-check text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                            </button>
+                        @endforeach
+                    @endif
 
                     @foreach($apps as $app)
                         <a href="{{ $app['href'] }}"

@@ -446,6 +446,88 @@ class Client
     }
 
     /**
+     * Create or retrieve a checkout session for an app-managed payment.
+     *
+     * @param string                                                          $teamSlug
+     * @param string                                                          $reference
+     * @param array<int, array{id: string, description: string, amount: int}> $lines
+     * @param string                                                          $successUrl
+     * @param string                                                          $cancelUrl
+     *
+     * @return array{id: string, stripe_id: string|null, reference: string, status: 'open'|'complete'|'expired', url: string|null, total: int, currency: string, expires_at: string|null}
+     */
+    public function createCheckoutSession(string $teamSlug, string $reference, array $lines, string $successUrl, string $cancelUrl): array
+    {
+        $response = $this->http->put("/api/team/{$teamSlug}/billing/checkout-session/{$reference}", [
+            'json'    => [
+                'lines'       => $lines,
+                'success_url' => $successUrl,
+                'cancel_url'  => $cancelUrl,
+            ],
+            'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not create checkout session.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Retrieve the current status for an app-managed checkout session.
+     *
+     * Open sessions are reconciled with Stripe before the response is returned.
+     *
+     * @param string $teamSlug
+     * @param string $reference
+     *
+     * @return array{id: string, stripe_id: string|null, reference: string, status: 'open'|'complete'|'expired', url: string|null, total: int, currency: string, expires_at: string|null}
+     */
+    public function retrieveCheckoutSession(string $teamSlug, string $reference): array
+    {
+        $response = $this->http->get("/api/team/{$teamSlug}/billing/checkout-session/{$reference}", [
+            'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
+        ]);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new RuntimeException('Could not retrieve checkout session.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Expire an app-managed checkout session.
+     *
+     * No content is returned when the checkout session no longer exists and a JSON payload when a session was expired or already completed.
+     *
+     * @param string $teamSlug
+     * @param string $reference
+     *
+     * @return array{id: string, stripe_id: string|null, reference: string, status: 'open'|'complete'|'expired', total: int, currency: string}|null
+     */
+    public function expireCheckoutSession(string $teamSlug, string $reference): ?array
+    {
+        $response = $this->http->delete("/api/team/{$teamSlug}/billing/checkout-session/{$reference}", [
+            'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
+        ]);
+
+        if (!in_array($response->getStatusCode(), [200, 204], true)) {
+            throw new RuntimeException('Could not expire checkout session.');
+        }
+
+        if ($response->getStatusCode() === 204) {
+            return null;
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * Report that there was activity on the team back to the mothership.
      *
      * @param \ChiefTools\SDK\Entities\Team $team

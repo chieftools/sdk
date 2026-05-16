@@ -64,6 +64,7 @@ Route::group(config('chief.routes.web'), function () {
                 Route::get('{team}/chief', Controllers\Team\Manage::class)->name('chief.manage');
                 Route::get('{team}/chief/plan', Controllers\Team\ManagePlan::class)->name('chief.manage.plan');
                 Route::get('{team}/chief/manage', Controllers\Team\ManageSingle::class)->name('chief.manage.single');
+                Route::get('{team}/chief/billing', Controllers\Team\ManageBilling::class)->name('chief.manage.billing');
                 Route::get('{team}/chief/invoices', Controllers\Team\ManageInvoices::class)->name('chief.manage.invoices');
             });
         }

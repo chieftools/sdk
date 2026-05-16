@@ -5,6 +5,7 @@ namespace ChiefTools\SDK;
 use Closure;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
+use ChiefTools\SDK\Webhook\WebhookEvent;
 
 final class Chief
 {
@@ -15,6 +16,9 @@ final class Chief
 
     /** @param class-string<\ChiefTools\SDK\Entities\Team> $teamModel */
     private static string $teamModel = Team::class;
+
+    /** @var array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>> */
+    private static array $webhookHandlers = [];
 
     private static ?string $afterUserUpdateJob = null;
 
@@ -140,6 +144,30 @@ final class Chief
     public static function registerAuthenticationExceptionJsonResponseHandler(?Closure $handler): void
     {
         self::$authenticationExceptionJsonResponseHandler = $handler;
+    }
+
+    /** @return array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>> */
+    public static function webhookHandlers(): array
+    {
+        $handlers = config('chief.webhooks', []);
+
+        if (!is_array($handlers)) {
+            $handlers = [];
+        }
+
+        return array_merge($handlers, self::$webhookHandlers);
+    }
+
+    /** @return class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>|null */
+    public static function getWebhookHandler(WebhookEvent $event): ?string
+    {
+        return self::webhookHandlers()[enum_value($event)] ?? null;
+    }
+
+    /** @param class-string<\ChiefTools\SDK\Webhook\Handlers\Handler> $handler */
+    public static function registerWebhookHandler(WebhookEvent $event, string $handler): void
+    {
+        self::$webhookHandlers[enum_value($event)] = $handler;
     }
 
     /**

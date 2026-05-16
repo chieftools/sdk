@@ -3,18 +3,26 @@
 namespace ChiefTools\SDK\Http\Controllers;
 
 use RuntimeException;
+use ChiefTools\SDK\Chief;
 use Illuminate\Http\Request;
+use ChiefTools\SDK\Webhook\WebhookEvent;
 use ChiefTools\SDK\Webhook\Handlers\Handler;
 
 class Webhook
 {
     public function __invoke(Request $request): array
     {
-        $event = $request->json('event');
+        $event = WebhookEvent::tryFrom($request->json('event'));
 
-        $handler = config("chief.webhooks.{$event}");
+        abort_if($event === null, 400, 'Invalid event type.');
+
+        $handled = false;
+
+        $handler = Chief::getWebhookHandler($event);
 
         if ($handler !== null && class_exists($handler)) {
+            $handled = true;
+
             $handler = app($handler);
 
             if (!$handler instanceof Handler) {
@@ -28,6 +36,9 @@ class Webhook
             }
         }
 
-        return ['status' => 'OK!'];
+        return [
+            'status'  => 'OK!',
+            'handled' => $handled,
+        ];
     }
 }

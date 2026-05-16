@@ -150,11 +150,11 @@ return [
 
     'webhooks' => [
 
-        'team_updated'    => ChiefTools\SDK\Webhook\Handlers\TeamUpdated::class,
-        'team_destroyed'  => ChiefTools\SDK\Webhook\Handlers\TeamDestroyed::class,
-        'account_closed'  => ChiefTools\SDK\Webhook\Handlers\AccountClosed::class,
-        'account_updated' => ChiefTools\SDK\Webhook\Handlers\AccountUpdated::class,
-        'token_destroyed' => ChiefTools\SDK\Webhook\Handlers\TokenDestroyed::class,
+        ChiefTools\SDK\Webhook\WebhookEvent::TEAM_UPDATED->value    => ChiefTools\SDK\Webhook\Handlers\TeamUpdated::class,
+        ChiefTools\SDK\Webhook\WebhookEvent::TEAM_DESTROYED->value  => ChiefTools\SDK\Webhook\Handlers\TeamDestroyed::class,
+        ChiefTools\SDK\Webhook\WebhookEvent::ACCOUNT_CLOSED->value  => ChiefTools\SDK\Webhook\Handlers\AccountClosed::class,
+        ChiefTools\SDK\Webhook\WebhookEvent::ACCOUNT_UPDATED->value => ChiefTools\SDK\Webhook\Handlers\AccountUpdated::class,
+        ChiefTools\SDK\Webhook\WebhookEvent::TOKEN_DESTROYED->value => ChiefTools\SDK\Webhook\Handlers\TokenDestroyed::class,
 
     ],
 

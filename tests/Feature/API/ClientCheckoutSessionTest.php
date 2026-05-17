@@ -69,6 +69,55 @@ it('creates a checkout session', function () {
         ]);
 });
 
+it('creates a checkout session with a payment description', function () {
+    config()->set('chief.id', 'domainchief');
+    config()->set('chief.secret', 'secret');
+
+    $history = [];
+    $client  = checkoutSessionClient([
+        new Response(200, [], json_encode([
+            'id'         => 'checkout_123',
+            'stripe_id'  => 'cs_test_123',
+            'reference'  => 'domain-prepayment-test',
+            'status'     => 'open',
+            'url'        => 'https://checkout.stripe.test/cs_test_123',
+            'total'      => 1033,
+            'currency'   => 'EUR',
+            'expires_at' => '2026-05-16T12:00:00+00:00',
+        ], JSON_THROW_ON_ERROR)),
+    ], $history);
+
+    $client->createCheckoutSession(
+        teamSlug: 'team-slug',
+        reference: 'domain-prepayment-test',
+        lines: [
+            [
+                'id'          => 'line_1',
+                'description' => 'example.mock (registration)',
+                'amount'      => 1033,
+            ],
+        ],
+        successUrl: 'https://domain.chief.test/success',
+        cancelUrl: 'https://domain.chief.test/cancel',
+        description: 'Domain prepayment for example.mock',
+    );
+
+    $requestBody = json_decode((string)$history[0]['request']->getBody(), true, 512, JSON_THROW_ON_ERROR);
+
+    expect($requestBody)->toBe([
+        'lines'       => [
+            [
+                'id'          => 'line_1',
+                'description' => 'example.mock (registration)',
+                'amount'      => 1033,
+            ],
+        ],
+        'success_url' => 'https://domain.chief.test/success',
+        'cancel_url'  => 'https://domain.chief.test/cancel',
+        'description' => 'Domain prepayment for example.mock',
+    ]);
+});
+
 it('retrieves a checkout session status', function () {
     config()->set('chief.id', 'domainchief');
     config()->set('chief.secret', 'secret');

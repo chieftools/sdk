@@ -453,16 +453,18 @@ class Client
      * @param array<int, array{id: string, description: string, amount: int}> $lines
      * @param string                                                          $successUrl
      * @param string                                                          $cancelUrl
+     * @param string|null                                                     $description
      *
      * @return array{id: string, stripe_id: string|null, reference: string, status: 'open'|'complete'|'expired', url: string|null, total: int, currency: string, expires_at: string|null}
      */
-    public function createCheckoutSession(string $teamSlug, string $reference, array $lines, string $successUrl, string $cancelUrl): array
+    public function createCheckoutSession(string $teamSlug, string $reference, array $lines, string $successUrl, string $cancelUrl, ?string $description = null): array
     {
         $response = $this->http->put("/api/team/{$teamSlug}/billing/checkout-session/{$reference}", [
             'json'    => [
                 'lines'       => $lines,
                 'success_url' => $successUrl,
                 'cancel_url'  => $cancelUrl,
+                'description' => $description,
             ],
             'headers' => $this->internalAuthHeaders(),
             'timeout' => 60,

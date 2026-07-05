@@ -2,8 +2,8 @@
     'breadcrumbs' => [],
 ])
 <header {{ $attributes->merge(['class' => 'py-4']) }}>
-    <div class="mx-auto sm:flex sm:items-center sm:justify-between">
-        <div class="flex-1 min-w-0">
+    <div class="mx-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
+        <div class="min-w-0 flex-[1_1_max-content]">
             @unless(empty($breadcrumbs))
                 <nav class="flex">
                     <ol class="flex items-center space-x-2 ml-1.5">
@@ -36,7 +36,7 @@
         </div>
 
         @if(isset($actions))
-            <div class="mt-3 sm:mt-5 flex xl:mt-0 xl:ml-4">
+            <div class="flex flex-none">
                 {{ $actions }}
             </div>
         @endif

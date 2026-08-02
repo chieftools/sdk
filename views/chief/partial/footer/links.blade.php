@@ -24,20 +24,8 @@
     </div>
 
     <div class="px-5 py-2">
-        <a href="{{ route('chief.privacy') }}" class="text-base text-fg-subtle hover:text-fg">
-            Privacy
-        </a>
-    </div>
-
-    <div class="px-5 py-2">
-        <a href="{{ route('chief.terms') }}" class="text-base text-fg-subtle hover:text-fg">
-            Terms
-        </a>
-    </div>
-
-    <div class="px-5 py-2">
-        <a href="{{ route('chief.abuse') }}" class="text-base text-fg-subtle hover:text-fg">
-            Abuse
+        <a href="{{ route('chief.legal') }}" class="text-base text-fg-subtle hover:text-fg">
+            Legal
         </a>
     </div>
 </nav>

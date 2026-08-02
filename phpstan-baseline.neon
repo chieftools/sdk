@@ -19,6 +19,12 @@ parameters:
 			path: src/Entities/Team.php
 
 		-
+			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
+			identifier: nullCoalesce.unnecessary
+			count: 1
+			path: src/Entities/User.php
+
+		-
 			rawMessage: 'Method ChiefTools\SDK\Entities\User::getTeamFromSession() should return ChiefTools\SDK\Entities\Team|null but returns (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
 			identifier: return.type
 			count: 1

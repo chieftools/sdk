@@ -33,6 +33,7 @@ Route::group(config('chief.routes.web'), function () {
         Route::get('about', Controllers\Pages\About::class)->name('about');
         Route::get('abuse', Controllers\Pages\Abuse::class)->name('abuse');
         Route::get('terms', Controllers\Pages\Terms::class)->name('terms');
+        Route::get('legal', Controllers\Pages\Legal::class)->name('legal');
         Route::get('contact', Controllers\Pages\Contact::class)->name('contact');
         Route::get('privacy', Controllers\Pages\Privacy::class)->name('privacy');
 

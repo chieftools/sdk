@@ -25,6 +25,19 @@
                 supported-color-schemes: light dark;
             }
 
+            .band-content a {
+                color: inherit !important;
+            }
+
+            .mail-auto-link a {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important;
+            }
+
             a:hover {
                 color: {{ $mailBrandHoverColor }} !important;
             }

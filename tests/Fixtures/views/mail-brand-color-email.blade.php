@@ -15,7 +15,7 @@ Panel copy
 <x-mail::band color="muted">
 **Previous certificate**
 
-passport.lsm.nl (Let's Encrypt)
+mail.example.com (Let's Encrypt)
 </x-mail::band>
 
 <x-mail::divider>
@@ -25,7 +25,8 @@ Replaced by
 <x-mail::band color="success">
 **New certificate**
 
-passport.lsm.nl (Let's Encrypt)
+[mail.example.com](https://example.com/certificates/1) (Let's Encrypt)<br>
+Valid from <strong class="mail-auto-link">03-08-2026 15:01</strong> until <strong class="mail-auto-link">01-11-2026 14:01</strong>
 </x-mail::band>
 
 <x-mail::table>

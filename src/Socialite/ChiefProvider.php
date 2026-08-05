@@ -2,12 +2,20 @@
 
 namespace ChiefTools\SDK\Socialite;
 
+use Illuminate\Support\Str;
 use ChiefTools\SDK\API\Client;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Crypt;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
+use Illuminate\Contracts\Encryption\DecryptException;
 
 class ChiefProvider extends AbstractProvider implements ProviderInterface
 {
+    private const AUTHENTICATION_RETRY_STATE_PREFIX = 'chief-authentication-retry:';
+
+    private bool $authenticationRetry = false;
+
     protected $scopes = ['profile', 'email', 'teams'];
 
     protected $usesPKCE = true;
@@ -15,6 +23,41 @@ class ChiefProvider extends AbstractProvider implements ProviderInterface
     protected $stateless = false;
 
     protected $scopeSeparator = ' ';
+
+    public function redirectForAuthenticationRetry(): RedirectResponse
+    {
+        $this->authenticationRetry = true;
+
+        return $this->redirect();
+    }
+
+    public static function hasAuthenticationRetryState(mixed $state): bool
+    {
+        if (!is_string($state)) {
+            return false;
+        }
+
+        try {
+            $state = Crypt::decryptString($state);
+        } catch (DecryptException) {
+            return false;
+        }
+
+        return Str::startsWith($state, self::AUTHENTICATION_RETRY_STATE_PREFIX);
+    }
+
+    protected function getState(): string
+    {
+        $state = parent::getState();
+
+        if (!$this->authenticationRetry) {
+            return $state;
+        }
+
+        $this->authenticationRetry = false;
+
+        return Crypt::encryptString(self::AUTHENTICATION_RETRY_STATE_PREFIX . $state);
+    }
 
     protected function getHttpClient()
     {

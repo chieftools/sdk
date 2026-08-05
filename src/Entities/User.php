@@ -303,7 +303,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             ->where('chief_id', '=', $remote->getId())
             ->orWhere(function (Builder $query) use ($remote) {
                 $query->whereNull('chief_id')
-                    ->where('email', '=', $remote->getEmail());
+                      ->where('email', '=', $remote->getEmail());
             })
             ->first();
 

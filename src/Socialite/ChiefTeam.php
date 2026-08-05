@@ -4,9 +4,7 @@ namespace ChiefTools\SDK\Socialite;
 
 class ChiefTeam
 {
-    /**
-     * @param array<string, int> $limits
-     */
+    /** @param array<string, int> $limits */
     public function __construct(
         public readonly int $id,
         public readonly string $slug,

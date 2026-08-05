@@ -54,12 +54,12 @@ test('the modern shell renders configured menu and app switcher data', function 
     ]));
 
     $html = view('chief::partial.menu', [
-        'logoRedirect' => '/',
-        'shellTool'    => [
+        'logoRedirect'  => '/',
+        'shellTool'     => [
             'name'         => 'Domain Chief',
             'logoColorUrl' => '/icons/domainchief.svg',
         ],
-        'menuItems'    => [
+        'menuItems'     => [
             [
                 'href'   => '/dashboard',
                 'icon'   => 'fad fa-dashboard',
@@ -67,7 +67,7 @@ test('the modern shell renders configured menu and app switcher data', function 
                 'active' => true,
             ],
         ],
-        'shellApps'    => [
+        'shellApps'     => [
             [
                 'id'           => 'accountchief',
                 'name'         => 'Account Chief',
@@ -156,9 +156,9 @@ test('the modern shell does not render a dynamic command search url without prov
     }
 
     config([
-        'chief.teams'                            => false,
-        'chief.shell.variant'                    => 'modern',
-        'chief.shell.command_palette_providers'  => [],
+        'chief.teams'                           => false,
+        'chief.shell.variant'                   => 'modern',
+        'chief.shell.command_palette_providers' => [],
     ]);
 
     auth()->setUser(new User([

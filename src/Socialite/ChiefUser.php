@@ -6,24 +6,16 @@ use Laravel\Socialite\Two\User;
 
 class ChiefUser extends User
 {
-    /**
-     * Indicates if the user is an Chief administrator user.
-     */
+    /** Indicates if the user is an Chief administrator user. */
     public readonly bool $is_admin;
 
-    /**
-     * Indicates the configured timezone for the user.
-     */
+    /** Indicates the configured timezone for the user. */
     public readonly ?string $timezone;
 
-    /**
-     * The ID of the default team for this user.
-     */
+    /** The ID of the default team for this user. */
     public readonly ?int $default_team_id;
 
-    /**
-     * The avatar hash for this user.
-     */
+    /** The avatar hash for this user. */
     public readonly ?string $avatar_hash;
 
     /**

@@ -59,7 +59,7 @@ return [
     |
     */
 
-    'schema_cache'         => [
+    'schema_cache' => [
         /*
          * Setting to true enables schema caching.
          */
@@ -68,7 +68,7 @@ return [
         /*
          * File path to store the lighthouse schema.
          */
-        'path'   => env('LIGHTHOUSE_SCHEMA_CACHE_PATH', base_path('bootstrap/cache/lighthouse-schema.php')),
+        'path' => env('LIGHTHOUSE_SCHEMA_CACHE_PATH', base_path('bootstrap/cache/lighthouse-schema.php')),
     ],
 
     /*
@@ -99,12 +99,12 @@ return [
         /*
          * Allows using a specific cache store, uses the app's default if set to null.
          */
-        'store'  => env('LIGHTHOUSE_QUERY_CACHE_STORE', null),
+        'store' => env('LIGHTHOUSE_QUERY_CACHE_STORE', null),
 
         /*
          * Duration in seconds the query should remain cached, null means forever.
          */
-        'ttl'    => env('LIGHTHOUSE_QUERY_CACHE_TTL', 24 * 60 * 60),
+        'ttl' => env('LIGHTHOUSE_QUERY_CACHE_TTL', 24 * 60 * 60),
     ],
 
     /*
@@ -125,12 +125,12 @@ return [
         /*
          * Allows using a specific cache store, uses the app's default if set to null.
          */
-        'store'  => env('LIGHTHOUSE_VALIDATION_CACHE_STORE', null),
+        'store' => env('LIGHTHOUSE_VALIDATION_CACHE_STORE', null),
 
         /*
          * Duration in seconds the validation result should remain cached, null means forever.
          */
-        'ttl'    => env('LIGHTHOUSE_VALIDATION_CACHE_TTL', 24 * 60 * 60),
+        'ttl' => env('LIGHTHOUSE_VALIDATION_CACHE_TTL', 24 * 60 * 60),
     ],
 
     /*
@@ -197,7 +197,7 @@ return [
          * Limit the maximum amount of items that clients can request from paginated lists.
          * Setting this to `null` means the count is unrestricted.
          */
-        'max_count'     => 100,
+        'max_count' => 100,
     ],
 
     /*
@@ -359,7 +359,7 @@ return [
         /*
          * Determines if broadcasts should be queued by default.
          */
-        'queue_broadcasts'      => env('LIGHTHOUSE_QUEUE_BROADCASTS', true),
+        'queue_broadcasts' => env('LIGHTHOUSE_QUEUE_BROADCASTS', true),
 
         /*
          * Determines the queue to use for broadcasting queue jobs.
@@ -371,7 +371,7 @@ return [
          *
          * Any Laravel supported cache driver options are available here.
          */
-        'storage'               => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE', 'redis'),
+        'storage' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE', 'redis'),
 
         /*
          * Default subscription storage time to live in seconds.
@@ -380,17 +380,17 @@ return [
          * Setting this to `null` means the subscriptions are stored forever. This may cause
          * stale subscriptions to linger indefinitely in case cleanup fails for any reason.
          */
-        'storage_ttl'           => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE_TTL', 60 * 60),
+        'storage_ttl' => env('LIGHTHOUSE_SUBSCRIPTION_STORAGE_TTL', 60 * 60),
 
         /*
          * Default subscription broadcaster.
          */
-        'broadcaster'           => env('LIGHTHOUSE_BROADCASTER', 'pusher'),
+        'broadcaster' => env('LIGHTHOUSE_BROADCASTER', 'pusher'),
 
         /*
          * Subscription broadcasting drivers with config options.
          */
-        'broadcasters'          => [
+        'broadcasters' => [
             'log'    => [
                 'driver' => 'log',
             ],
@@ -404,7 +404,7 @@ return [
          * Should the subscriptions extension be excluded when the response has no subscription channel?
          * This optimizes performance by sending less data, but clients must anticipate this appropriately.
          */
-        'exclude_empty'         => env('LIGHTHOUSE_SUBSCRIPTION_EXCLUDE_EMPTY', true),
+        'exclude_empty' => env('LIGHTHOUSE_SUBSCRIPTION_EXCLUDE_EMPTY', true),
     ],
 
     /*
@@ -429,7 +429,7 @@ return [
          * Once reached, remaining fields will be resolved synchronously.
          * 0 means unlimited.
          */
-        'max_execution_ms'  => 0,
+        'max_execution_ms' => 0,
     ],
 
     /*

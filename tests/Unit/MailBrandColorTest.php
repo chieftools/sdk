@@ -48,8 +48,8 @@ test('mail brand color derives expected blue 600 button color', function () {
 
 test('markdown mail uses the brand color for primary accents', function () {
     config([
-        'chief.brand.color'    => '#F4C430',
-        'mail.markdown.paths'  => [dirname(__DIR__, 2) . '/views/mail'],
+        'chief.brand.color'   => '#F4C430',
+        'mail.markdown.paths' => [dirname(__DIR__, 2) . '/views/mail'],
     ]);
 
     app()->forgetInstance(Markdown::class);
@@ -117,8 +117,8 @@ test('markdown mail uses the brand color for primary accents', function () {
 
 test('markdown mail leaves semantic success and error buttons unchanged', function () {
     config([
-        'chief.brand.color'    => '#F4C430',
-        'mail.markdown.paths'  => [dirname(__DIR__, 2) . '/views/mail'],
+        'chief.brand.color'   => '#F4C430',
+        'mail.markdown.paths' => [dirname(__DIR__, 2) . '/views/mail'],
     ]);
 
     app()->forgetInstance(Markdown::class);

@@ -26,25 +26,19 @@ readonly class ChiefRemoteAccessToken
         public ?string $plainTextToken = null,
     ) {}
 
-    /**
-     * Determine if the token has the given scope.
-     */
+    /** Determine if the token has the given scope. */
     public function can(string $scopeToTest): bool
     {
         return ScopeResolver::satisfies($this->scopes, $scopeToTest);
     }
 
-    /**
-     * Determine if the token is missing the given scope.
-     */
+    /** Determine if the token is missing the given scope. */
     public function cant(string $scope): bool
     {
         return !$this->can($scope);
     }
 
-    /**
-     * Determine if the token has the given scope (exact match).
-     */
+    /** Determine if the token has the given scope (exact match). */
     public function hasScope(string $scope): bool
     {
         return in_array($scope, $this->scopes, true);

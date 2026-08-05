@@ -126,7 +126,7 @@ final class MailBrandColor
         $amount = max(0, min(1, $amount));
 
         [$fromRed, $fromGreen, $fromBlue] = self::rgb($from);
-        [$toRed, $toGreen, $toBlue]       = self::rgb($to);
+        [$toRed, $toGreen, $toBlue] = self::rgb($to);
 
         return sprintf(
             '#%02x%02x%02x',
@@ -148,9 +148,7 @@ final class MailBrandColor
         return self::hexFromHsl($hue, $saturation, max(0, min(1, $lightness + $amount)));
     }
 
-    /**
-     * @return array{float, float, float}
-     */
+    /** @return array{float, float, float} */
     private static function hsl(string $color): array
     {
         [$red, $green, $blue] = array_map(
@@ -249,9 +247,7 @@ final class MailBrandColor
             + (0.0722 * $channels[2]);
     }
 
-    /**
-     * @return array{int, int, int}
-     */
+    /** @return array{int, int, int} */
     private static function rgb(string $color): array
     {
         $color = ltrim(self::normalize($color), '#');

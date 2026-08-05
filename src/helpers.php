@@ -95,9 +95,7 @@ function sync_user_timezone(ChiefTools\SDK\Entities\User|ChiefTools\SDK\Entities
     }
 }
 
-/**
- * Validate some data.
- */
+/** Validate some data. */
 function validate(mixed $fields, string|array|Illuminate\Contracts\Validation\Rule $rules): bool
 {
     if (!is_array($fields)) {
@@ -150,9 +148,7 @@ function chief_apps(?bool $authenticated = null, bool $cached = true): ?Illumina
     return collect($apps);
 }
 
-/**
- * Get the Chief account manager base url.
- */
+/** Get the Chief account manager base url. */
 function chief_base_url(?string $path = null, ?string $ref = null, array $query = []): string
 {
     $base = rtrim(config('chief.base_url'), '/');
@@ -165,9 +161,7 @@ function chief_base_url(?string $path = null, ?string $ref = null, array $query 
     ]));
 }
 
-/**
- * Get the global Chief site url.
- */
+/** Get the global Chief site url. */
 function chief_site_url(?string $path = null, ?string $ref = null, array $query = []): string
 {
     $base = rtrim(config('chief.site_url'), '/');
@@ -180,9 +174,7 @@ function chief_site_url(?string $path = null, ?string $ref = null, array $query 
     ]));
 }
 
-/**
- * Get the url to the Chief docs site for the current application.
- */
+/** Get the url to the Chief docs site for the current application. */
 function chief_docs_url(?string $ref = null, array $query = []): string
 {
     $base  = rtrim(config('chief.docs_url'), '/');
@@ -197,9 +189,7 @@ function chief_docs_url(?string $ref = null, array $query = []): string
     ]));
 }
 
-/**
- * Get the url to the Chief roadmap site for the current application.
- */
+/** Get the url to the Chief roadmap site for the current application. */
 function chief_roadmap_url(?string $ref = null, array $query = []): string
 {
     $base  = rtrim(config('chief.roadmap_url'), '/');

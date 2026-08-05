@@ -394,9 +394,7 @@ img {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
     -premailer-width: calc(100% + 64px);
-    margin: 24px 0;
-    margin-left: -32px;
-    margin-right: -32px;
+    margin: 24px auto;
     width: calc(100% + 64px);
 }
 

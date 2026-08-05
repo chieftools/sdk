@@ -91,8 +91,9 @@ test('markdown mail uses the brand color for primary accents', function () {
         ->toContain('text-decoration: none !important')
         ->toContain('href="https://example.com/certificates/1"')
         ->toContain('text-decoration: underline')
+        ->toContain('<table class="band band-muted" align="center" width="100%"')
         ->toContain('calc(100% + 64px)')
-        ->toContain('margin-left: -32px')
+        ->toContain('margin: 24px auto')
         ->toContain('padding: 20px 32px')
         ->toContain('background-color: #4b5563')
         ->toContain('background-color: #047857')
@@ -109,7 +110,9 @@ test('markdown mail uses the brand color for primary accents', function () {
         ->toContain('[data-ogsc] blockquote')
         ->not->toContain('#3498db')
         ->not->toContain('#016baa')
-        ->not->toContain('#7698ff');
+        ->not->toContain('#7698ff')
+        ->not->toContain('margin-left: -32px')
+        ->not->toContain('margin-right: -32px');
 });
 
 test('markdown mail leaves semantic success and error buttons unchanged', function () {

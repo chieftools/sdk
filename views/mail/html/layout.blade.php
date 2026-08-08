@@ -374,13 +374,39 @@
                         <!-- Email Body -->
                         <tr>
                             <td class="body" width="100%" cellpadding="0" cellspacing="0" style="border: hidden !important;">
+                                @php
+                                    $body = Illuminate\Mail\Markdown::parse($slot);
+                                    $fullBleedStart = '<!-- ' . \ChiefTools\SDK\Mail\MarkdownBody::FULL_BLEED_START . ' -->';
+                                    $fullBleedEnd = '<!-- ' . \ChiefTools\SDK\Mail\MarkdownBody::FULL_BLEED_END . ' -->';
+                                    $bodySections = \ChiefTools\SDK\Mail\MarkdownBody::segments(
+                                        $body,
+                                        $fullBleedStart,
+                                        $fullBleedEnd,
+                                    );
+                                @endphp
                                 <table class="inner-body" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
                                     <!-- Body content -->
+                                    @if($bodySections !== null)
                                     <tr>
-                                        <td class="content-cell">
-                                            {{ Illuminate\Mail\Markdown::parse($slot) }}
+                                        <td class="content-spacer" height="32">&nbsp;</td>
+                                    </tr>
+                                    @foreach($bodySections as $bodySection)
+                                    <tr>
+                                        <td class="{{ $bodySection['fullBleed'] ? 'full-bleed-cell' : 'content-cell content-section' }}">
+                                            {{ $bodySection['content'] }}
                                         </td>
                                     </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td class="content-spacer" height="32">&nbsp;</td>
+                                    </tr>
+                                    @else
+                                    <tr>
+                                        <td class="content-cell">
+                                            {{ new Illuminate\Support\HtmlString(str_replace([$fullBleedStart, $fullBleedEnd], '', $body->toHtml())) }}
+                                        </td>
+                                    </tr>
+                                    @endif
                                 </table>
                                 @isset($subcopy)
                                 <table class="inner-body subcopy-card" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">

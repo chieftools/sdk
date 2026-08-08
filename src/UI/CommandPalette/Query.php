@@ -30,7 +30,7 @@ readonly class Query
                 ->filter(static fn (string $part): bool => $part !== '')
                 ->values()
                 ->all();
-            $this->scope = implode(' > ', $this->scopeParts);
+            $this->scope      = implode(' > ', $this->scopeParts);
 
             return;
         }

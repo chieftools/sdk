@@ -6,9 +6,7 @@ use Illuminate\Support\Carbon;
 
 trait EloquentUserTimezones
 {
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     protected function asDateTime($value): Carbon
     {
         $value = parent::asDateTime($value);
@@ -24,9 +22,7 @@ trait EloquentUserTimezones
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function fromDateTime($value): ?string
     {
         if ($value instanceof Carbon && $this->isServingApplication()) {
@@ -40,9 +36,7 @@ trait EloquentUserTimezones
         return parent::fromDateTime($value);
     }
 
-    /**
-     * Admin panels and other tools that are not the application itself should not use user timezones.
-     */
+    /** Admin panels and other tools that are not the application itself should not use user timezones. */
     private function isServingApplication(): bool
     {
         if (request()->is('nova*')) {

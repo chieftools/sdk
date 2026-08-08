@@ -48,14 +48,21 @@ test('mail brand color derives expected blue 600 button color', function () {
 
 test('markdown mail uses the brand color for primary accents', function () {
     config([
-        'chief.brand.color'    => '#F4C430',
-        'mail.markdown.paths'  => [dirname(__DIR__, 2) . '/views/mail'],
+        'chief.brand.color'   => '#F4C430',
+        'mail.markdown.paths' => [dirname(__DIR__, 2) . '/views/mail'],
     ]);
 
     app()->forgetInstance(Markdown::class);
     app('view')->addLocation(dirname(__DIR__) . '/Fixtures/views');
 
     $html = (string)app(Markdown::class)->render('mail-brand-color-email');
+
+    expect(substr_count($html, 'class="full-bleed-cell"'))->toBe(2);
+    expect(substr_count($html, 'class="content-cell content-section"'))->toBe(3);
+    expect(substr_count($html, 'class="content-spacer"'))->toBe(2);
+    expect(preg_match('/<td class="full-bleed-cell"[^>]*>\s*<table class="band band-muted"/', $html))->toBe(1);
+    expect(preg_match('/<td class="full-bleed-cell"[^>]*>\s*<table class="band band-success"/', $html))->toBe(1);
+    expect(preg_match('/band-muted.*Replaced by.*band-success/s', $html))->toBe(1);
 
     expect($html)
         ->toContain('#f4c430')
@@ -91,9 +98,10 @@ test('markdown mail uses the brand color for primary accents', function () {
         ->toContain('text-decoration: none !important')
         ->toContain('href="https://example.com/certificates/1"')
         ->toContain('text-decoration: underline')
-        ->toContain('<table class="band band-muted" align="center" width="100%"')
-        ->toContain('calc(100% + 64px)')
-        ->toContain('margin: 24px auto')
+        ->toContain('<table class="band band-muted" width="100%"')
+        ->toContain('content-cell content-section')
+        ->toContain('class="content-spacer"')
+        ->toContain('padding: 24px 0')
         ->toContain('padding: 20px 32px')
         ->toContain('background-color: #4b5563')
         ->toContain('background-color: #047857')
@@ -111,22 +119,47 @@ test('markdown mail uses the brand color for primary accents', function () {
         ->not->toContain('#3498db')
         ->not->toContain('#016baa')
         ->not->toContain('#7698ff')
+        ->not->toContain('chief-mail:full-bleed')
+        ->not->toContain('calc(100% + 64px)')
+        ->not->toContain('margin: 24px auto')
         ->not->toContain('margin-left: -32px')
         ->not->toContain('margin-right: -32px');
 });
 
+test('markdown mail keeps full bleed layout markers out of plain text', function () {
+    config([
+        'mail.markdown.paths' => [dirname(__DIR__, 2) . '/views/mail'],
+    ]);
+
+    app()->forgetInstance(Markdown::class);
+    app('view')->addLocation(dirname(__DIR__) . '/Fixtures/views');
+
+    $text = (string)app(Markdown::class)->renderText('mail-brand-color-email');
+
+    expect($text)
+        ->toContain('mail.example.com')
+        ->toContain('Previous certificate')
+        ->toContain('New certificate')
+        ->not->toContain('chief-mail:full-bleed');
+});
+
 test('markdown mail leaves semantic success and error buttons unchanged', function () {
     config([
-        'chief.brand.color'    => '#F4C430',
-        'mail.markdown.paths'  => [dirname(__DIR__, 2) . '/views/mail'],
+        'chief.brand.color'   => '#F4C430',
+        'mail.markdown.paths' => [dirname(__DIR__, 2) . '/views/mail'],
     ]);
 
     app()->forgetInstance(Markdown::class);
 
-    expect(render_mail_brand_color_test_email('success'))
+    $successHtml = render_mail_brand_color_test_email('success');
+
+    expect($successHtml)
         ->toContain('#047857')
         ->toContain('a.button-success')
-        ->toContain('color: #ffffff');
+        ->toContain('color: #ffffff')
+        ->toContain('class="content-cell"')
+        ->not->toContain('content-section')
+        ->not->toContain('full-bleed-cell');
 
     expect(render_mail_brand_color_test_email('error'))
         ->toContain('#b91c1c')

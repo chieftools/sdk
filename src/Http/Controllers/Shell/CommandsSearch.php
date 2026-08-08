@@ -23,8 +23,8 @@ class CommandsSearch
 
         return response()->json([
             'data' => $commands->search($query)
-                ->map(static fn ($item): array => $item->toArray())
-                ->values(),
+                               ->map(static fn ($item): array => $item->toArray())
+                               ->values(),
         ]);
     }
 }

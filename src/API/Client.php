@@ -49,9 +49,7 @@ class Client
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    /**
-     * Get the pricing HTML for an app by it's ID.
-     */
+    /** Get the pricing HTML for an app by it's ID. */
     public function appPricing(string $id, bool $withoutFeatured = false): HtmlString
     {
         if (empty($id)) {
@@ -560,9 +558,7 @@ class Client
         ];
     }
 
-    /**
-     * Get the URL to the Account Chief application.
-     */
+    /** Get the URL to the Account Chief application. */
     public static function getBaseUrl(?string $path = null): string
     {
         $url = rtrim(config('chief.base_url', 'https://account.chief.app'), '/');

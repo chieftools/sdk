@@ -8,9 +8,7 @@ namespace ChiefTools\SDK\Auth;
  */
 trait HasRemoteToken
 {
-    /**
-     * The access token the user is using for the current request.
-     */
+    /** The access token the user is using for the current request. */
     private ?ChiefRemoteAccessToken $chiefRemoteAccessToken = null;
 
     public function hasChiefRemoteAccessToken(): bool

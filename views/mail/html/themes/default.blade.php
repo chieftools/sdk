@@ -332,8 +332,23 @@ img {
     padding: 32px;
 }
 
+.content-cell.content-section {
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
 .content-cell > *:last-child {
     margin-bottom: 0;
+}
+
+.content-spacer {
+    font-size: 0;
+    height: 32px;
+    line-height: 0;
+}
+
+.full-bleed-cell {
+    padding: 24px 0;
 }
 
 /* Buttons */
@@ -393,9 +408,9 @@ img {
 .band {
     -premailer-cellpadding: 0;
     -premailer-cellspacing: 0;
-    -premailer-width: calc(100% + 64px);
-    margin: 24px auto;
-    width: calc(100% + 64px);
+    -premailer-width: 100%;
+    margin: 0;
+    width: 100%;
 }
 
 .band-content {

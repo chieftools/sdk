@@ -444,6 +444,25 @@ class Client
     }
 
     /**
+     * Queue finalization of every draft invoice submitted by this app for a reference.
+     *
+     * @return array{status: string, reference: string}
+     */
+    public function finalizeDraftInvoices(string $reference): array
+    {
+        $response = $this->http->post("/api/billing/invoices/{$reference}/finalize", [
+            'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
+        ]);
+
+        if ($response->getStatusCode() !== 202) {
+            throw new RuntimeException('Could not queue draft invoice finalization.');
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
      * Create or retrieve a checkout session for an app-managed payment.
      *
      * @param string                                                          $teamSlug

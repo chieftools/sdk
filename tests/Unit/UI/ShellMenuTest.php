@@ -3,6 +3,7 @@
 use Tests\TestCase;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
@@ -217,6 +218,26 @@ test('the modern shell does not expose dynamic command search to guests', functi
         ->toContain('data-chief-shell')
         ->not->toContain('data-command-palette-search-url="')
         ->not->toContain('chief/ui/commands/search');
+});
+
+test('the modern shell renders translated public chrome and extension actions', function () {
+    config([
+        'chief.shell.variant'         => 'modern',
+        'chief.shell.command_palette' => true,
+    ]);
+    app()->setLocale('nl');
+
+    $html = Blade::render(<<<'BLADE'
+        @push('chief.shell.actions')
+            <span data-test-language-action>NL</span>
+        @endpush
+        @include('chief::partial.menu', ['logoRedirect' => '/', 'menuItems' => []])
+        BLADE);
+
+    expect($html)
+        ->toContain('data-test-language-action')
+        ->toContain('Zoeken of snel navigeren...')
+        ->toContain('Hoofdmenu openen of sluiten');
 });
 
 test('the modern shell renders a guest theme selector when theme route exists', function () {

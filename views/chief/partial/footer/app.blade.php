@@ -6,10 +6,10 @@
             <i class="fad fa-fw {{ config('chief.brand.icon') }} text-brand"></i>
         @endif
         {{ config('app.name') }}
-        is created in The Netherlands 🇳🇱
+        {{ __('chief::ui.footer.created_in_netherlands') }} 🇳🇱
         <br>
-        Hosted in Europe 🇪🇺
+        {{ __('chief::ui.footer.hosted_in_europe') }} 🇪🇺
         &middot;
-        A Chief Tools product.
+        {{ __('chief::ui.footer.chief_tools_product') }}
     </a>
 </p>

@@ -90,21 +90,21 @@
     $themeCommands = collect([
         [
             'theme' => 'light',
-            'label' => 'Switch to light theme',
+            'label' => __('chief::ui.shell.switch_to_light_theme'),
             'icon' => 'fad fa-sun-bright',
-            'description' => 'Use the light appearance',
+            'description' => __('chief::ui.shell.use_light_appearance'),
         ],
         [
             'theme' => 'dark',
-            'label' => 'Switch to dark theme',
+            'label' => __('chief::ui.shell.switch_to_dark_theme'),
             'icon' => 'fad fa-moon',
-            'description' => 'Use the dark appearance',
+            'description' => __('chief::ui.shell.use_dark_appearance'),
         ],
         [
             'theme' => 'system',
-            'label' => 'Use system theme',
+            'label' => __('chief::ui.shell.use_system_theme'),
             'icon' => 'fad fa-display',
-            'description' => 'Follow the device appearance',
+            'description' => __('chief::ui.shell.follow_device_appearance'),
         ],
     ]);
 
@@ -162,7 +162,7 @@
                     x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; themeOpen = false; closePalette()"
                     aria-controls="chief-shell-mobile-menu"
                     x-bind:aria-expanded="menuOpen.toString()">
-                <span class="sr-only">Toggle main menu</span>
+                <span class="sr-only">{{ __('chief::ui.shell.toggle_main_menu') }}</span>
                 <i class="fa fa-fw fa-bars" x-show="!menuOpen"></i>
                 <i class="fa fa-fw fa-xmark" x-show="menuOpen"></i>
             </button>
@@ -197,9 +197,9 @@
                                 x-on:click="togglePalette('switcher')"
                                 x-bind:aria-expanded="paletteOpen.toString()"
                                 aria-haspopup="dialog"
-                                aria-label="Switch app"
+                                aria-label="{{ __('chief::ui.shell.switch_app') }}"
                                 data-toggle="tooltip"
-                                data-title="Switch app (⌘J)">
+                                data-title="{{ __('chief::ui.shell.switch_app') }} (⌘J)">
                             <i class="fa fa-fw fa-chevron-down text-[10px] text-fg-faint"></i>
                         </button>
                     @endif
@@ -246,17 +246,19 @@
                             class="hidden h-8 min-w-52 cursor-pointer items-center gap-2 rounded-md border border-line bg-surface-2 px-2 text-xs text-fg-subtle transition hover:border-line-strong hover:bg-surface-3 hover:text-fg-muted lg:flex"
                             x-on:click="openPalette()">
                         <i class="fa fa-fw fa-search"></i>
-                        <span class="flex-1 text-left">Search or jump to...</span>
+                        <span class="flex-1 text-left">{{ __('chief::ui.shell.search_or_jump') }}</span>
                         <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px] font-medium text-fg-subtle">Cmd K</span>
                     </button>
 
                     <button type="button"
                             class="grid size-8 cursor-pointer place-items-center rounded-md bg-surface-2 text-fg-faint transition hover:bg-surface-3 hover:text-fg-muted lg:hidden"
                             x-on:click="openPalette()">
-                        <span class="sr-only">Search</span>
+                        <span class="sr-only">{{ __('chief::ui.shell.search') }}</span>
                         <i class="fad fa-fw fa-search text-sm"></i>
                     </button>
                 @endif
+
+                @stack('chief.shell.actions')
 
                 @guest
                     @if(config('chief.shell.theme_selector', true) && $themeUpdateUrl)
@@ -266,7 +268,7 @@
                                     x-on:click="themeOpen = !themeOpen; menuOpen = false; accountOpen = false; teamOpen = false; closePalette()"
                                     x-bind:aria-expanded="themeOpen.toString()"
                                     aria-haspopup="menu"
-                                    aria-label="Theme">
+                                    aria-label="{{ __('chief::ui.shell.theme') }}">
                                 <i class="fad fa-fw text-sm" x-bind:class="resolvedTheme() === 'dark' ? 'fa-moon' : 'fa-sun-bright'"></i>
                             </button>
 
@@ -276,7 +278,7 @@
                                  x-transition.origin.top.right
                                  class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
                                  role="menu"
-                                 aria-label="Theme">
+                                 aria-label="{{ __('chief::ui.shell.theme') }}">
                                 <div class="p-1.5" role="none">
                                     <button type="button"
                                             class="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg"
@@ -285,7 +287,7 @@
                                         <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
                                             <i class="fad fa-fw fa-sun-bright text-[11px]"></i>
                                         </span>
-                                        <span class="min-w-0 flex-1 truncate">Light</span>
+                                        <span class="min-w-0 flex-1 truncate">{{ __('chief::ui.shell.light') }}</span>
                                         <i x-show="theme === 'light'" class="fa fa-fw fa-check text-xs text-accent"></i>
                                     </button>
                                     <button type="button"
@@ -295,7 +297,7 @@
                                         <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
                                             <i class="fad fa-fw fa-moon text-[11px]"></i>
                                         </span>
-                                        <span class="min-w-0 flex-1 truncate">Dark</span>
+                                        <span class="min-w-0 flex-1 truncate">{{ __('chief::ui.shell.dark') }}</span>
                                         <i x-show="theme === 'dark'" class="fa fa-fw fa-check text-xs text-accent"></i>
                                     </button>
                                     <button type="button"
@@ -305,7 +307,7 @@
                                         <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-subtle">
                                             <i class="fad fa-fw fa-display text-[11px]"></i>
                                         </span>
-                                        <span class="min-w-0 flex-1 truncate">System</span>
+                                        <span class="min-w-0 flex-1 truncate">{{ __('chief::ui.shell.system') }}</span>
                                         <i x-show="theme === 'system'" class="fa fa-fw fa-check text-xs text-accent"></i>
                                     </button>
                                 </div>
@@ -322,7 +324,7 @@
                                     x-on:click="teamOpen = !teamOpen; accountOpen = false; themeOpen = false; menuOpen = false; closePalette()"
                                     x-bind:aria-expanded="teamOpen.toString()"
                                     aria-haspopup="menu">
-                                <span class="sr-only">Open team menu</span>
+                                <span class="sr-only">{{ __('chief::ui.shell.open_team_menu') }}</span>
                                 <img class="size-8 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
                                 <span class="absolute bottom-0 right-0 grid size-4 place-items-center rounded-sm border-2 border-surface bg-accent text-[7px] font-bold leading-none text-accent-fg">T</span>
                             </button>
@@ -344,7 +346,7 @@
                                 x-on:click="accountOpen = !accountOpen; teamOpen = false; themeOpen = false; menuOpen = false; closePalette()"
                                 x-bind:aria-expanded="accountOpen.toString()"
                                 aria-haspopup="menu">
-                            <span class="sr-only">Open account menu</span>
+                            <span class="sr-only">{{ __('chief::ui.shell.open_account_menu') }}</span>
                             <img class="size-8 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
                             @if(config('chief.teams') && auth()->user()->team)
                                 <span class="absolute bottom-0 right-0 grid size-4 place-items-center rounded-sm border-2 border-surface bg-accent text-[7px] font-bold leading-none text-accent-fg">P</span>
@@ -373,21 +375,21 @@
                                                 x-bind:class="themeButtonClasses('light')"
                                                 x-on:click="setTheme('light')">
                                             <i class="fad fa-fw fa-sun-bright text-[11px]"></i>
-                                            <span>Light</span>
+                                            <span>{{ __('chief::ui.shell.light') }}</span>
                                         </button>
                                         <button type="button"
                                                 class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
                                                 x-bind:class="themeButtonClasses('dark')"
                                                 x-on:click="setTheme('dark')">
                                             <i class="fad fa-fw fa-moon text-[11px]"></i>
-                                            <span>Dark</span>
+                                            <span>{{ __('chief::ui.shell.dark') }}</span>
                                         </button>
                                         <button type="button"
                                                 class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
                                                 x-bind:class="themeButtonClasses('system')"
                                                 x-on:click="setTheme('system')">
                                             <i class="fad fa-fw fa-display text-[11px]"></i>
-                                            <span>System</span>
+                                            <span>{{ __('chief::ui.shell.system') }}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -632,31 +634,31 @@
                     </template>
 
                     <div x-cloak x-show="remoteError" class="rounded-md px-3 py-2 text-xs text-red">
-                        Search results could not be loaded.
+                        {{ __('chief::ui.shell.search_results_unavailable') }}
                     </div>
 
                     <div x-cloak
                          x-show="hasPaletteSearchTerm() && !remoteLoading && !remoteError && !hasPaletteItems()"
                          class="rounded-md px-3 py-6 text-center text-sm text-fg-subtle">
-                        No results found.
+                        {{ __('chief::ui.shell.no_results') }}
                     </div>
                 </div>
 
                 <div class="flex items-center gap-4 border-t border-line bg-surface-2 px-4 py-2 text-xs text-fg-subtle">
                     <span class="flex items-center gap-1">
                         <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">↑</span>
-                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">↓</span> move
+                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">↓</span> {{ __('chief::ui.shell.move') }}
                     </span>
                     <span class="flex items-center gap-1">
-                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">Enter</span> open
+                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">Enter</span> {{ __('chief::ui.shell.open') }}
                     </span>
                     @if($apps->isNotEmpty())
                         <a href="{{ $allAppsUrl }}" target="_blank" rel="noopener" class="ml-auto inline-flex items-center gap-1 font-medium text-fg-muted hover:text-fg">
-                            <span>All apps</span>
+                            <span>{{ __('chief::ui.shell.all_apps') }}</span>
                             <i class="fa fa-fw fa-arrow-up-right-from-square text-[10px] text-fg-faint"></i>
                         </a>
                     @else
-                        <span class="ml-auto">Use &gt; to scope results</span>
+                        <span class="ml-auto">{{ __('chief::ui.shell.scope_results') }}</span>
                     @endif
                 </div>
             </div>

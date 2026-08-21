@@ -215,6 +215,7 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadViewsFrom(__DIR__ . '/../views/chief', 'chief');
         $this->loadViewsFrom(__DIR__ . '/../views/tailwind', 'tw');
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'chief');
     }
 
     private function configureEvents(): void

@@ -8,7 +8,7 @@
     $theme = ChiefTools\SDK\Chief::theme();
 @endphp
     <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}"
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
       data-theme="{{ $theme }}"
       data-theme-preference="{{ $themePreference }}"
       data-tool="{{ config('chief.id', 'chief') }}"

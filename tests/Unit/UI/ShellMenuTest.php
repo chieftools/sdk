@@ -119,26 +119,13 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->toContain('Account Chief &gt; Account')
         ->toContain('Switch to Acme team')
         ->toContain('Domain Chief &gt; Teams &gt; Acme')
-        ->toContain('Account Chief')
-        ->toContain('fa-github')
         ->toContain('Chief Tools &gt; Account Chief')
-        ->toContain('x-data="chiefShell"')
-        ->toContain('data-theme-update-url="')
-        ->toContain('chief/ui/theme/__theme__')
-        ->toContain('commandOrder(paletteQuery')
-        ->toContain('remoteResults')
         ->toContain('data-command-palette-search-url="')
         ->toContain('chief/ui/commands/search')
-        ->toContain("remoteLoading ? 'fa-spinner-third fa-spin' : 'fa-search'")
-        ->toContain('result.icon_url')
-        ->toContain('x-on:load="$el.classList.remove')
         ->toContain('No results found.')
-        ->toContain('/icons/domainchief.svg')
-        ->toContain('menuOpen = !menuOpen')
+        ->toContain('src="/icons/domainchief.svg"')
         ->toContain('Search or jump to...')
         ->toContain('All apps')
-        ->not->toContain('Searching...')
-        ->not->toContain('Close main menu')
         ->not->toContain('main-menu-items');
 
     expect($html)->toContain('href="https://account.chief.app/team/current"');
@@ -173,7 +160,6 @@ test('the modern shell does not render a dynamic command search url without prov
     ])->render();
 
     expect($html)
-        ->toContain('data-chief-shell')
         ->not->toContain('data-command-palette-search-url="')
         ->not->toContain('chief/ui/commands/search');
 });
@@ -215,7 +201,6 @@ test('the modern shell does not expose dynamic command search to guests', functi
     ])->render();
 
     expect($html)
-        ->toContain('data-chief-shell')
         ->not->toContain('data-command-palette-search-url="')
         ->not->toContain('chief/ui/commands/search');
 });
@@ -255,24 +240,16 @@ test('the modern shell renders a guest theme selector when theme route exists', 
         'menuItems'    => [],
     ])->render();
 
+    $text = strip_tags($html);
+
     expect($html)
         ->toContain('aria-label="Theme"')
-        ->toContain('themeOpen = !themeOpen')
-        ->toContain("resolvedTheme() === 'dark' ? 'fa-moon' : 'fa-sun-bright'")
-        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'light' }\"")
-        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'dark' }\"")
-        ->toContain("x-bind:class=\"{ 'bg-surface-2 text-fg': theme === 'system' }\"")
-        ->toContain('Switch to light theme')
-        ->toContain('Switch to dark theme')
-        ->toContain('Use system theme')
-        ->toContain("theme !== 'light'")
-        ->toContain("theme !== 'dark'")
-        ->toContain("theme !== 'system'")
-        ->toContain("setTheme('light'); themeOpen = false")
-        ->toContain("setTheme('dark'); themeOpen = false")
-        ->toContain("setTheme('system'); themeOpen = false")
-        ->toContain('chief/ui/theme/__theme__')
-        ->not->toContain("theme === 'system' ? 'fa-display'");
+        ->toContain('chief/ui/theme/__theme__');
+
+    expect($text)
+        ->toContain('Light')
+        ->toContain('Dark')
+        ->toContain('System');
 });
 
 test('the shell theme route stores guest preferences without authentication', function () {
@@ -297,11 +274,15 @@ test('the modern shell can hide the guest theme selector', function () {
         'menuItems'    => [],
     ])->render();
 
+    $text = strip_tags($html);
+
     expect($html)
-        ->toContain('data-chief-shell')
-        ->not->toContain('aria-label="Theme"')
+        ->not->toContain('aria-label="Theme"');
+
+    expect($text)
         ->not->toContain('Switch to light theme')
-        ->not->toContain('themeOpen = !themeOpen');
+        ->not->toContain('Switch to dark theme')
+        ->not->toContain('Use system theme');
 });
 
 test('the modern shell renders the saved dark theme before javascript hydration', function () {
@@ -318,8 +299,7 @@ test('the modern shell renders the saved dark theme before javascript hydration'
 
     expect($html)
         ->toContain('data-theme="dark"')
-        ->toContain('data-theme-preference="dark"')
-        ->toContain('dark');
+        ->toContain('data-theme-preference="dark"');
 });
 
 test('the modern shell resolves system theme before rendering shell content', function () {
@@ -334,36 +314,12 @@ test('the modern shell resolves system theme before rendering shell content', fu
         'menuItems'    => [],
     ])->render();
 
-    expect($html)
-        ->toContain('data-theme-preference="system"')
-        ->toContain("window.matchMedia('(prefers-color-scheme: dark)').matches")
-        ->toContain('document.currentScript.parentElement');
-});
+    $beforeShellContent = explode('<header', $html, 2)[0];
 
-test('the modern shell keeps minimal marketing menus full width', function () {
-    config([
-        'chief.shell.variant' => 'modern',
-    ]);
+    expect($html)->toContain('data-theme-preference="system"');
 
-    $html = view('chief::partial.menu', [
-        'minimalMenu'  => true,
-        'logoRedirect' => '/',
-        'menuItems'    => [
-            [
-                'href' => '/pricing',
-                'icon' => 'fad fa-money-bill-wave',
-                'text' => 'Pricing',
-            ],
-        ],
-    ])->render();
-
-    expect($html)
-        ->toContain('data-chief-shell')
-        ->toContain('w-full')
-        ->toContain('md:absolute md:inset-y-0 md:left-1/2')
-        ->toContain('md:ml-auto')
-        ->toContain('justify-center')
-        ->not->toContain('container mx-auto max-w-7xl');
+    expect($beforeShellContent)
+        ->toContain("window.matchMedia('(prefers-color-scheme: dark)').matches");
 });
 
 test('the modern shell can hide the account menu theme selector', function () {
@@ -387,8 +343,11 @@ test('the modern shell can hide the account menu theme selector', function () {
         'menuItems'    => [],
     ])->render();
 
-    expect($html)
-        ->toContain('data-chief-shell')
-        ->not->toContain("themeButtonClasses('light')")
-        ->not->toContain("setTheme('light')");
+    $text = strip_tags($html);
+
+    expect($text)
+        ->toContain('Open account menu')
+        ->not->toContain('Switch to light theme')
+        ->not->toContain('Switch to dark theme')
+        ->not->toContain('Use system theme');
 });

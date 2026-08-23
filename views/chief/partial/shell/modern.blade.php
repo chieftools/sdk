@@ -489,14 +489,14 @@
                     @foreach($menuItems as $item)
                         @php($label = $item['text'] ?? $item['label'] ?? '')
                         <a href="{{ $item['href'] ?? '#' }}"
-                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                            data-shell-command
                            data-shell-category="{{ $tool['name'] }}"
                            data-shell-title="{{ strtolower($label) }}"
                            data-shell-body="{{ strtolower($tool['name']) }}"
                            x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
                            x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
-                           x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                           x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if(!empty($item['wire'])) wire:navigate @endif
                            x-on:click="closePalette()">
                             @if(!empty($item['icon']))
@@ -508,20 +508,20 @@
                                 <span class="block truncate text-sm font-medium">{{ $label }}</span>
                                 <span class="block truncate text-xs text-fg-subtle">{{ $tool['name'] }} &gt; {{ $label }}</span>
                             </span>
-                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
                         </a>
                     @endforeach
 
                     @foreach($commands as $command)
                         <a href="{{ $command['href'] }}"
-                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                            data-shell-command
                            data-shell-category="{{ $command['category'] }}"
                            data-shell-title="{{ strtolower($command['label']) }}"
                            data-shell-body="{{ strtolower($command['description']) }}"
                            x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
                            x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
-                           x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                           x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if($command['target']) target="{{ $command['target'] }}" @endif
                            @if($command['target'] === '_blank') rel="noopener" @endif
                            @if($command['wire']) wire:navigate @endif
@@ -533,21 +533,21 @@
                                 <span class="block truncate text-sm font-medium">{{ $command['label'] }}</span>
                                 <span class="block truncate text-xs text-fg-subtle">{{ $command['category'] }} &gt; {{ $command['description'] ?: $command['label'] }}</span>
                             </span>
-                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
                         </a>
                     @endforeach
 
                     @if(config('chief.shell.theme_selector', true))
                         @foreach($themeCommands as $themeCommand)
                             <button type="button"
-                                    class="group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                                    class="group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                                     data-shell-command
                                     data-shell-category="Theme"
                                     data-shell-title="{{ strtolower($themeCommand['label']) }}"
                                     data-shell-body="{{ strtolower($themeCommand['description']) }}"
                                     x-show="theme !== @js($themeCommand['theme']) && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
                                     x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
-                                    x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                                    x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                                     x-on:click="setTheme(@js($themeCommand['theme'])); closePalette()">
                                 <span class="grid size-7 place-items-center rounded-md bg-surface-2 text-fg-subtle">
                                     <i class="fa-fw {{ $themeCommand['icon'] }} text-sm"></i>
@@ -556,21 +556,21 @@
                                     <span class="block truncate text-sm font-medium">{{ $themeCommand['label'] }}</span>
                                     <span class="block truncate text-xs text-fg-subtle">Theme &gt; {{ $themeCommand['description'] }}</span>
                                 </span>
-                                <i class="fa fa-fw fa-check text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                                <i class="fa fa-fw fa-check text-xs text-fg-faint"></i>
                             </button>
                         @endforeach
                     @endif
 
                     @foreach($apps as $app)
                         <a href="{{ $app['href'] }}"
-                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                            data-shell-command
                            data-shell-category="Chief Tools"
                            data-shell-title="{{ strtolower($app['name'] . ' ' . $app['short']) }}"
                            data-shell-body="{{ strtolower($app['description']) }}"
                            x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
                            x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
-                           x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                           x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if($app['target']) target="{{ $app['target'] }}" @endif
                            @if($app['target'] === '_blank') rel="noopener" @endif
                            x-on:click="closePalette()">
@@ -594,13 +594,13 @@
                                     <span class="block truncate text-xs text-fg-subtle">Chief Tools &gt; {{ $app['name'] }}</span>
                                 @endif
                             </span>
-                            <i class="fa fa-fw fa-arrow-up-right text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                            <i class="fa fa-fw fa-arrow-up-right text-xs text-fg-faint"></i>
                         </a>
                     @endforeach
 
                     <template x-for="result in remoteResults" x-bind:key="result.id">
                         <a x-bind:href="result.url || '#'"
-                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition hover:bg-surface-2 hover:text-fg data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                            data-shell-command
                            x-bind:data-shell-category="result.category || ''"
                            x-bind:data-shell-title="result.title || ''"
@@ -608,7 +608,7 @@
                            x-bind:style="{ order: result.order || 9500 }"
                            x-bind:target="result.target || null"
                            x-bind:rel="result.target === '_blank' ? 'noopener' : null"
-                           x-on:mouseenter="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                           x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            x-on:click="closePalette()">
                             <span class="relative grid size-7 place-items-center overflow-hidden rounded-md bg-surface-2 text-fg-subtle">
                                 <i class="fa-fw text-sm" x-bind:class="result.icon || 'fad fa-arrow-right'"></i>
@@ -629,7 +629,7 @@
                                     </template>
                                 </span>
                             </span>
-                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint group-hover:text-fg-subtle"></i>
+                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
                         </a>
                     </template>
 

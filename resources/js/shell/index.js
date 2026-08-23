@@ -51,6 +51,8 @@ function chiefShell() {
         paletteQuery: '',
         activeIndex: 0,
         remoteResults: [],
+        paletteNavigationStack: [],
+        paletteContextLabels: [],
         remoteLoading: false,
         remoteError: false,
         remoteSearchUrl: null,
@@ -232,6 +234,7 @@ function chiefShell() {
         },
 
         openPalette(query = '') {
+            this.resetPaletteNavigation();
             this.paletteQuery = query;
             this.activeIndex = 0;
             this.menuOpen = false;
@@ -251,7 +254,9 @@ function chiefShell() {
             this.paletteOpen = false;
             this.activeIndex = 0;
             this.remoteSearchAbort?.abort();
+            this.remoteResults = [];
             this.remoteLoading = false;
+            this.resetPaletteNavigation();
         },
 
         togglePalette(mode = 'empty') {
@@ -270,6 +275,8 @@ function chiefShell() {
                     return;
                 }
 
+                this.resetPaletteNavigation();
+                this.remoteResults = [];
                 this.paletteQuery = query;
                 this.activeIndex = 0;
                 this.$nextTick(() => {
@@ -401,6 +408,16 @@ function chiefShell() {
             return score > 0 ? 10000 - score : 10000;
         },
 
+        paletteItemOrder(query, title, category, body = '', unfilteredOrder = 10000) {
+            const parts = commandParts(query);
+
+            if (!parts.scoped && !normalize(parts.term)) {
+                return unfilteredOrder;
+            }
+
+            return this.commandOrder(query, title, category, body);
+        },
+
         matchesCommand(query, title, category, body = '') {
             return this.commandScore(query, title, category, body) > 0;
         },
@@ -418,7 +435,7 @@ function chiefShell() {
         },
 
         shouldSearchRemote() {
-            if (!this.remoteSearchUrl) {
+            if (!this.remoteSearchUrl || this.hasNestedPaletteContext()) {
                 return false;
             }
 
@@ -430,6 +447,13 @@ function chiefShell() {
 
         queueRemoteSearch() {
             clearTimeout(this.remoteSearchTimer);
+
+            if (this.hasNestedPaletteContext()) {
+                this.remoteSearchAbort?.abort();
+                this.remoteLoading = false;
+                this.remoteError = false;
+                return;
+            }
 
             if (!this.shouldSearchRemote()) {
                 this.remoteSearchAbort?.abort();
@@ -502,6 +526,118 @@ function chiefShell() {
             return normalize(commandParts(this.paletteQuery).term).length > 0;
         },
 
+        hasNestedPaletteContext() {
+            return this.paletteNavigationStack.length > 0;
+        },
+
+        paletteContextTitle() {
+            return this.paletteContextLabels.join(' > ');
+        },
+
+        resetPaletteNavigation() {
+            this.paletteNavigationStack = [];
+            this.paletteContextLabels = [];
+        },
+
+        hasPaletteChildren(result) {
+            return Array.isArray(result?.children) && result.children.length > 0;
+        },
+
+        enterPaletteChildren(result) {
+            if (!this.hasPaletteChildren(result)) {
+                return false;
+            }
+
+            this.remoteSearchAbort?.abort();
+            this.paletteNavigationStack.push({
+                query: this.paletteQuery,
+                results: this.remoteResults,
+                activeIndex: this.activeIndex,
+            });
+            this.paletteContextLabels.push(result.title || '');
+            this.paletteQuery = '';
+            this.remoteResults = result.children;
+            this.remoteLoading = false;
+            this.remoteError = false;
+            this.activeIndex = 0;
+            this.$nextTick(() => {
+                this.$refs.paletteSearch?.focus();
+                this.syncPaletteActive();
+            });
+
+            return true;
+        },
+
+        leavePaletteContext() {
+            const parent = this.paletteNavigationStack.pop();
+
+            if (!parent) {
+                return false;
+            }
+
+            this.paletteContextLabels.pop();
+            this.paletteQuery = parent.query;
+            this.remoteResults = parent.results;
+            this.remoteLoading = false;
+            this.remoteError = false;
+            this.activeIndex = parent.activeIndex;
+            this.$nextTick(() => {
+                this.$refs.paletteSearch?.focus();
+                this.$refs.paletteSearch?.setSelectionRange(this.paletteQuery.length, this.paletteQuery.length);
+                this.syncPaletteActive();
+            });
+
+            return true;
+        },
+
+        remoteResultForItem(item) {
+            const id = item?.dataset?.shellCommandId;
+
+            if (!id) {
+                return null;
+            }
+
+            return this.remoteResults.find(result => String(result.id) === id) || null;
+        },
+
+        activePaletteResult() {
+            return this.remoteResultForItem(this.visiblePaletteItems()[this.activeIndex]);
+        },
+
+        activePaletteHasChildren() {
+            return this.hasPaletteChildren(this.activePaletteResult());
+        },
+
+        drillIntoPalette() {
+            return this.enterPaletteChildren(this.activePaletteResult());
+        },
+
+        handlePaletteRight(event) {
+            const input = event.currentTarget;
+            const caretAtEnd = input.selectionStart === input.value.length && input.selectionEnd === input.value.length;
+
+            if (caretAtEnd && this.drillIntoPalette()) {
+                event.preventDefault();
+            }
+        },
+
+        handlePaletteLeft(event) {
+            const input = event.currentTarget;
+            const caretAtStart = input.selectionStart === 0 && input.selectionEnd === 0;
+
+            if (this.hasNestedPaletteContext() && !this.hasPaletteSearchTerm() && caretAtStart) {
+                event.preventDefault();
+                this.leavePaletteContext();
+            }
+        },
+
+        handlePaletteBackspace(event) {
+            if (this.hasNestedPaletteContext() && !this.hasPaletteSearchTerm()) {
+                event.preventDefault();
+                this.leavePaletteContext();
+            }
+        },
+
         syncPaletteActive() {
             const items = this.visiblePaletteItems();
 
@@ -534,7 +670,13 @@ function chiefShell() {
         },
 
         activatePalette() {
-            this.visiblePaletteItems()[this.activeIndex]?.click();
+            const item = this.visiblePaletteItems()[this.activeIndex];
+
+            if (!item) {
+                return;
+            }
+
+            (item.querySelector?.('[data-shell-command-primary]') || item).click();
         },
     };
 }

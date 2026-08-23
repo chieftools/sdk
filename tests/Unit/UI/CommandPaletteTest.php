@@ -28,6 +28,35 @@ test('command palette query treats the last path segment as the term', function 
         ->and($query->normalizedScopeParts())->toBe(['domain chief', 'domains']);
 });
 
+test('command palette items serialize nested destinations and search keywords', function () {
+    $item = new Item(
+        id: 'domain:1',
+        type: 'domain',
+        title: 'violetforge.test',
+        url: '/domains/violetforge.test',
+        category: 'Domain Chief',
+        children: [
+            new Item(
+                id: 'domain:1:dns',
+                type: 'domain_destination',
+                title: 'DNS records',
+                url: '/domains/violetforge.test/records',
+                category: 'Domain Chief > Domains > violetforge.test',
+                keywords: ['dns', 'zone'],
+            ),
+        ],
+    );
+
+    expect($item->toArray())
+        ->children->toHaveCount(1)
+        ->children->sequence(
+            fn ($child) => $child
+                ->id->toBe('domain:1:dns')
+                ->url->toBe('/domains/violetforge.test/records')
+                ->keywords->toBe(['dns', 'zone']),
+        );
+});
+
 test('command palette manager searches matching scoped providers', function () {
     $domainProvider = new class implements Provider
     {

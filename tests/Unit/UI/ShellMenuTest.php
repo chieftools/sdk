@@ -164,6 +164,37 @@ test('the modern shell does not render a dynamic command search url without prov
         ->not->toContain('chief/ui/commands/search');
 });
 
+test('the modern shell renders current-page commands as a separate palette context', function () {
+    config([
+        'chief.shell.variant' => 'modern',
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect'        => '/',
+        'menuItems'           => [],
+        'shellCommandContext' => [
+            'label'    => 'violetforge.test',
+            'commands' => [
+                [
+                    'label'       => 'DNS records',
+                    'href'        => '/domains/violetforge.test/records',
+                    'category'    => 'Domain Chief > Domains',
+                    'description' => 'violetforge.test',
+                    'keywords'    => ['dns', 'zone'],
+                ],
+            ],
+        ],
+    ])->render();
+
+    expect($html)
+        ->toContain('For violetforge.test')
+        ->toContain('All commands')
+        ->toContain('href="/domains/violetforge.test/records"')
+        ->toContain('Back to previous command results')
+        ->toContain('Show destinations for')
+        ->toContain('data-shell-command-browse');
+});
+
 test('the modern shell renders the configured brand icon when no logo is configured', function () {
     config([
         'chief.id'              => 'billdo',

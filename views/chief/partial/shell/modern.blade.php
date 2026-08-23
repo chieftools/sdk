@@ -73,18 +73,30 @@
         ->filter(fn (array $app): bool => !empty($app['id']) && !empty($app['name']))
         ->values();
 
-    $commands = collect($shellCommands ?? [])
-        ->map(static fn (array $command): array => [
+    $normalizeCommand = static fn (array $command): array => [
             'label' => $command['label'] ?? $command['text'] ?? '',
             'href' => $command['href'] ?? '#',
             'icon' => $command['icon'] ?? 'fa-arrow-right',
             'category' => $command['category'] ?? $tool['name'],
             'description' => $command['description'] ?? $command['group'] ?? '',
+            'keywords' => collect(\Illuminate\Support\Arr::wrap($command['keywords'] ?? []))
+                ->filter(static fn (mixed $keyword): bool => is_string($keyword) && $keyword !== '')
+                ->implode(' '),
             'target' => $command['target'] ?? null,
             'wire' => $command['wire'] ?? false,
-        ])
+        ];
+
+    $commands = collect($shellCommands ?? [])
+        ->map($normalizeCommand)
         ->filter(fn (array $command): bool => !empty($command['label']))
         ->reject(static fn (array $command): bool => in_array($commandKey($command['category'], $command['label']), $menuCommandKeys, true))
+        ->unique(static fn (array $command): string => $commandKey($command['category'], $command['label']))
+        ->values();
+    $commandContextLabel = trim((string) data_get($shellCommandContext ?? [], 'label', ''));
+    $contextCommands = collect(data_get($shellCommandContext ?? [], 'commands', []))
+        ->filter(static fn (mixed $command): bool => is_array($command))
+        ->map($normalizeCommand)
+        ->filter(static fn (array $command): bool => !empty($command['label']))
         ->unique(static fn (array $command): string => $commandKey($command['category'], $command['label']))
         ->values();
     $themeCommands = collect([
@@ -456,22 +468,33 @@
                  x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
                  x-transition:enter-end="opacity-100 scale-100 translate-y-0"
                  x-transition:leave="ease-in duration-150"
-                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 scale-95 -translate-y-2">
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-95 -translate-y-2">
                 <div class="flex items-center gap-3 border-b border-line px-4 py-3">
-                    <i class="fa fa-fw text-fg-faint" x-bind:class="remoteLoading ? 'fa-spinner-third fa-spin' : 'fa-search'"></i>
+                    <button type="button"
+                            x-cloak
+                            x-show="hasNestedPaletteContext()"
+                            x-on:click="leavePaletteContext()"
+                            class="grid size-7 shrink-0 cursor-pointer place-items-center rounded-md text-fg-subtle transition hover:bg-surface-2 hover:text-fg"
+                            aria-label="{{ __('chief::ui.shell.back_to_results') }}">
+                        <i class="fa fa-fw fa-arrow-left text-xs"></i>
+                    </button>
+                    <i x-show="!hasNestedPaletteContext()" class="fa fa-fw text-fg-faint" x-bind:class="remoteLoading ? 'fa-spinner-third fa-spin' : 'fa-search'"></i>
                     <input x-ref="paletteSearch"
                            x-model="paletteQuery"
                            x-on:input="paletteQueryChanged()"
                            x-on:keydown.arrow-down.prevent="movePalette(1)"
                            x-on:keydown.arrow-up.prevent="movePalette(-1)"
+                           x-on:keydown.arrow-right="handlePaletteRight($event)"
+                           x-on:keydown.arrow-left="handlePaletteLeft($event)"
+                           x-on:keydown.backspace="handlePaletteBackspace($event)"
                            x-on:keydown.enter.prevent="activatePalette()"
                            type="search"
                            class="min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-fg placeholder:text-fg-faint focus:ring-0">
                     <span class="rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] font-medium text-fg-subtle">esc</span>
                 </div>
 
-                <div class="flex gap-2 border-b border-line bg-surface-2 px-3 py-2 text-xs text-fg-subtle">
+                <div x-show="!hasNestedPaletteContext()" class="flex gap-2 border-b border-line bg-surface-2 px-3 py-2 text-xs text-fg-subtle">
                     <button type="button" class="cursor-pointer rounded-md px-2 py-1 font-medium hover:bg-surface hover:text-fg" x-on:click="setPaletteQuery('')">
                         All
                     </button>
@@ -485,7 +508,50 @@
                     @endif
                 </div>
 
+                <div x-cloak x-show="hasNestedPaletteContext()" class="border-b border-line bg-surface-2 px-4 py-2 text-xs font-medium text-fg-subtle">
+                    <span x-text="paletteContextTitle()"></span>
+                </div>
+
                 <div x-ref="paletteItems" class="flex max-h-96 flex-col overflow-y-auto p-1.5">
+                    @if($commandContextLabel !== '' && $contextCommands->isNotEmpty())
+                        <div x-show="!hasNestedPaletteContext() && !paletteQuery.trim()"
+                             class="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-fg-faint"
+                             style="order: 100">
+                            {{ __('chief::ui.shell.for_context', ['label' => $commandContextLabel]) }}
+                        </div>
+
+                        @foreach($contextCommands as $command)
+                            <a href="{{ $command['href'] }}"
+                               class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                               data-shell-command
+                               data-shell-category="{{ $command['category'] }}"
+                               data-shell-title="{{ strtolower($command['label']) }}"
+                               data-shell-body="{{ strtolower(trim($command['description'] . ' ' . $command['keywords'])) }}"
+                               x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                               x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 110) }"
+                               x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                               @if($command['target']) target="{{ $command['target'] }}" @endif
+                               @if($command['target'] === '_blank') rel="noopener" @endif
+                               @if($command['wire']) wire:navigate @endif
+                               x-on:click="closePalette()">
+                                <span class="grid size-7 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                    <i class="fa-fw {{ $command['icon'] }} text-sm"></i>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-sm font-medium">{{ $command['label'] }}</span>
+                                    <span class="block truncate text-xs text-fg-subtle">{{ $command['category'] }} &gt; {{ $command['description'] ?: $command['label'] }}</span>
+                                </span>
+                                <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
+                            </a>
+                        @endforeach
+
+                        <div x-show="!hasNestedPaletteContext() && !paletteQuery.trim()"
+                             class="border-t border-line px-3 pb-1 pt-3 text-[11px] font-semibold uppercase tracking-wide text-fg-faint"
+                             style="order: 200">
+                            {{ __('chief::ui.shell.all_commands') }}
+                        </div>
+                    @endif
+
                     @foreach($menuItems as $item)
                         @php($label = $item['text'] ?? $item['label'] ?? '')
                         <a href="{{ $item['href'] ?? '#' }}"
@@ -494,8 +560,8 @@
                            data-shell-category="{{ $tool['name'] }}"
                            data-shell-title="{{ strtolower($label) }}"
                            data-shell-body="{{ strtolower($tool['name']) }}"
-                           x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
-                           x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
+                           x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                           x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) }"
                            x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if(!empty($item['wire'])) wire:navigate @endif
                            x-on:click="closePalette()">
@@ -518,9 +584,9 @@
                            data-shell-command
                            data-shell-category="{{ $command['category'] }}"
                            data-shell-title="{{ strtolower($command['label']) }}"
-                           data-shell-body="{{ strtolower($command['description']) }}"
-                           x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
-                           x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
+                           data-shell-body="{{ strtolower(trim($command['description'] . ' ' . $command['keywords'])) }}"
+                           x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                           x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) }"
                            x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if($command['target']) target="{{ $command['target'] }}" @endif
                            @if($command['target'] === '_blank') rel="noopener" @endif
@@ -545,8 +611,8 @@
                                     data-shell-category="Theme"
                                     data-shell-title="{{ strtolower($themeCommand['label']) }}"
                                     data-shell-body="{{ strtolower($themeCommand['description']) }}"
-                                    x-show="theme !== @js($themeCommand['theme']) && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
-                                    x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
+                                    x-show="!hasNestedPaletteContext() && theme !== @js($themeCommand['theme']) && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                                    x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) }"
                                     x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                                     x-on:click="setTheme(@js($themeCommand['theme'])); closePalette()">
                                 <span class="grid size-7 place-items-center rounded-md bg-surface-2 text-fg-subtle">
@@ -568,8 +634,8 @@
                            data-shell-category="Chief Tools"
                            data-shell-title="{{ strtolower($app['name'] . ' ' . $app['short']) }}"
                            data-shell-body="{{ strtolower($app['description']) }}"
-                           x-show="matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
-                           x-bind:style="{ order: commandOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody) }"
+                           x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                           x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) }"
                            x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
                            @if($app['target']) target="{{ $app['target'] }}" @endif
                            @if($app['target'] === '_blank') rel="noopener" @endif
@@ -599,38 +665,52 @@
                     @endforeach
 
                     <template x-for="result in remoteResults" x-bind:key="result.id">
-                        <a x-bind:href="result.url || '#'"
-                           class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
-                           data-shell-command
-                           x-bind:data-shell-category="result.category || ''"
-                           x-bind:data-shell-title="result.title || ''"
-                           x-bind:data-shell-body="result.description || ''"
-                           x-bind:style="{ order: result.order || 9500 }"
-                           x-bind:target="result.target || null"
-                           x-bind:rel="result.target === '_blank' ? 'noopener' : null"
-                           x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
-                           x-on:click="closePalette()">
-                            <span class="relative grid size-7 place-items-center overflow-hidden rounded-md bg-surface-2 text-fg-subtle">
-                                <i class="fa-fw text-sm" x-bind:class="result.icon || 'fad fa-arrow-right'"></i>
-                                <img x-show="result.icon_url"
-                                     x-bind:src="result.icon_url"
-                                     alt=""
-                                     loading="lazy"
-                                     class="absolute hidden size-5 rounded-sm"
-                                     x-on:load="$el.classList.remove('hidden'); $el.previousElementSibling?.classList.add('hidden')"
-                                     x-on:error="$el.remove()">
-                            </span>
-                            <span class="min-w-0 flex-1">
-                                <span class="block truncate text-sm font-medium" x-text="result.title"></span>
-                                <span class="block truncate text-xs text-fg-subtle">
-                                    <span x-text="result.subtitle || result.category"></span>
-                                    <template x-if="result.description">
-                                        <span> · <span x-text="result.description"></span></span>
-                                    </template>
+                        <div class="group flex items-center rounded-md text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                             data-shell-command
+                             x-bind:data-shell-command-id="String(result.id || '')"
+                             x-bind:data-shell-category="result.category || ''"
+                             x-bind:data-shell-title="result.title || ''"
+                             x-bind:data-shell-body="[result.description || '', ...(result.keywords || [])].join(' ')"
+                             x-bind:style="{ order: hasNestedPaletteContext() ? commandOrder(paletteQuery, result.title || '', result.category || '', [result.description || '', ...(result.keywords || [])].join(' ')) : (result.order || 9500) }"
+                             x-show="!hasNestedPaletteContext() || matchesCommand(paletteQuery, result.title || '', result.category || '', [result.description || '', ...(result.keywords || [])].join(' '))"
+                             x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()">
+                            <a x-bind:href="result.url || '#'"
+                               data-shell-command-primary
+                               class="flex min-w-0 flex-1 items-center gap-3 px-3 py-2"
+                               x-bind:target="result.target || null"
+                               x-bind:rel="result.target === '_blank' ? 'noopener' : null"
+                               x-on:click="closePalette()">
+                                <span class="relative grid size-7 shrink-0 place-items-center overflow-hidden rounded-md bg-surface-2 text-fg-subtle">
+                                    <i class="fa-fw text-sm" x-bind:class="result.icon || 'fad fa-arrow-right'"></i>
+                                    <img x-show="result.icon_url"
+                                         x-bind:src="result.icon_url"
+                                         alt=""
+                                         loading="lazy"
+                                         class="absolute hidden size-5 rounded-sm"
+                                         x-on:load="$el.classList.remove('hidden'); $el.previousElementSibling?.classList.add('hidden')"
+                                         x-on:error="$el.remove()">
                                 </span>
-                            </span>
-                            <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
-                        </a>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block truncate text-sm font-medium" x-text="result.title"></span>
+                                    <span class="block truncate text-xs text-fg-subtle">
+                                        <span x-text="result.subtitle || result.category"></span>
+                                        <template x-if="result.description">
+                                            <span> · <span x-text="result.description"></span></span>
+                                        </template>
+                                    </span>
+                                </span>
+                                <i x-show="!hasPaletteChildren(result)" class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
+                            </a>
+                            <button type="button"
+                                    x-show="hasPaletteChildren(result)"
+                                    x-on:click.stop="enterPaletteChildren(result)"
+                                    data-shell-command-browse
+                                    class="mr-1 flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-2 text-xs font-medium text-fg-subtle transition hover:bg-surface-3 hover:text-fg"
+                                    x-bind:aria-label="@js(__('chief::ui.shell.show_destinations_for')) + ' ' + (result.title || 'result')">
+                                <span>{{ __('chief::ui.shell.browse') }}</span>
+                                <i class="fa fa-fw fa-chevron-right text-xs"></i>
+                            </button>
+                        </div>
                     </template>
 
                     <div x-cloak x-show="remoteError" class="rounded-md px-3 py-2 text-xs text-red">
@@ -651,6 +731,12 @@
                     </span>
                     <span class="flex items-center gap-1">
                         <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">Enter</span> {{ __('chief::ui.shell.open') }}
+                    </span>
+                    <span x-cloak x-show="activePaletteHasChildren()" class="flex items-center gap-1">
+                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">→</span> {{ __('chief::ui.shell.browse') }}
+                    </span>
+                    <span x-cloak x-show="hasNestedPaletteContext()" class="flex items-center gap-1">
+                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px]">←</span> {{ __('chief::ui.shell.back') }}
                     </span>
                     @if($apps->isNotEmpty())
                         <a href="{{ $allAppsUrl }}" target="_blank" rel="noopener" class="ml-auto inline-flex items-center gap-1 font-medium text-fg-muted hover:text-fg">

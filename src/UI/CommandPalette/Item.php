@@ -4,6 +4,10 @@ namespace ChiefTools\SDK\UI\CommandPalette;
 
 readonly class Item
 {
+    /**
+     * @param array<int, self>   $children
+     * @param array<int, string> $keywords
+     */
     public function __construct(
         public string $id,
         public string $type,
@@ -16,9 +20,11 @@ readonly class Item
         public ?string $iconUrl = null,
         public ?string $target = null,
         public int $score = 500,
+        public array $children = [],
+        public array $keywords = [],
     ) {}
 
-    /** @return array<string, int|string|null> */
+    /** @return array<string, mixed> */
     public function toArray(): array
     {
         return [
@@ -34,6 +40,8 @@ readonly class Item
             'target'      => $this->target,
             'score'       => $this->score,
             'order'       => 10000 - $this->score,
+            'children'    => array_map(static fn (self $child): array => $child->toArray(), $this->children),
+            'keywords'    => $this->keywords,
         ];
     }
 }

@@ -95,6 +95,33 @@ return [
 
     ],
 
+    'api_documentation' => [
+
+        // Null keeps the current SDK behavior by following the API route setting.
+        'enabled' => null,
+
+        'rest' => [
+
+            'documentation_url' => null,
+
+            'documentation_route' => 'api.docs.rest',
+
+            'playground_route' => null,
+
+        ],
+
+        'graphql' => [
+
+            'documentation_url' => null,
+
+            'documentation_route' => null,
+
+            'playground_route' => 'api.playground',
+
+        ],
+
+    ],
+
     'graphql' => [
 
         'namespace' => [

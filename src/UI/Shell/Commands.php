@@ -62,30 +62,11 @@ class Commands
     {
         $commands = collect();
 
-        if (Route::has('api.docs.rest')) {
+        if (Route::has('api.docs')) {
             $commands->push([
                 'label'       => 'API documentation',
-                'href'        => route('api.docs.rest'),
-                'icon'        => 'fad fa-exchange',
-                'description' => 'Developer',
-                'target'      => '_blank',
-            ]);
-        }
-
-        if (Route::has('api.docs.graphql')) {
-            $commands->push([
-                'label'       => 'GraphQL API docs',
-                'href'        => route('api.docs.graphql'),
-                'icon'        => 'fad fa-plug',
-                'description' => 'Developer',
-            ]);
-        }
-
-        if (Route::has('api.tokens')) {
-            $commands->push([
-                'label'       => 'Personal access tokens',
-                'href'        => route('api.tokens'),
-                'icon'        => 'fad fa-key',
+                'href'        => route('api.docs'),
+                'icon'        => 'fad fa-rectangle-api',
                 'description' => 'Developer',
             ]);
         }

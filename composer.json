@@ -21,9 +21,13 @@
     },
     "require-dev": {
         "chieftools/php-cs-fixer": "1.1.*",
+        "dedoc/scramble": "0.13.*",
         "larastan/larastan": "^3.0",
         "orchestra/testbench": "^10.1|^11",
         "pestphp/pest": "^5.0"
+    },
+    "suggest": {
+        "dedoc/scramble": "Required to use the optional Scramble OpenAPI extensions."
     },
     "autoload": {
         "psr-4": {

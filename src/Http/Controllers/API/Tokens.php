@@ -2,18 +2,19 @@
 
 namespace ChiefTools\SDK\Http\Controllers\API;
 
-use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Route;
 
 class Tokens
 {
-    public function __invoke(Request $request): View
+    public function __invoke(): RedirectResponse
     {
-        /** @var \ChiefTools\SDK\Entities\User $user */
-        $user = $request->user();
+        if (Route::has('api.docs')) {
+            return redirect(route('api.docs') . '#authentication');
+        }
 
-        return view('chief::api.tokens.index', compact('user'));
+        return redirect()->away(chief_base_url('api/tokens'));
     }
 
     public function create(Request $request): RedirectResponse

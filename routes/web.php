@@ -70,13 +70,24 @@ Route::group(config('chief.routes.web'), function () {
             });
         }
 
-        if (config('chief.routes.api')) {
+        $apiDocumentationEnabled = config('chief.api_documentation.enabled')
+            ?? (bool)config('chief.routes.api');
+
+        if ($apiDocumentationEnabled || config('chief.routes.api')) {
             Route::group([
                 'as'         => 'api.',
                 'prefix'     => 'api',
                 'middleware' => 'auth',
-            ], function () {
-                Route::view('docs/graphql', 'chief::api.docs.graphql')->name('docs.graphql');
+            ], function () use ($apiDocumentationEnabled) {
+                if ($apiDocumentationEnabled) {
+                    Route::get('docs', Controllers\API\Documentation::class)->name('docs');
+                }
+
+                if (!config('chief.routes.api')) {
+                    return;
+                }
+
+                Route::get('docs/graphql', static fn (): Illuminate\Http\RedirectResponse => to_route('api.docs'))->name('docs.graphql');
 
                 Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
                 Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');

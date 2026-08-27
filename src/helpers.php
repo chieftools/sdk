@@ -189,6 +189,22 @@ function chief_docs_url(?string $ref = null, array $query = []): string
     ]));
 }
 
+/** Get a url to the developer documentation for the current application. */
+function chief_developer_docs_url(?string $page = null, ?string $ref = null, array $query = []): string
+{
+    $base    = rtrim(config('chief.docs_url'), '/') . '/developers';
+    $appId   = config('chief.id');
+    $page  ??= $appId;
+
+    return (string)Illuminate\Support\Uri::of(
+        empty($page)
+            ? $base
+            : "{$base}/" . ltrim($page, '/'),
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: $appId,
+    ]));
+}
+
 /** Get the url to the Chief roadmap site for the current application. */
 function chief_roadmap_url(?string $ref = null, array $query = []): string
 {

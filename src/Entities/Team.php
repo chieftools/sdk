@@ -107,7 +107,11 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     // Relations
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(Chief::userModel())->withTimestamps()->orderBy('created_at');
+        return $this->belongsToMany(Chief::userModel())
+            ->using(TeamMembership::class)
+            ->withPivot('role')
+            ->withTimestamps()
+            ->orderBy('team_user.created_at');
     }
 
     // Helpers

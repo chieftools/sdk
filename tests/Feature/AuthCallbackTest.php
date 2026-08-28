@@ -1,14 +1,18 @@
 <?php
 
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Support\Facades\Crypt;
+use ChiefTools\SDK\Socialite\ChiefUser;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Exceptions;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Laravel\Socialite\Two\InvalidStateException;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+
+uses(LazilyRefreshDatabase::class);
 
 beforeEach(function () {
     config([
-        'app.key'        => 'base64:oE72uRMtvwHlVTVBthR+K3FBDmSqNXTevcEU2LtLqrw=',
         'chief.base_url' => 'https://account.chief.test',
         'services.chief' => [
             'client_id'     => 'domainchief',
@@ -82,4 +86,34 @@ it('preserves OAuth error descriptions', function () {
             'text' => 'Authentication failed (The user denied the request.), please try again!',
             'type' => 'warning',
         ]);
+});
+
+it('rejects callbacks without application-accessible teams before creating a local user', function () {
+    $remote = new ChiefUser([
+        'id'              => '1d018668-266f-41b7-8718-3986228c9d3a',
+        'name'            => 'Morgan Vale',
+        'email'           => 'morgan@example.test',
+        'timezone'        => 'Europe/Amsterdam',
+        'avatar_hash'     => 'avatar42',
+        'default_team_id' => null,
+        'teams'           => [],
+    ]);
+    $remote->setToken('billing-only-access-token');
+
+    $provider = $this->mock(ChiefProvider::class);
+    $provider->shouldReceive('user')->once()->andReturn($remote);
+    $provider->shouldReceive('revokeAccessToken')->once()->with('billing-only-access-token');
+
+    Socialite::shouldReceive('driver')->with('chief')->andReturn($provider);
+
+    $this->get('/login/callback?code=synthetic-code')
+        ->assertRedirect(url('/'))
+        ->assertSessionHas('message', [
+            'text' => 'Authentication failed (Your account does not have access to applications.), please try again!',
+            'type' => 'warning',
+        ]);
+
+    $this->assertGuest();
+
+    expect(User::query()->doesntExist())->toBeTrue();
 });

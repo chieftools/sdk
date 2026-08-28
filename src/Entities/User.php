@@ -13,6 +13,7 @@ use ChiefTools\SDK\Auth\HasRemoteToken;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Auth\AuthenticationException;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -135,7 +136,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     // Relations
     public function teams(): BelongsToMany
     {
-        $relation = $this->belongsToMany(Chief::teamModel())->withTimestamps();
+        $relation = $this->belongsToMany(Chief::teamModel())
+            ->using(TeamMembership::class)
+            ->withPivot('role')
+            ->withTimestamps();
 
         $relation->getQuery()->when($this->default_team_id !== null, function (Builder $query) {
             $grammer = $query->getQuery()->grammar;
@@ -205,7 +209,13 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function defaultOrFirstTeam(): Team
     {
-        return $this->defaultTeam ?? $this->teams()->first();
+        return $this->defaultTeam
+            ?? $this->teams()->first()
+            ?? throw new AuthenticationException('The user does not have access to applications.');
+    }
+    public function hasApplicationAccess(): bool
+    {
+        return $this->teams()->exists();
     }
     public function getTeamFromSession(): ?Team
     {
@@ -282,10 +292,11 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             'default_team_id' => $remote->default_team_id,
         ])->save();
 
-        $this->teams()->sync(array_map(
-            static fn (ChiefTeam $team) => $team->id,
-            $remote->teams,
-        ));
+        $this->teams()->sync(collect($remote->teams)
+            ->mapWithKeys(static fn (ChiefTeam $team): array => [
+                $team->id => ['role' => $team->membershipRole()->value],
+            ])
+            ->all());
     }
     private static function createFromRemote(ChiefUser $remote): self
     {

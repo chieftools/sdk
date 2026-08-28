@@ -8,7 +8,6 @@ use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use ChiefTools\SDK\Enums\TokenPrefix;
 use Stayallive\RandomTokens\RandomToken;
-use Illuminate\Support\ItemNotFoundException;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 readonly class RemoteUserAccessTokenGuard extends RemoteAccessTokenGuard
@@ -22,27 +21,27 @@ readonly class RemoteUserAccessTokenGuard extends RemoteAccessTokenGuard
     {
         $user = $this->resolveUserForRemoteToken($remoteAccessToken);
 
-        if ($user === null) {
+        if ($user === null || !$user->hasApplicationAccess()) {
             return null;
         }
 
         if ($remoteAccessToken->teamId !== null) {
-            retry(2, function () use (&$user, $remoteAccessToken) {
-                $user->setCurrentTeam(
-                    $user->teams->firstOrFail(
-                        static fn (Team $team) => $team->id === $remoteAccessToken->teamId,
-                    ),
+            $team = $user->teams->first(
+                static fn (Team $team): bool => $team->id === $remoteAccessToken->teamId,
+            );
+
+            if ($team === null) {
+                $user = $this->resolveUserFromMothershipForRemoteToken($remoteAccessToken);
+                $team = $user?->teams->first(
+                    static fn (Team $team): bool => $team->id === $remoteAccessToken->teamId,
                 );
-            }, when: function (Exception $e) use (&$user, $remoteAccessToken) {
-                if ($e instanceof ItemNotFoundException) {
-                    // If we can't find the team update the user from the mothership to sync their teams and retry the lookup
-                    $user = $this->resolveUserFromMothershipForRemoteToken($remoteAccessToken);
+            }
 
-                    return true;
-                }
+            if ($user === null || !$user->hasApplicationAccess() || $team === null) {
+                return null;
+            }
 
-                return false;
-            });
+            $user->setCurrentTeam($team);
         }
 
         return $user;

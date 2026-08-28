@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Stayallive\RandomTokens\RandomToken;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Events\Authenticated;
+use ChiefTools\SDK\Enums\Team\MembershipRole;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Stayallive\RandomTokens\Exceptions\InvalidTokenException;
 
@@ -78,6 +79,7 @@ abstract readonly class RemoteAccessTokenGuard
             scopes: $response['scopes'],
             userId: $response['user_id'] ?? null,
             teamId: $response['team_id'] ?? null,
+            teamRole: isset($response['team_role']) ? MembershipRole::tryFrom($response['team_role']) : null,
             expiresAt: $expires ?: null,
         );
 

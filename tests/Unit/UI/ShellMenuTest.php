@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 uses(TestCase::class);
 
 beforeEach(function () {
-    config(['app.key' => 'base64:oE72uRMtvwHlVTVBthR+K3FBDmSqNXTevcEU2LtLqrw=']);
     request()->cookies->remove('chief_shell_theme');
 });
 

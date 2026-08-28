@@ -42,6 +42,10 @@ class Callback
             $driver->revokeAccessToken($token);
         }))->afterResponse();
 
+        if (empty($remote->teams)) {
+            return $this->authenticationFailed($request, 'Your account does not have access to applications.');
+        }
+
         Auth::guard()->login(
             Chief::userModel()::createOrUpdateFromRemote($remote),
         );
@@ -49,10 +53,14 @@ class Callback
         return redirect()->intended(config('chief.auth.redirect'));
     }
 
-    private function authenticationFailed(Request $request): RedirectResponse
+    private function authenticationFailed(Request $request, ?string $description = null): RedirectResponse
     {
-        $message = $request->filled('error_description')
-            ? " ({$request->input('error_description')})"
+        $description ??= $request->filled('error_description')
+            ? $request->string('error_description')->toString()
+            : null;
+
+        $message = $description !== null
+            ? " ({$description})"
             : '';
 
         return redirect()->to(home())->with('message', [

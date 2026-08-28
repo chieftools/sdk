@@ -6,6 +6,9 @@ use Sentry\State\Scope;
 use Sentry\State\HubInterface;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Auth\Events\Authenticated as AuthenticatedEvent;
 
 class Authenticated
@@ -14,6 +17,24 @@ class Authenticated
     {
         /** @var \ChiefTools\SDK\Entities\User|\ChiefTools\SDK\Entities\Team $authenticatable */
         $authenticatable = $event->user;
+
+        if ($authenticatable instanceof User && $authenticatable->exists && !$authenticatable->hasApplicationAccess()) {
+            $guard = Auth::guard($event->guard);
+
+            if ($guard instanceof StatefulGuard) {
+                $guard->logout();
+
+                if (request()->hasSession()) {
+                    request()->session()->invalidate();
+                    request()->session()->regenerateToken();
+                }
+            }
+
+            throw new AuthenticationException(
+                'The user does not have access to applications.',
+                [$event->guard],
+            );
+        }
 
         sync_user_timezone($authenticatable);
 

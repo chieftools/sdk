@@ -34,7 +34,7 @@ class ChiefUser extends User
         ]);
 
         $this->teams = array_map(
-            static fn (array $team) => ChiefTeam::fromArray($team),
+            static fn (array $team) => ChiefTeam::fromMembershipArray($team),
             $user['teams'] ?? [],
         );
 

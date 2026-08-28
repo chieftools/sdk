@@ -13,6 +13,7 @@ use ChiefTools\SDK\Enums\TokenPrefix;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
+use ChiefTools\SDK\Enums\Team\MembershipRole;
 use ChiefTools\SDK\Jobs\Reporting\ReportUsage;
 use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
 
@@ -213,6 +214,7 @@ class Client
                 scopes: $data['scopes'],
                 userId: $data['user_id'],
                 teamId: $data['team_id'],
+                teamRole: isset($data['team_role']) ? MembershipRole::tryFrom($data['team_role']) : null,
                 expiresAt: $data['expires_at'] ? Carbon::createFromTimestamp($data['expires_at']) : null,
                 plainTextToken: $data['access_token'],
             );
@@ -226,7 +228,7 @@ class Client
      *
      * @param string $token
      *
-     * @return array{scopes: array, user_id: string|null, team_id: int|null, expires_at: ?int}|null
+     * @return array{scopes: array, user_id: string|null, team_id: int|null, team_role?: string|null, expires_at: ?int}|null
      */
     public function validateAccessToken(string $token): ?array
     {

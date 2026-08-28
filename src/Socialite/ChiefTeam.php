@@ -2,6 +2,10 @@
 
 namespace ChiefTools\SDK\Socialite;
 
+use LogicException;
+use InvalidArgumentException;
+use ChiefTools\SDK\Enums\Team\MembershipRole;
+
 class ChiefTeam
 {
     /** @param array<string, int> $limits */
@@ -16,14 +20,35 @@ class ChiefTeam
         public readonly ?string $planId,
         public readonly ?bool $planDiscounted,
         public readonly int $actionableInvoicesCount,
+        public readonly ?MembershipRole $role = null,
     ) {}
 
     public static function fromArray(array $team): self
+    {
+        return self::make($team);
+    }
+
+    public static function fromMembershipArray(array $team): self
+    {
+        $role = MembershipRole::tryFrom((string)($team['role'] ?? ''))
+            ?? throw new InvalidArgumentException('Chief team membership payloads must contain a valid role.');
+
+        return self::make($team, $role);
+    }
+
+    public function membershipRole(): MembershipRole
+    {
+        return $this->role
+            ?? throw new LogicException('This Chief team does not contain membership context.');
+    }
+
+    private static function make(array $team, ?MembershipRole $role = null): self
     {
         return new self(
             id: $team['id'],
             slug: $team['slug'],
             name: $team['name'],
+            role: $role,
             limits: $team['limits'],
             planId: $team['plan_id'] ?? null,
             timezone: $team['timezone'],

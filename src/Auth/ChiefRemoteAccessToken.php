@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Auth;
 
 use Carbon\Carbon;
+use ChiefTools\SDK\Enums\Team\MembershipRole;
 
 readonly class ChiefRemoteAccessToken
 {
@@ -24,6 +25,8 @@ readonly class ChiefRemoteAccessToken
         public ?Carbon $expiresAt,
         /** The actual token string if available. */
         public ?string $plainTextToken = null,
+        /** The user's current role on the scoped team. */
+        public ?MembershipRole $teamRole = null,
     ) {}
 
     /** Determine if the token has the given scope. */

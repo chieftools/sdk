@@ -215,6 +215,7 @@ class Client
                 userId: $data['user_id'],
                 teamId: $data['team_id'],
                 teamRole: isset($data['team_role']) ? MembershipRole::tryFrom($data['team_role']) : null,
+                audience: $data['audience'] ?? null,
                 expiresAt: $data['expires_at'] ? Carbon::createFromTimestamp($data['expires_at']) : null,
                 plainTextToken: $data['access_token'],
             );
@@ -228,7 +229,7 @@ class Client
      *
      * @param string $token
      *
-     * @return array{scopes: array, user_id: string|null, team_id: int|null, team_role?: string|null, expires_at: ?int}|null
+     * @return array{id: string, name: string, scopes: list<string>, user_id: string|null, team_id: int|null, team_role?: string|null, expires_at: int|null, audience?: string|null}|null
      */
     public function validateAccessToken(string $token): ?array
     {

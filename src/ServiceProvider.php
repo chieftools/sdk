@@ -252,6 +252,7 @@ class ServiceProvider extends IlluminateServiceProvider
         $router->model('team_hint', Chief::teamModel());
         $router->aliasMiddleware('team', Middleware\TeamUrlContext::class);
         $router->aliasMiddleware('scope', Middleware\EnsureTokenHasScope::class);
+        $router->aliasMiddleware('audience', Middleware\EnsureTokenHasAudience::class);
         $router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
     }

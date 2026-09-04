@@ -27,6 +27,8 @@ readonly class ChiefRemoteAccessToken
         public ?string $plainTextToken = null,
         /** The user's current role on the scoped team. */
         public ?MembershipRole $teamRole = null,
+        /** The protected resource this token is intended for. */
+        public ?string $audience = null,
     ) {}
 
     /** Determine if the token has the given scope. */
@@ -45,5 +47,11 @@ readonly class ChiefRemoteAccessToken
     public function hasScope(string $scope): bool
     {
         return in_array($scope, $this->scopes, true);
+    }
+
+    /** Determine if the token is intended for the given audience. */
+    public function isForAudience(string $audience): bool
+    {
+        return $this->audience !== null && hash_equals($this->audience, $audience);
     }
 }

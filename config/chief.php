@@ -14,6 +14,8 @@ return [
 
         'passport' => env('CHIEF_PASSPORT_ENABLED', true),
 
+        'audiences' => [],
+
     ],
 
     'brand' => [

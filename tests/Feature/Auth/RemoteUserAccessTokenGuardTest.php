@@ -38,14 +38,20 @@ it('authenticates a cached remote token when the local user has a team', functio
 
     $token = RandomToken::generate('ctp', 36);
 
-    cache()->put($token->cacheKey(), remoteGuardValidationResponse($user));
+    $validationResponse             = remoteGuardValidationResponse($user);
+    $validationResponse['audience'] = 'https://resource.service.invalid/mcp';
+
+    cache()->put($token->cacheKey(), $validationResponse);
 
     $request = Request::create('/api/example');
     $request->headers->set('Authorization', 'Bearer ' . $token);
 
     $guard = new RemoteUserAccessTokenGuard('api', app(Client::class), app(CacheManager::class));
 
-    expect($guard($request)?->is($user))->toBeTrue();
+    $authenticatedUser = $guard($request);
+
+    expect($authenticatedUser?->is($user))->toBeTrue()
+        ->and($authenticatedUser?->getChiefRemoteAccessToken()?->audience)->toBe('https://resource.service.invalid/mcp');
 });
 
 it('returns unauthenticated when refreshing a missing token team produces no teams', function () {

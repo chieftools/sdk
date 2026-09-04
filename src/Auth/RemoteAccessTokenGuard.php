@@ -80,6 +80,7 @@ abstract readonly class RemoteAccessTokenGuard
             userId: $response['user_id'] ?? null,
             teamId: $response['team_id'] ?? null,
             teamRole: isset($response['team_role']) ? MembershipRole::tryFrom($response['team_role']) : null,
+            audience: $response['audience'] ?? null,
             expiresAt: $expires ?: null,
         );
 

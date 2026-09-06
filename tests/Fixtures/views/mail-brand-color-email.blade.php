@@ -6,6 +6,8 @@
 
 Use the action below.
 
+Domain: <strong class="mail-auto-link">cedar-mail.invalid</strong>
+
 > Quoted guidance
 
 <x-mail::panel>

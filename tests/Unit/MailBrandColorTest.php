@@ -94,6 +94,9 @@ test('markdown mail uses the brand color for primary accents', function () {
         ->toContain('band-muted')
         ->toContain('band-success')
         ->toContain('.mail-auto-link a')
+        ->toContain('.mail-auto-link a:hover')
+        ->toContain('class="mail-auto-link"')
+        ->toContain('cedar-mail.invalid')
         ->toContain('font-family: inherit !important')
         ->toContain('text-decoration: none !important')
         ->toContain('href="https://example.com/certificates/1"')
@@ -138,6 +141,9 @@ test('markdown mail keeps full bleed layout markers out of plain text', function
 
     expect($text)
         ->toContain('mail.example.com')
+        ->toContain('Domain: cedar-mail.invalid')
+        ->not->toContain('mail-auto-link')
+        ->not->toContain('<strong')
         ->toContain('Previous certificate')
         ->toContain('New certificate')
         ->not->toContain('chief-mail:full-bleed');

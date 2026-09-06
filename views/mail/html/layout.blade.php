@@ -29,15 +29,6 @@
                 color: inherit !important;
             }
 
-            .mail-auto-link a {
-                color: inherit !important;
-                font-family: inherit !important;
-                font-size: inherit !important;
-                font-weight: inherit !important;
-                line-height: inherit !important;
-                text-decoration: none !important;
-            }
-
             a:hover {
                 color: {{ $mailBrandHoverColor }} !important;
             }
@@ -343,6 +334,16 @@
             [data-ogsc] .table th {
                 border-bottom: 1px solid #262728 !important;
                 color: #e5e7eb !important;
+            }
+
+            .mail-auto-link a,
+            .mail-auto-link a:hover {
+                color: inherit !important;
+                font-family: inherit !important;
+                font-size: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
+                text-decoration: none !important;
             }
 
             @font-face {

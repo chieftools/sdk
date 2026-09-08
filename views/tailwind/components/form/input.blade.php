@@ -92,7 +92,7 @@
                                    type="checkbox"
                                    name="{{ $name }}"
                                    value="{{ $value ?? '1' }}"
-                                   class="h-4 w-4 text-brand-600 bg-surface border-line-strong focus:ring-brand-500 rounded {{ $inputClass }}"
+                                   class="h-4 w-4 text-brand-600 bg-surface border-line-strong checked:bg-brand-600 checked:border-brand-600 focus:ring-brand-500 rounded {{ $inputClass }}"
                                    {{ $style ? new Illuminate\Support\HtmlString("style='{$style}'") : '' }}
                                    {{ $checked ? 'checked' : '' }}
                                    {{ $disabled ? 'disabled' : '' }}

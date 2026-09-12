@@ -63,6 +63,28 @@ it('serializes a complete resource', function () {
     ]);
 });
 
+it('serializes an optional resource label', function () {
+    $line = new InvoiceLine(
+        id: 'operation_synthetic_7',
+        description: 'Synthetic managed zone renewal',
+        amount: 1275,
+        resourceId: 'resource_synthetic_4',
+        resourceType: 'domain',
+        resourceLabel: 'managed-zone.example',
+    );
+
+    expect($line->toArray())->toBe([
+        'id'          => 'operation_synthetic_7',
+        'description' => 'Synthetic managed zone renewal',
+        'amount'      => 1275,
+        'resource'    => [
+            'id'    => 'resource_synthetic_4',
+            'type'  => 'domain',
+            'label' => 'managed-zone.example',
+        ],
+    ]);
+});
+
 it('requires both category fields', function (?string $categoryKey, ?string $categoryLabel) {
     expect(fn () => new InvoiceLine(
         id: 'operation_synthetic_3',
@@ -88,3 +110,12 @@ it('requires both resource fields', function (?string $resourceId, ?string $reso
     'missing id'   => [null, 'domain'],
     'missing type' => ['resource_synthetic_2', null],
 ]);
+
+it('requires a resource when a resource label is provided', function () {
+    expect(fn () => new InvoiceLine(
+        id: 'operation_synthetic_8',
+        description: 'Synthetic labeled resource operation',
+        amount: 1025,
+        resourceLabel: 'labeled-resource.example',
+    ))->toThrow(RuntimeException::class, 'resourceLabel can only be provided with resourceId and resourceType.');
+});

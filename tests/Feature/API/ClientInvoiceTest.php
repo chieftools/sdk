@@ -41,6 +41,7 @@ it('sends optional invoice line resource metadata', function () {
                 amount: 1350,
                 resourceId: 'resource_synthetic_3',
                 resourceType: 'domain',
+                resourceLabel: 'renewal-resource.example',
             ),
         ],
         memo: null,
@@ -53,8 +54,9 @@ it('sends optional invoice line resource metadata', function () {
         'description' => 'Synthetic resource renewal',
         'amount'      => 1350,
         'resource'    => [
-            'id'   => 'resource_synthetic_3',
-            'type' => 'domain',
+            'id'    => 'resource_synthetic_3',
+            'type'  => 'domain',
+            'label' => 'renewal-resource.example',
         ],
     ]]);
 });

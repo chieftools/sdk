@@ -43,6 +43,26 @@ it('serializes a complete category', function () {
     ]);
 });
 
+it('serializes a complete resource', function () {
+    $line = new InvoiceLine(
+        id: 'operation_synthetic_4',
+        description: 'Synthetic managed resource renewal',
+        amount: 1175,
+        resourceId: 'resource_synthetic_1',
+        resourceType: 'domain',
+    );
+
+    expect($line->toArray())->toBe([
+        'id'          => 'operation_synthetic_4',
+        'description' => 'Synthetic managed resource renewal',
+        'amount'      => 1175,
+        'resource'    => [
+            'id'   => 'resource_synthetic_1',
+            'type' => 'domain',
+        ],
+    ]);
+});
+
 it('requires both category fields', function (?string $categoryKey, ?string $categoryLabel) {
     expect(fn () => new InvoiceLine(
         id: 'operation_synthetic_3',
@@ -54,4 +74,17 @@ it('requires both category fields', function (?string $categoryKey, ?string $cat
 })->with([
     'missing key'   => [null, 'Service operations'],
     'missing label' => ['operation', null],
+]);
+
+it('requires both resource fields', function (?string $resourceId, ?string $resourceType) {
+    expect(fn () => new InvoiceLine(
+        id: 'operation_synthetic_5',
+        description: 'Synthetic managed resource operation',
+        amount: 925,
+        resourceId: $resourceId,
+        resourceType: $resourceType,
+    ))->toThrow(RuntimeException::class, 'Both resourceId and resourceType must be provided together.');
+})->with([
+    'missing id'   => [null, 'domain'],
+    'missing type' => ['resource_synthetic_2', null],
 ]);

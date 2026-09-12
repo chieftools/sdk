@@ -16,6 +16,8 @@ class InvoiceLine implements Arrayable
         public readonly ?Carbon $periodEnd = null,
         public readonly ?string $categoryKey = null,
         public readonly ?string $categoryLabel = null,
+        public readonly ?string $resourceId = null,
+        public readonly ?string $resourceType = null,
     ) {
         if (($this->periodStart === null) !== ($this->periodEnd === null)) {
             throw new RuntimeException('Both periodStart and periodEnd must be provided together.');
@@ -23,6 +25,10 @@ class InvoiceLine implements Arrayable
 
         if (($this->categoryKey === null) !== ($this->categoryLabel === null)) {
             throw new RuntimeException('Both categoryKey and categoryLabel must be provided together.');
+        }
+
+        if (($this->resourceId === null) !== ($this->resourceType === null)) {
+            throw new RuntimeException('Both resourceId and resourceType must be provided together.');
         }
     }
 
@@ -45,6 +51,13 @@ class InvoiceLine implements Arrayable
             $data['category'] = [
                 'key'   => $this->categoryKey,
                 'label' => $this->categoryLabel,
+            ];
+        }
+
+        if ($this->resourceId !== null && $this->resourceType !== null) {
+            $data['resource'] = [
+                'id'   => $this->resourceId,
+                'type' => $this->resourceType,
             ];
         }
 

@@ -4,7 +4,10 @@ use ChiefTools\SDK\Chief;
 use Illuminate\Http\Request;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
+use Illuminate\Support\Facades\Bus;
+use Tests\Fixtures\AfterUserUpdate;
 use Illuminate\Support\Facades\Auth;
+use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\QueryException;
 use ChiefTools\SDK\Webhook\WebhookEvent;
 use ChiefTools\SDK\Http\Controllers\Webhook;
@@ -74,6 +77,53 @@ it('retains the local user and syncs an empty team list from an account update',
     expect($user->fresh()->name)->toBe('Morgan Updated')
         ->and($user->teams()->doesntExist())->toBeTrue()
         ->and($team->fresh())->not->toBeNull();
+});
+
+it('dispatches the registered job after an account update has synced the user', function () {
+    Bus::fake([AfterUserUpdate::class]);
+    Chief::registerAfterUserUpdateJob(AfterUserUpdate::class);
+
+    $user = createLocalWebhookUser();
+    $team = new Team;
+    $team->forceFill([
+        'id'   => 527,
+        'slug' => 'silver-lantern',
+        'name' => 'Silver Lantern',
+    ])->save();
+    $user->teams()->attach($team, ['role' => 'member']);
+
+    app(AccountUpdated::class)([
+        'data' => [
+            'id'              => $user->chief_id,
+            'name'            => 'Riley North',
+            'email'           => 'riley@silver-lantern.example',
+            'timezone'        => 'Europe/Amsterdam',
+            'avatar_hash'     => 'lantern52',
+            'default_team_id' => null,
+            'teams'           => [],
+        ],
+    ]);
+
+    Bus::assertDispatched(AfterUserUpdate::class, fn (AfterUserUpdate $job): bool => $job->user->is($user)
+        && $job->user->teams()->doesntExist());
+    Bus::assertDispatchedTimes(AfterUserUpdate::class, 1);
+});
+
+it('dispatches the registered job once when a remote user is created or updated', function () {
+    Bus::fake([AfterUserUpdate::class]);
+    Chief::registerAfterUserUpdateJob(AfterUserUpdate::class);
+
+    User::createOrUpdateFromRemote(new ChiefUser([
+        'id'              => '1ecac9d7-d938-43f1-b826-c593eb83292a',
+        'name'            => 'Avery Brook',
+        'email'           => 'avery@brook.example',
+        'timezone'        => 'Europe/Amsterdam',
+        'avatar_hash'     => 'brook91',
+        'default_team_id' => null,
+        'teams'           => [],
+    ]));
+
+    Bus::assertDispatchedTimes(AfterUserUpdate::class, 1);
 });
 
 it('requires every local team membership to declare a role', function () {

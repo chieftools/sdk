@@ -2,6 +2,7 @@
 
 namespace ChiefTools\SDK\Console\Commands;
 
+use ChiefTools\SDK\Chief;
 use ChiefTools\SDK\API\Client;
 use Illuminate\Console\Command;
 use ChiefTools\SDK\Entities\User;
@@ -26,7 +27,7 @@ class SyncUsers extends Command
             return self::FAILURE;
         }
 
-        User::query()
+        Chief::userModel()::query()
             ->when(count($userIds) > 0, function (Builder $query) use ($userIds) {
                 $query->whereIn('id', $userIds);
             })

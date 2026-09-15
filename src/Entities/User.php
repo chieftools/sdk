@@ -297,6 +297,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
                 $team->id => ['role' => $team->membershipRole()->value],
             ])
             ->all());
+
+        Chief::dispatchAfterUserUpdateJob($this);
     }
     private static function createFromRemote(ChiefUser $remote): self
     {
@@ -310,7 +312,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     public static function createOrUpdateFromRemote(ChiefUser $remote): self
     {
         /** @var \ChiefTools\SDK\Entities\User|null $local */
-        $local = self::query()
+        $local = static::query()
             ->where('chief_id', '=', $remote->getId())
             ->orWhere(function (Builder $query) use ($remote) {
                 $query->whereNull('chief_id')
@@ -323,8 +325,6 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         }
 
         $local->updateFromRemote($remote);
-
-        Chief::dispatchAfterUserUpdateJob($local);
 
         return $local;
     }

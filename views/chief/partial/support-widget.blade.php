@@ -26,6 +26,9 @@
             <a href="{{ chief_roadmap_url(config('chief.id') . '-support-widget') }}" target="_blank" rel="noopener" class="group text-fg-muted hover:bg-brand hover:text-accent-fg block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-road text-brand group-hover:text-accent-fg"></i>&nbsp;&nbsp;Roadmap
             </a>
+            <a href="{{ chief_changelog_url(config('chief.id') . '-support-widget') }}" target="_blank" rel="noopener" class="group text-fg-muted hover:bg-brand hover:text-accent-fg block text-sm p-1.5 mb-1 rounded" tabindex="-1">
+                <i class="fad fa-fw fa-sparkles text-brand group-hover:text-accent-fg"></i>&nbsp;&nbsp;Changelog
+            </a>
             <a x-show="showBugReportBtn" x-ref="sentryBugReportBtn" @click.prevent="open = false" href="#" class="group text-fg-muted hover:bg-brand hover:text-accent-fg block text-sm p-1.5 mb-1 rounded" tabindex="-1">
                 <i class="fad fa-fw fa-bug text-brand group-hover:text-accent-fg"></i>&nbsp;&nbsp;Report a bug
             </a>

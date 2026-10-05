@@ -220,6 +220,21 @@ function chief_roadmap_url(?string $ref = null, array $query = []): string
     ]));
 }
 
+/** Get the url to the Chief changelog site for the current application. */
+function chief_changelog_url(?string $ref = null, array $query = []): string
+{
+    $base  = rtrim(config('chief.roadmap_url'), '/');
+    $appId = config('chief.id');
+
+    return (string)Illuminate\Support\Uri::of(
+        empty($appId)
+            ? $base
+            : "{$base}/changelog/{$appId}",
+    )->withQuery($query)->withQueryIfMissing(array_filter([
+        'ref' => $ref ?: $appId,
+    ]));
+}
+
 /**
  * Check if we can reach the outside internet.
  *

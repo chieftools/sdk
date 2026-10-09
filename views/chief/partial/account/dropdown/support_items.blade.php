@@ -1,6 +1,12 @@
 <div @class(['py-1' => config('chief.shell.variant') !== 'modern', 'border-t border-line p-1.5' => config('chief.shell.variant') === 'modern']) role="none">
+    <x-chief::account.dropdown-link :href="chief_docs_url(config('chief.id') . '-menu-link')" icon="fa-book" target="_blank">
+        Documentation
+    </x-chief::account.dropdown-link>
     <x-chief::account.dropdown-link :href="chief_roadmap_url(config('chief.id') . '-menu-link')" icon="fa-road" target="_blank">
         Roadmap
+    </x-chief::account.dropdown-link>
+    <x-chief::account.dropdown-link :href="chief_changelog_url(config('chief.id') . '-menu-link')" icon="fa-sparkles" target="_blank">
+        Changelog
     </x-chief::account.dropdown-link>
     <x-chief::account.dropdown-link :href="route('chief.contact')" icon="fa-paper-plane" target="_blank">
         Contact us

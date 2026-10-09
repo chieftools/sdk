@@ -381,3 +381,44 @@ test('the modern shell can hide the account menu theme selector', function () {
         ->not->toContain('Switch to dark theme')
         ->not->toContain('Use system theme');
 });
+
+test('the modern team menu only offers team search when the user has many teams', function (int $otherTeamCount, bool $expectsSearch) {
+    config([
+        'chief.teams'         => true,
+        'chief.shell.variant' => 'modern',
+    ]);
+
+    $currentTeam = (new Team)->forceFill([
+        'id'   => 1,
+        'name' => 'Current team',
+        'slug' => 'current',
+    ]);
+
+    $otherTeams = collect(range(2, $otherTeamCount + 1))->map(static fn (int $id): Team => (new Team)->forceFill([
+        'id'   => $id,
+        'name' => "Other team {$id}",
+        'slug' => "other-{$id}",
+    ]));
+
+    $user = new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]);
+    $user->setRelation('teams', $otherTeams->prepend($currentTeam));
+
+    auth()->setUser($user);
+    request()->attributes->set('team_hint', $currentTeam);
+
+    $html = view('chief::partial.team.dropdown_items')->render();
+
+    expect(substr_count($html, '>Other team '))->toBe($otherTeamCount);
+
+    if ($expectsSearch) {
+        expect($html)->toContain('x-ref="teamSearch"');
+    } else {
+        expect($html)->not->toContain('x-ref="teamSearch"');
+    }
+})->with([
+    'few teams'  => [6, false],
+    'many teams' => [7, true],
+]);

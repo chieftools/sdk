@@ -171,12 +171,13 @@
         ])>
             <button type="button"
                     class="grid size-9 cursor-pointer place-items-center self-center rounded-md text-fg-subtle transition hover:bg-surface-2 hover:text-fg md:hidden"
-                    x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; themeOpen = false; closePalette()"
+                    x-ref="mobileMenuButton"
+                    x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; themeOpen = false; closePalette(); if (menuOpen && $event.detail === 0) focusFirstMenuItem($refs.mobileMenu)"
                     aria-controls="chief-shell-mobile-menu"
                     x-bind:aria-expanded="menuOpen.toString()">
                 <span class="sr-only">{{ __('chief::ui.shell.toggle_main_menu') }}</span>
                 <i class="fa fa-fw fa-bars" x-show="!menuOpen"></i>
-                <i class="fa fa-fw fa-xmark" x-show="menuOpen"></i>
+                <i class="fa fa-fw fa-xmark" x-cloak x-show="menuOpen"></i>
             </button>
 
             <div x-ref="shellLeft" class="flex items-stretch gap-2">
@@ -263,10 +264,12 @@
                     </button>
 
                     <button type="button"
-                            class="grid size-8 cursor-pointer place-items-center rounded-md bg-surface-2 text-fg-faint transition hover:bg-surface-3 hover:text-fg-muted lg:hidden"
+                            class="group/search grid size-9 cursor-pointer place-items-center rounded-lg lg:hidden"
                             x-on:click="openPalette()">
                         <span class="sr-only">{{ __('chief::ui.shell.search') }}</span>
-                        <i class="fad fa-fw fa-search text-sm"></i>
+                        <span class="grid size-8 place-items-center rounded-md border border-line bg-surface-2 text-fg-subtle transition group-hover/search:border-line-strong group-hover/search:bg-surface-3 group-hover/search:text-fg-muted">
+                            <i class="fad fa-fw fa-search text-sm"></i>
+                        </span>
                     </button>
                 @endif
 
@@ -330,10 +333,12 @@
 
                 @auth
                     @if(config('chief.teams') && auth()->user()->team)
-                        <div class="relative">
+                        <div class="relative" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) teamOpen = false">
                             <button type="button"
                                     class="relative grid size-9 cursor-pointer place-items-center rounded-lg transition hover:bg-surface-2"
-                                    x-on:click="teamOpen = !teamOpen; accountOpen = false; themeOpen = false; menuOpen = false; closePalette()"
+                                    x-ref="teamMenuButton"
+                                    x-on:click="teamOpen = !teamOpen; accountOpen = false; themeOpen = false; menuOpen = false; closePalette(); if (teamOpen && $event.detail === 0) focusFirstMenuItem($refs.teamMenu)"
+                                    x-on:keydown.arrow-down.prevent="if (!teamOpen) $el.click(); focusFirstMenuItem($refs.teamMenu)"
                                     x-bind:aria-expanded="teamOpen.toString()"
                                     aria-haspopup="menu">
                                 <span class="sr-only">{{ __('chief::ui.shell.open_team_menu') }}</span>
@@ -342,20 +347,26 @@
                             </button>
 
                             <div x-cloak
+                                 x-ref="teamMenu"
                                  x-show="teamOpen"
+                                 x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
+                                 x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
+                                 x-on:keydown.escape.stop="teamOpen = false; $refs.teamMenuButton.focus()"
                                  x-on:click.away="teamOpen = false"
                                  x-transition.origin.top.right
-                                 class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
+                                 class="absolute right-0 top-full z-50 mt-2 flex max-h-[calc(100dvh-5rem)] w-80 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
                                  role="menu">
                                 @include('chief::partial.team.dropdown_items')
                             </div>
                         </div>
                     @endif
 
-                    <div class="relative">
+                    <div class="relative" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) accountOpen = false">
                         <button type="button"
                                 class="relative grid size-9 cursor-pointer place-items-center rounded-lg transition hover:bg-surface-2"
-                                x-on:click="accountOpen = !accountOpen; teamOpen = false; themeOpen = false; menuOpen = false; closePalette()"
+                                x-ref="accountMenuButton"
+                                x-on:click="accountOpen = !accountOpen; teamOpen = false; themeOpen = false; menuOpen = false; closePalette(); if (accountOpen && $event.detail === 0) focusFirstMenuItem($refs.accountMenu)"
+                                x-on:keydown.arrow-down.prevent="if (!accountOpen) $el.click(); focusFirstMenuItem($refs.accountMenu)"
                                 x-bind:aria-expanded="accountOpen.toString()"
                                 aria-haspopup="menu">
                             <span class="sr-only">{{ __('chief::ui.shell.open_account_menu') }}</span>
@@ -366,7 +377,11 @@
                         </button>
 
                         <div x-cloak
+                             x-ref="accountMenu"
                              x-show="accountOpen"
+                             x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
+                             x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
+                             x-on:keydown.escape.stop="accountOpen = false; $refs.accountMenuButton.focus()"
                              x-on:click.away="accountOpen = false"
                              x-transition.origin.top.right
                              class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
@@ -417,10 +432,30 @@
 
     <div x-cloak
          x-show="menuOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
          id="chief-shell-mobile-menu"
-         class="fixed inset-0 top-[55px] z-50 bg-black/40 backdrop-blur-sm md:hidden"
+         class="fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm md:hidden"
+         x-bind:style="{ top: `${mobileMenuTop}px` }"
          x-on:click="menuOpen = false">
-        <div class="h-full w-72 border-r border-line bg-surface shadow-xl" x-on:click.stop x-transition>
+        <div x-show="menuOpen"
+             x-ref="mobileMenu"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="-translate-x-full"
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="-translate-x-full"
+             x-on:click.stop
+             x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
+             x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
+             x-on:keydown.escape.stop="menuOpen = false; $refs.mobileMenuButton.focus()"
+             x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget) && $event.relatedTarget !== $refs.mobileMenuButton) menuOpen = false"
+             class="h-full w-72 overflow-y-auto overscroll-contain border-r border-line bg-surface shadow-xl">
             <div class="p-2">
                 @foreach($menuItems as $item)
                     @php
@@ -430,9 +465,9 @@
                     @endphp
                     <a href="{{ $href }}"
                        @class([
-                           'group flex min-h-12 items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition',
+                           'group flex min-h-12 items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition outline-none',
                            'bg-surface-2 text-fg' => $active,
-                           'text-fg-muted hover:bg-surface-2 hover:text-fg' => !$active,
+                           'text-fg-muted hover:bg-surface-2 hover:text-fg focus-visible:bg-surface-2 focus-visible:text-fg' => !$active,
                        ])
                        @if(!empty($item['wire'])) wire:navigate @endif
                        x-on:click="menuOpen = false">

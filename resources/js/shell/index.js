@@ -62,6 +62,8 @@ function chiefShell() {
         theme: 'light',
         systemThemeQuery: null,
         systemThemeHandler: null,
+        desktopMenuQuery: null,
+        desktopMenuHandler: null,
         shellElement: null,
         shellChromeObserver: null,
         shellResizeHandler: null,
@@ -69,6 +71,7 @@ function chiefShell() {
         shellMenuCentered: false,
         menuScrolledFromStart: false,
         menuScrolledToEnd: false,
+        mobileMenuTop: 0,
 
         init() {
             this.shellElement = this.$el;
@@ -83,11 +86,28 @@ function chiefShell() {
             };
             this.systemThemeQuery.addEventListener?.('change', this.systemThemeHandler);
             this.applyTheme();
+            this.desktopMenuQuery = window.matchMedia('(min-width: 768px)');
+            this.desktopMenuHandler = event => {
+                if (event.matches) {
+                    this.menuOpen = false;
+                }
+            };
+            this.desktopMenuQuery.addEventListener?.('change', this.desktopMenuHandler);
+            this.$watch('menuOpen', open => {
+                if (open) {
+                    // Start the drawer below the header, even when the page is scrolled and the header partially left the viewport
+                    this.mobileMenuTop = Math.max(0, this.$refs.shellHeader?.closest('header')?.getBoundingClientRect().bottom ?? 0);
+                }
+
+                this.lockPageScroll(open);
+            });
             this.$nextTick(() => this.watchShellChrome());
         },
 
         destroy() {
             this.systemThemeQuery?.removeEventListener?.('change', this.systemThemeHandler);
+            this.desktopMenuQuery?.removeEventListener?.('change', this.desktopMenuHandler);
+            this.lockPageScroll(false);
             this.shellChromeObserver?.disconnect();
 
             if (this.shellResizeHandler) {
@@ -297,6 +317,36 @@ function chiefShell() {
             this.teamOpen = false;
             this.themeOpen = false;
             this.closePalette();
+        },
+
+        lockPageScroll(locked) {
+            document.documentElement.style.overflow = locked ? 'hidden' : '';
+        },
+
+        menuItems(menu) {
+            return [...(menu?.querySelectorAll('a[href], button:not([disabled]), input:not([disabled])') ?? [])].filter(item => item.offsetParent !== null);
+        },
+
+        focusMenuItem(menu, delta) {
+            const items = this.menuItems(menu);
+
+            if (!items.length) {
+                return;
+            }
+
+            const index = items.indexOf(document.activeElement);
+            const next = index === -1 ? (delta > 0 ? 0 : items.length - 1) : (index + delta + items.length) % items.length;
+
+            items[next].focus();
+        },
+
+        focusFirstMenuItem(menu) {
+            // Alpine holds next ticks until the menu's enter transition made it visible
+            this.$nextTick(() => {
+                if (!menu.contains(document.activeElement)) {
+                    this.focusMenuItem(menu, 1);
+                }
+            });
         },
 
         normalize(value) {

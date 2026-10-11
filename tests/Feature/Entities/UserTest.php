@@ -3,6 +3,7 @@
 use Tests\Fixtures\Models\User;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -33,3 +34,43 @@ it('updates existing users through the model that initiated the remote sync', fu
         ->and($updatedUser->name)->toBe('Jordan Finch Updated')
         ->and(User::$updatedChiefIds)->toBe([$chiefId]);
 });
+
+it('uses the team from an exact team header', function () {
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    $team = createTeamContextTeam('birch-hollow', $user);
+
+    expect($user->currentTeam(teamContextRequest('birch-hollow'))->is($team))->toBeTrue();
+});
+
+it('rejects a team header that does not match one of the user teams', function () {
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow');
+
+    $user->currentTeam(teamContextRequest('birch-hollow'));
+})->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header was not found.');
+
+it('uses the first team for access token requests without a team hint', function () {
+    $user = createTeamContextUser()->withChiefRemoteAccessToken(teamContextAccessToken());
+    $team = createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user);
+
+    expect($user->currentTeam(teamContextRequest())->is($team))->toBeTrue();
+});
+
+it('lets admins use any team from the team header in the apps', function () {
+    $user = createTeamContextUser(isAdmin: true);
+    createTeamContextTeam('amber-grove', $user);
+    $team = createTeamContextTeam('birch-hollow');
+
+    expect($user->currentTeam(teamContextRequest('birch-hollow'))->is($team))->toBeTrue();
+});
+
+it('limits admin access tokens to the teams the admin is a member of', function () {
+    $user = createTeamContextUser(isAdmin: true)->withChiefRemoteAccessToken(teamContextAccessToken());
+    createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow');
+
+    $user->currentTeam(teamContextRequest('birch-hollow'));
+})->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header was not found.');

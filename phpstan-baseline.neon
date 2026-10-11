@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns (ChiefTools\SDK\Entities\Team&object{pivot: ChiefTools\SDK\Entities\TeamMembership})|null.'
+			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns (ChiefTools\SDK\Entities\Team&object{pivot: ChiefTools\SDK\Entities\PivotEntity})|null.'
 			identifier: return.type
 			count: 1
 			path: src/Entities/Team.php

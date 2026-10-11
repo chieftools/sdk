@@ -5,6 +5,8 @@ namespace ChiefTools\SDK\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use ChiefTools\SDK\API\Client;
+use ChiefTools\SDK\Entities\Team;
+use ChiefTools\SDK\Entities\User;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Database\Eloquent\Model;
 use Stayallive\RandomTokens\RandomToken;
@@ -90,6 +92,8 @@ abstract readonly class RemoteAccessTokenGuard
             return null;
         }
 
+        $this->ensureTeamHeaderMatchesBoundTeam($request, $remoteToken, $authenticatable);
+
         if ($authenticatable instanceof Model) {
             $authenticatable->preventsLazyLoading = false;
         }
@@ -101,6 +105,28 @@ abstract readonly class RemoteAccessTokenGuard
         event(new Authenticated($this->guard, $authenticatable));
 
         return $authenticatable;
+    }
+
+    /**
+     * A team header must name the team the token is bound to, an empty header counts as no header.
+     *
+     * Tokens not bound to a team validate the header when the current team is resolved.
+     */
+    private function ensureTeamHeaderMatchesBoundTeam(Request $request, ChiefRemoteAccessToken $remoteToken, Authenticatable $authenticatable): void
+    {
+        $teamFromHeader = trim((string)$request->header('x-chief-team'));
+
+        if ($teamFromHeader === '') {
+            return;
+        }
+
+        $boundTeam = match (true) {
+            $authenticatable instanceof Team                                  => $authenticatable,
+            $authenticatable instanceof User && $remoteToken->teamId !== null => $authenticatable->getMemoizedCurrentTeam(),
+            default                                                           => null,
+        };
+
+        abort_if($boundTeam !== null && $boundTeam->slug !== $teamFromHeader, 404, 'The team from the X-Chief-Team header does not match the team this token is limited to.');
     }
 
     protected function getTokenFromRequest(Request $request): ?string

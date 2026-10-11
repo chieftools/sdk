@@ -9,6 +9,7 @@ use ChiefTools\SDK\Socialite\ChiefUser;
 use Stayallive\RandomTokens\RandomToken;
 use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -92,6 +93,37 @@ it('returns unauthenticated when refreshing a missing token team produces no tea
         ->and($user->fresh()->teams()->doesntExist())->toBeTrue();
 });
 
+it('authenticates a team bound token when the team header is the bound team or empty', function (?string $teamHeader) {
+    $user  = createRemoteGuardUser();
+    $team  = createRemoteGuardTeam($user, 811, 'cedar-point');
+    $token = RandomToken::generate('ctp', 36);
+
+    cache()->put($token->cacheKey(), [...remoteGuardValidationResponse($user), 'team_id' => $team->id]);
+
+    $guard = new RemoteUserAccessTokenGuard('api', app(Client::class), app(CacheManager::class));
+
+    $authenticatedUser = $guard(remoteGuardRequest($token, $teamHeader));
+
+    expect($authenticatedUser?->getMemoizedCurrentTeam()?->is($team))->toBeTrue();
+})->with([
+    'bound team'   => 'cedar-point',
+    'empty header' => '',
+    'no header'    => null,
+]);
+
+it('rejects a team bound token when the team header names another team of the user', function () {
+    $user  = createRemoteGuardUser();
+    $team  = createRemoteGuardTeam($user, 811, 'cedar-point');
+    createRemoteGuardTeam($user, 812, 'dune-ridge');
+    $token = RandomToken::generate('ctp', 36);
+
+    cache()->put($token->cacheKey(), [...remoteGuardValidationResponse($user), 'team_id' => $team->id]);
+
+    $guard = new RemoteUserAccessTokenGuard('api', app(Client::class), app(CacheManager::class));
+
+    $guard(remoteGuardRequest($token, 'dune-ridge'));
+})->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header does not match the team this token is limited to.');
+
 function createRemoteGuardUser(): User
 {
     $user = new User;
@@ -117,4 +149,29 @@ function remoteGuardValidationResponse(User $user): array
         'team_role'  => null,
         'expires_at' => null,
     ];
+}
+
+function createRemoteGuardTeam(User $member, int $id, string $slug): Team
+{
+    $team = new Team;
+    $team->forceFill([
+        'id'   => $id,
+        'slug' => $slug,
+        'name' => str($slug)->headline()->toString(),
+    ])->save();
+    $member->teams()->attach($team, ['role' => 'member']);
+
+    return $team;
+}
+
+function remoteGuardRequest(RandomToken $token, ?string $teamHeader = null): Request
+{
+    $request = Request::create('/api/example');
+    $request->headers->set('Authorization', 'Bearer ' . $token);
+
+    if ($teamHeader !== null) {
+        $request->headers->set('X-Chief-Team', $teamHeader);
+    }
+
+    return $request;
 }

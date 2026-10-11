@@ -66,6 +66,7 @@ it('creates a checkout session', function () {
             ],
             'success_url' => 'https://domain.chief.test/success',
             'cancel_url'  => 'https://domain.chief.test/cancel',
+            'description' => null,
         ]);
 });
 

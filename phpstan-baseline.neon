@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
+			rawMessage: 'Method ChiefTools\SDK\Entities\Team::resolveRouteBinding() should return static(ChiefTools\SDK\Entities\Team)|null but returns (ChiefTools\SDK\Entities\Team&object{pivot: ChiefTools\SDK\Entities\TeamMembership})|null.'
 			identifier: return.type
 			count: 1
 			path: src/Entities/Team.php
@@ -17,24 +17,6 @@ parameters:
 			identifier: return.type
 			count: 2
 			path: src/Entities/Team.php
-
-		-
-			rawMessage: Coalesce operator ?? is unnecessary because the left side is always set and the right side is null.
-			identifier: nullCoalesce.unnecessary
-			count: 1
-			path: src/Entities/User.php
-
-		-
-			rawMessage: 'Method ChiefTools\SDK\Entities\User::getTeamFromSession() should return ChiefTools\SDK\Entities\Team|null but returns (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
-			identifier: return.type
-			count: 1
-			path: src/Entities/User.php
-
-		-
-			rawMessage: 'Property ChiefTools\SDK\Entities\User::$memoizedCurrentTeam (ChiefTools\SDK\Entities\Team|null) does not accept (Illuminate\Database\Eloquent\Model&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null.'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Entities/User.php
 
 		-
 			rawMessage: Trait ChiefTools\SDK\GraphQL\AuthorizesRequests is used zero times and is not analysed.
@@ -53,3 +35,9 @@ parameters:
 			identifier: function.impossibleType
 			count: 1
 			path: src/Socialite/ChiefProvider.php
+
+		-
+			rawMessage: Variable $blacklisted is assigned value false but it already has that value.
+			identifier: assign.redundant
+			count: 1
+			path: src/helpers.php

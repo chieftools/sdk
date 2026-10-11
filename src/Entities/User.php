@@ -134,6 +134,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Relations
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\ChiefTools\SDK\Entities\Team, $this, \ChiefTools\SDK\Entities\TeamMembership> */
     public function teams(): BelongsToMany
     {
         $relation = $this->belongsToMany(Chief::teamModel())
@@ -170,10 +171,18 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         $request ??= request();
 
         $fromRequest = $request->attributes->get('team_hint') ??
-                       $request->route('team_hint') ??
-                       $request->header('x-chief-team') ??
-                       session('chief_team_hint') ??
-                       null;
+                       $request->route('team_hint');
+
+        // An explicit team header must match a team exactly, falling back to another team would act on the wrong team
+        if ($fromRequest === null && ($fromHeader = trim((string)$request->header('x-chief-team'))) !== '') {
+            $team = $this->findAccessibleTeamBySlug($fromHeader);
+
+            abort_if($team === null, 404, 'The team from the X-Chief-Team header was not found.');
+
+            return $this->memoizedCurrentTeam = $team;
+        }
+
+        $fromRequest ??= session('chief_team_hint');
 
         if ($fromRequest === null) {
             return $this->memoizedCurrentTeam = $this->defaultOrFirstTeam();
@@ -183,11 +192,20 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             return $this->memoizedCurrentTeam = $fromRequest;
         }
 
-        if ($this->is_admin) {
-            return $this->memoizedCurrentTeam = Chief::teamModel()::query()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
+        return $this->memoizedCurrentTeam = $this->findAccessibleTeamBySlug($fromRequest) ?? $this->defaultOrFirstTeam();
+    }
+    public function findAccessibleTeamBySlug(string $slug): ?Team
+    {
+        if ($this->canAccessAllTeams()) {
+            return Chief::teamModel()::query()->where('slug', '=', $slug)->first();
         }
 
-        return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $fromRequest)->first() ?? $this->defaultOrFirstTeam();
+        return $this->teams()->where('slug', '=', $slug)->first();
+    }
+    /** Admins can open any team in the apps, access tokens are always limited to the teams the user is a member of. */
+    public function canAccessAllTeams(): bool
+    {
+        return $this->is_admin && !$this->hasChiefRemoteAccessToken();
     }
     public function setCurrentTeam(Team $team): void
     {

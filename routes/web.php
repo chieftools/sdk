@@ -87,7 +87,9 @@ Route::group(config('chief.routes.web'), function () {
                     return;
                 }
 
-                Route::get('docs/graphql', static fn (): Illuminate\Http\RedirectResponse => to_route('api.docs'))->name('docs.graphql');
+                if ($apiDocumentationEnabled) {
+                    Route::get('docs/graphql', static fn (): Illuminate\Http\RedirectResponse => to_route('api.docs'))->name('docs.graphql');
+                }
 
                 Route::get('tokens', Controllers\API\Tokens::class)->name('tokens');
                 Route::get('token/create', [Controllers\API\Tokens::class, 'create'])->name('tokens.create');

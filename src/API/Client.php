@@ -404,7 +404,7 @@ class Client
      * @param array<int, \ChiefTools\SDK\API\DTO\InvoiceLine> $lines
      * @param string|null                                     $memo
      *
-     * @return array{stripe_id: string, reference: string, status: string, total: int, currency: string}
+     * @return array{stripe_id: string, reference: string, status: string, total: int, currency: string, line_mode: string}
      */
     public function createOrUpdateDraftInvoice(string $teamSlug, string $reference, array $lines, ?string $memo): array
     {
@@ -422,6 +422,28 @@ class Client
         }
 
         return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /**
+     * Remove every line the team contributed to a draft invoice.
+     *
+     * The draft invoice is deleted when no lines remain. Succeeds when no draft invoice exists for the reference.
+     *
+     * @param string $teamSlug
+     * @param string $reference
+     *
+     * @return void
+     */
+    public function removeDraftInvoiceLines(string $teamSlug, string $reference): void
+    {
+        $response = $this->http->delete("/api/team/{$teamSlug}/billing/invoice/{$reference}", [
+            'headers' => $this->internalAuthHeaders(),
+            'timeout' => 60,
+        ]);
+
+        if ($response->getStatusCode() !== 204) {
+            throw new RuntimeException('Could not remove draft invoice lines.');
+        }
     }
 
     /**

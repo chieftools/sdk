@@ -90,3 +90,30 @@ it('queues finalization for every draft invoice with the same reference', functi
         ->and($history[0]['request']->getHeaderLine('X-Chief-App'))->toBe('example-app')
         ->and($history[0]['request']->getHeaderLine('X-Chief-Secret'))->toBe('synthetic-secret');
 });
+
+it('removes the team lines from a draft invoice', function () {
+    config()->set('chief.id', 'example-app');
+    config()->set('chief.secret', 'synthetic-secret');
+
+    $history = [];
+    $handler = new MockHandler([
+        new Response(204),
+        new Response(409),
+    ]);
+    $stack   = HandlerStack::create($handler);
+    $stack->push(Middleware::history($history));
+
+    $client = new Client(new HttpClient([
+        'base_uri'    => 'https://account.chief.test',
+        'handler'     => $stack,
+        'http_errors' => false,
+    ]));
+
+    $client->removeDraftInvoiceLines('synthetic-team', 'period-2099-06');
+
+    expect($history[0]['request']->getMethod())->toBe('DELETE')
+        ->and($history[0]['request']->getUri()->getPath())->toBe('/api/team/synthetic-team/billing/invoice/period-2099-06')
+        ->and($history[0]['request']->getHeaderLine('X-Chief-App'))->toBe('example-app')
+        ->and(fn () => $client->removeDraftInvoiceLines('synthetic-team', 'period-2099-06'))
+        ->toThrow(RuntimeException::class, 'Could not remove draft invoice lines.');
+});

@@ -64,7 +64,9 @@
             <link rel="alternate icon" href="{{ static_asset('icons/' . config('chief.id') . '_favicon.ico') }}" sizes="32x32">
         @endif
 
-        <link rel="stylesheet" href="{{ url('/chief/navigate-track.css') }}?id={{ rawurlencode((string)config('app.version', '@dev')) }}" data-navigate-track>
+        @if(!($noNavigateTrack ?? false))
+            <link rel="stylesheet" href="{{ url('/chief/navigate-track.css') }}?id={{ rawurlencode((string)config('app.version', '@dev')) }}" data-navigate-track>
+        @endif
 
         @hasSection('styles')
             @yield('styles')

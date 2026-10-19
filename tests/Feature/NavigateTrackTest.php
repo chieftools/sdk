@@ -31,3 +31,22 @@ test('the chief layout tracks application version changes for Livewire navigate'
         ->toContain('/chief/navigate-track.css?id=release-123')
         ->toContain('data-navigate-track');
 });
+
+test('the chief layout leaves out the navigate track asset for pages that do not navigate', function () {
+    $html = Blade::render(<<<'BLADE'
+        @extends('chief::layout.html', ['title' => 'Test', 'noNavigateTrack' => true])
+        @section('styles')
+            <style></style>
+        @endsection
+        @section('body')
+            Body
+        @endsection
+        @section('scripts')
+            <script></script>
+        @endsection
+    BLADE);
+
+    expect($html)
+        ->not->toContain('/chief/navigate-track.css')
+        ->not->toContain('data-navigate-track');
+});

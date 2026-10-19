@@ -95,7 +95,7 @@ jobs:
           path: .php-cs-fixer.cache
           key: ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-${{ hashFiles('.php-cs-fixer.php') }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-${{ hashFiles('php-cs-fixer.php') }}-
+            ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-${{ hashFiles('.php-cs-fixer.php') }}-
             ${{ runner.os }}-php-cs-fixer-${{ github.ref }}-
             ${{ runner.os }}-php-cs-fixer-
       - name: Validate code style

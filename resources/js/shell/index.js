@@ -197,8 +197,40 @@ function chiefShell() {
             this.shellLayoutFrame = requestAnimationFrame(() => {
                 this.shellLayoutFrame = null;
                 this.updateShellMenuLayout();
+                this.revealActiveShellMenuItem();
                 this.$nextTick(() => this.updateShellMenuScrollState());
             });
+        },
+
+        revealActiveShellMenuItem() {
+            const menu = this.$refs.shellMenu;
+
+            // Layout passes (fonts loading, resizes) keep the active item in view until the user scrolls the menu themselves
+            if (!menu || this.shellMenuScrolledByUser || menu.scrollWidth <= menu.clientWidth) {
+                return;
+            }
+
+            if (!this.shellMenuUserScrollHandler) {
+                this.shellMenuUserScrollHandler = () => (this.shellMenuScrolledByUser = true);
+                ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(event => menu.addEventListener(event, this.shellMenuUserScrollHandler, {passive: true, once: true}));
+            }
+
+            const active = menu.querySelector('[aria-current="page"]');
+
+            if (!active) {
+                return;
+            }
+
+            // Keep the item clear of the 1.5rem edge fades, not just inside the scroll box
+            const fade = parseFloat(getComputedStyle(document.documentElement).fontSize) * 1.5;
+            const menuRect = menu.getBoundingClientRect();
+            const itemRect = active.getBoundingClientRect();
+
+            if (itemRect.left < menuRect.left + fade) {
+                menu.scrollLeft -= menuRect.left + fade - itemRect.left;
+            } else if (itemRect.right > menuRect.right - fade) {
+                menu.scrollLeft += itemRect.right - (menuRect.right - fade);
+            }
         },
 
         updateShellMenuLayout() {

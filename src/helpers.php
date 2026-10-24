@@ -260,7 +260,7 @@ function outside_reachable(): bool
  */
 function latest_ca_bundle_file_path(): string
 {
-    return ChiefTools\SDK\ServiceProvider::basePath('files/cacert-2025-05-20.pem');
+    return ChiefTools\SDK\ServiceProvider::basePath('files/cacert-2026-10-20.pem');
 }
 
 /**

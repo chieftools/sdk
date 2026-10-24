@@ -11,6 +11,7 @@
        'border-accent text-fg' => $active,
        'border-transparent text-fg-muted hover:text-fg' => !$active,
    ])
+   @if($active) aria-current="page" @endif
    @if(!empty($item['vue-href'])) vue-href="{{ $item['vue-href'] }}" @endif
    @if(!empty($item['wire'])) wire:navigate @endif
    @if(!empty($item['target'])) target="{{ $item['target'] }}" @endif

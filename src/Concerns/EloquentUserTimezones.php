@@ -28,8 +28,9 @@ trait EloquentUserTimezones
         if ($value instanceof Carbon && $this->isServingApplication()) {
             $timezone = config('app.timezone_user');
 
+            // Shift a copy, the caller's instance is mutable and may still be used after it was assigned
             if (!empty($timezone)) {
-                $value->shiftTimezone($timezone);
+                $value = $value->copy()->shiftTimezone($timezone);
             }
         }
 

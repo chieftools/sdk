@@ -180,7 +180,8 @@
                 <i class="fa fa-fw fa-xmark" x-cloak x-show="menuOpen"></i>
             </button>
 
-            <div x-ref="shellLeft" class="flex items-stretch gap-2">
+            {{-- The logo's padding and hover area hang into the gutter, so the logo lines up with the page content, like the account menu on the right --}}
+            <div x-ref="shellLeft" class="flex items-stretch gap-2 md:-ml-2">
                 <div class="relative flex items-center">
                     <a href="{{ $tool['href'] }}"
                        @class([

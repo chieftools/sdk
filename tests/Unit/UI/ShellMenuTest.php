@@ -422,3 +422,24 @@ test('the modern team menu only offers team search when the user has many teams'
     'few teams'  => [6, false],
     'many teams' => [7, true],
 ]);
+
+test('the modern shell renders a menu item badge with its label for screen readers', function () {
+    if (!Route::has('chief.shell.commands.search')) {
+        Route::get('chief/ui/commands/search', static fn (): array => [])->name('chief.shell.commands.search');
+    }
+
+    config(['chief.shell.variant' => 'modern']);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [
+            ['href' => '/alerts', 'text' => 'Alerts', 'badge' => 3, 'badge_tone' => 'danger', 'badge_label' => '3 alerts firing'],
+            ['href' => '/servers', 'text' => 'Servers', 'badge' => 0],
+        ],
+    ])->render();
+
+    // The desktop menu and the mobile menu each show the badge once; a zero shows nothing
+    expect(substr_count($html, '>3</span><span class="sr-only">3 alerts firing</span>'))->toBe(2)
+        ->and(substr_count($html, 'rounded-full px-1.5'))->toBe(2)
+        ->and($html)->toContain('bg-red-500/15');
+});

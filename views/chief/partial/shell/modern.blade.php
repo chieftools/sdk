@@ -480,6 +480,7 @@
                             ])></i>
                         @endif
                         <span class="truncate">{{ $item['text'] ?? $item['label'] ?? '' }}</span>
+                        <span class="ml-auto">@include('chief::partial.shell.nav-badge', ['item' => $item])</span>
                     </a>
                 @endforeach
             </div>

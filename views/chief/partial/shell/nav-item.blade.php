@@ -27,4 +27,6 @@
     @endif
 
     <span class="whitespace-nowrap">{{ $label }}</span>
+
+    @include('chief::partial.shell.nav-badge', ['item' => $item])
 </a>

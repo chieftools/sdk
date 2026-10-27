@@ -6,7 +6,8 @@
 @php
     $themePreference = ChiefTools\SDK\Chief::themePreference();
     $theme = ChiefTools\SDK\Chief::theme();
-    $sidebarLayout = ChiefTools\SDK\Chief::shellLayout() === 'sidebar';
+    // Whether a page of this app can have the sidebar; the shell decides per page (marketing pages keep the top bar)
+    $sidebarLayout = config('chief.shell.variant') === 'modern' && (config('chief.shell.layout') === 'sidebar' || config('chief.shell.layout_switcher'));
 @endphp
     <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -100,12 +101,12 @@
         @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
-        {{-- The sidebar layout's sidebar is fixed on the left, so everything else moves right by its width --}}
+        {{-- The sidebar is fixed on the left, so everything else moves right by its width, on pages whose shell has one --}}
         <div id="app" @class([
             'chief-layout-app border-t-4 border-brand',
             'h-full' => ($fullHeight ?? false) === true,
             'min-h-screen pb-16' => ($fullHeight ?? false) !== true,
-            'lg:pl-60 lg:group-data-[shell-sidebar=collapsed]/chief:pl-16' => $sidebarLayout,
+            'lg:has-[[data-shell-layout=sidebar]]:pl-60 lg:group-data-[shell-sidebar=collapsed]/chief:has-[[data-shell-layout=sidebar]]:pl-16' => $sidebarLayout,
         ])>
             @yield('body')
         </div>

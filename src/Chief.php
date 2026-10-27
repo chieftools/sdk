@@ -178,18 +178,22 @@ final class Chief
      *
      * Returns `'topbar'` or `'sidebar'`: the app's `chief.shell.layout`, or
      * the user's preference where the app lets users choose with
-     * `chief.shell.layout_switcher`. Only the modern shell has a sidebar.
+     * `chief.shell.layout_switcher`. Only the modern shell has a sidebar,
+     * and only for signed-in users: visitors get the top bar, like the
+     * minimal menu of marketing pages does.
      */
     public static function shellLayout(): string
     {
-        if (config('chief.shell.variant') !== 'modern') {
+        $user = authenticated_user();
+
+        if (config('chief.shell.variant') !== 'modern' || $user === null) {
             return 'topbar';
         }
 
         $sidebar = config('chief.shell.layout') === 'sidebar';
 
         if (config('chief.shell.layout_switcher')) {
-            $sidebar = (bool)(authenticated_user()?->getPreference(self::SIDEBAR_LAYOUT_PREFERENCE, $sidebar) ?? $sidebar);
+            $sidebar = (bool)$user->getPreference(self::SIDEBAR_LAYOUT_PREFERENCE, $sidebar);
         }
 
         return $sidebar ? 'sidebar' : 'topbar';

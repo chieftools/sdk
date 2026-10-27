@@ -1,8 +1,11 @@
 @php
-    // The sidebar layout moves the menu into a column on the left, with room for groups and nested items, and keeps the
-    // header (logo, search, team and account) on top. Apps opt in with `chief.shell.layout`, as the content shifts right
-    $sidebarLayout = ChiefTools\SDK\Chief::shellLayout() === 'sidebar';
+    // The sidebar layout moves the menu, with room for groups and nested items, and what the header holds on larger
+    // screens into a column on the left. Apps opt in with `chief.shell.layout`; the minimal menu of marketing pages, and
+    // visitors who are not signed in (see `Chief::shellLayout()`), always get the top bar
     $minimalMenu = isset($minimalMenu) && $minimalMenu;
+    $sidebarLayout = !$minimalMenu && ChiefTools\SDK\Chief::shellLayout() === 'sidebar';
+    // Choosing the layout only applies to the app's own pages
+    $layoutSwitchable = !$minimalMenu && config('chief.shell.layout_switcher') && auth()->check() && \Illuminate\Support\Facades\Route::has('account.preferences.toggle');
     $fullwidthMenu = $sidebarLayout || $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
     $menuItems = collect($menuItems ?? [])->values();
     // Pinned items, such as settings, sit at the bottom of the sidebar and the drawer, apart from the work itself
@@ -142,7 +145,7 @@
         ->values();
 
     // Where users choose the layout, the palette offers the other one, below everything else
-    $layoutCommand = config('chief.shell.layout_switcher') && auth()->check() && \Illuminate\Support\Facades\Route::has('account.preferences.toggle')
+    $layoutCommand = $layoutSwitchable
         ? ($sidebarLayout
             ? ['layout' => 'topbar', 'label' => __('chief::ui.shell.switch_to_top_bar_layout'), 'icon' => 'fad fa-browser', 'description' => __('chief::ui.shell.show_menu_in_top_bar')]
             : ['layout' => 'sidebar', 'label' => __('chief::ui.shell.switch_to_sidebar_layout'), 'icon' => 'fad fa-sidebar', 'description' => __('chief::ui.shell.show_menu_in_sidebar')])
@@ -166,7 +169,7 @@
      data-tool="{{ $tool['id'] }}"
      @if($commandPaletteSearchUrl) data-command-palette-search-url="{{ $commandPaletteSearchUrl }}" @endif
      @if($themeUpdateUrl) data-theme-update-url="{{ $themeUpdateUrl }}" @endif
-     @if(config('chief.shell.layout_switcher') && auth()->check() && \Illuminate\Support\Facades\Route::has('account.preferences.toggle')) data-layout-update-url="{{ route('account.preferences.toggle', [], false) }}" data-layout-preference="{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}" @endif
+     @if($layoutSwitchable) data-layout-update-url="{{ route('account.preferences.toggle', [], false) }}" data-layout-preference="{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}" @endif
      @class([
         'group/shell relative z-40 bg-surface text-fg',
         'dark' => $theme === 'dark',

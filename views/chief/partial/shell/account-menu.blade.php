@@ -35,7 +35,7 @@
     </div>
 @endif
 
-@if(config('chief.shell.variant') === 'modern' && config('chief.shell.layout_switcher') && \Illuminate\Support\Facades\Route::has('account.preferences.toggle'))
+@if($layoutSwitchable ?? false)
     {{-- Only larger screens differ: smaller ones have the same header and drawer in either layout --}}
     @php($currentLayout = ChiefTools\SDK\Chief::shellLayout())
     <div class="hidden px-3 pb-2.5 lg:block" role="none">

@@ -539,9 +539,12 @@ test('users choose the layout only where the app lets them', function () {
 
     expect(ChiefTools\SDK\Chief::shellLayout())->toBe('topbar');
 
+    // Visitors who are not signed in always get the top bar
     auth()->forgetUser();
 
-    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('sidebar');
+    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('topbar');
+
+    auth()->setUser((new User)->forceFill(['preferences' => []]));
 
     config(['chief.shell.variant' => 'legacy']);
 
@@ -612,4 +615,41 @@ test('the menu button points out menu items that need attention on small screens
     expect($quiet)
         ->toContain('Toggle main menu</span>')
         ->not->toContain('ring-2 ring-surface dark:bg-red-400');
+});
+
+test('marketing pages keep the top bar and leave out the layout switch for signed-in users', function () {
+    if (!Route::has('account.preferences.toggle')) {
+        Route::post('account/preference/toggle', static fn (): array => [])->name('account.preferences.toggle');
+    }
+
+    config([
+        'chief.shell.variant'         => 'modern',
+        'chief.shell.layout'          => 'sidebar',
+        'chief.shell.layout_switcher' => true,
+    ]);
+
+    auth()->setUser(new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]));
+    request()->attributes->set('team_hint', (new Team)->forceFill([
+        'name' => 'Current team',
+        'slug' => 'current',
+    ]));
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'minimalMenu'  => true,
+        'menuItems'    => [
+            ['href' => '/pricing', 'text' => 'Pricing'],
+        ],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-shell-layout="topbar"')
+        ->toContain('x-ref="shellMenu"')
+        ->not->toContain('x-ref="shellSidebar"')
+        ->not->toContain('data-layout-update-url=')
+        ->not->toContain('setLayout(')
+        ->not->toContain('Switch to top bar layout');
 });

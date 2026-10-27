@@ -36,6 +36,13 @@ return [
 
         'variant' => 'legacy',
 
+        // `topbar` or `sidebar`, which needs the modern variant and moves the app's content right (on large screens)
+        'layout' => 'topbar',
+
+        // Lets each user choose the other layout, as a preference and in the account menu; `layout` stays the default.
+        // Only for apps whose pages work in both layouts
+        'layout_switcher' => false,
+
         'theme_cookie' => 'chief_shell_theme',
 
         'app_switcher' => true,

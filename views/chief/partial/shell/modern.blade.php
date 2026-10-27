@@ -1,7 +1,20 @@
 @php
+    // The sidebar layout moves the menu into a column on the left, with room for groups and nested items, and keeps the
+    // header (logo, search, team and account) on top. Apps opt in with `chief.shell.layout`, as the content shifts right
+    $sidebarLayout = ChiefTools\SDK\Chief::shellLayout() === 'sidebar';
     $minimalMenu = isset($minimalMenu) && $minimalMenu;
-    $fullwidthMenu = $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
+    $fullwidthMenu = $sidebarLayout || $minimalMenu || (isset($fullwidthMenu) && $fullwidthMenu);
     $menuItems = collect($menuItems ?? [])->values();
+    // Pinned items, such as settings, sit at the bottom of the sidebar and the drawer, apart from the work itself
+    $mainMenuItems = $menuItems->reject(static fn (array $item): bool => (bool)($item['pinned'] ?? false))->values();
+    $pinnedMenuItems = $menuItems->filter(static fn (array $item): bool => (bool)($item['pinned'] ?? false))->values();
+    // Nested items are commands too, under their parent's name and with its icon unless they have their own
+    $commandMenuItems = $menuItems->flatMap(static fn (array $item): array => [
+        $item,
+        ...collect($item['children'] ?? [])
+            ->map(static fn (array $child): array => [...$child, 'parent' => $item['text'] ?? $item['label'] ?? null, 'icon' => $child['icon'] ?? $item['icon'] ?? null])
+            ->all(),
+    ])->filter(static fn (array $item): bool => !empty($item['href']))->values();
     $themePreference = ChiefTools\SDK\Chief::themePreference();
     $theme = ChiefTools\SDK\Chief::theme();
     $tool = array_merge([
@@ -19,7 +32,7 @@
     $toolLogoUrl = $tool['logoColorUrl'] ?? $tool['logoUrl'] ?? null;
 
     $commandKey = static fn (?string $category, ?string $label): string => strtolower(trim((string)$category)) . '|' . strtolower(trim((string)$label));
-    $menuCommandKeys = $menuItems
+    $menuCommandKeys = $commandMenuItems
         ->map(static fn (array $item): string => $commandKey($tool['name'], $item['text'] ?? $item['label'] ?? ''))
         ->filter(static fn (string $key): bool => !str_ends_with($key, '|'))
         ->values()
@@ -120,9 +133,20 @@
         ],
     ]);
 
-    $activeMenuItem = $menuItems->first(fn (array $item): bool => $item['active'] ?? false);
-    $mobileTitle = $activeMenuItem['text'] ?? $activeMenuItem['label'] ?? $tool['title'] ?? $tool['name'];
-    $mobileIcon = $activeMenuItem['icon'] ?? $tool['icon'];
+    // Menu items that need attention (a `danger` badge, such as firing alerts) are hidden in the drawer on small
+    // screens, so the button that opens it shows a dot; screen readers hear what the badges say
+    $menuAttention = $menuItems
+        ->flatMap(static fn (array $item): array => [$item, ...($item['children'] ?? [])])
+        ->filter(static fn (array $item): bool => ($item['badge_tone'] ?? null) === 'danger' && !in_array($item['badge'] ?? null, [null, '', 0], true))
+        ->map(static fn (array $item): string => $item['badge_label'] ?? ($item['text'] ?? $item['label'] ?? '') . ': ' . $item['badge'])
+        ->values();
+
+    // Where users choose the layout, the palette offers the other one, below everything else
+    $layoutCommand = config('chief.shell.layout_switcher') && auth()->check() && \Illuminate\Support\Facades\Route::has('account.preferences.toggle')
+        ? ($sidebarLayout
+            ? ['layout' => 'topbar', 'label' => __('chief::ui.shell.switch_to_top_bar_layout'), 'icon' => 'fad fa-browser', 'description' => __('chief::ui.shell.show_menu_in_top_bar')]
+            : ['layout' => 'sidebar', 'label' => __('chief::ui.shell.switch_to_sidebar_layout'), 'icon' => 'fad fa-sidebar', 'description' => __('chief::ui.shell.show_menu_in_sidebar')])
+        : null;
     $allAppsUrl = function_exists('chief_base_url') ? chief_base_url(ref: config('chief.id') . '-app-switcher') : '#';
     $hasDynamicCommandProviders = collect(config('chief.shell.command_palette_providers', []))
         ->filter()
@@ -136,11 +160,13 @@
 @endphp
 
 <nav data-chief-shell
+     data-shell-layout="{{ $sidebarLayout ? 'sidebar' : 'topbar' }}"
      data-theme="{{ $theme }}"
      data-theme-preference="{{ $themePreference }}"
      data-tool="{{ $tool['id'] }}"
      @if($commandPaletteSearchUrl) data-command-palette-search-url="{{ $commandPaletteSearchUrl }}" @endif
      @if($themeUpdateUrl) data-theme-update-url="{{ $themeUpdateUrl }}" @endif
+     @if(config('chief.shell.layout_switcher') && auth()->check() && \Illuminate\Support\Facades\Route::has('account.preferences.toggle')) data-layout-update-url="{{ route('account.preferences.toggle', [], false) }}" data-layout-preference="{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}" @endif
      @class([
         'group/shell relative z-40 bg-surface text-fg',
         'dark' => $theme === 'dark',
@@ -163,68 +189,47 @@
         </script>
     @endif
 
-    <header class="border-b border-line bg-surface">
+    {{-- The sidebar layout has everything in the header in its sidebar from the lg breakpoint --}}
+    <header @class(['border-b border-line bg-surface', 'lg:hidden' => $sidebarLayout])>
         <div x-ref="shellHeader" @class([
-            'relative flex h-[52px] items-stretch gap-2 px-2 sm:px-6 lg:px-8',
+            'relative flex h-[52px] items-stretch gap-2 px-2 sm:px-6',
+            'lg:px-8',
             'container mx-auto max-w-7xl' => !$fullwidthMenu,
             'w-full' => $fullwidthMenu,
         ])>
+            {{--
+                The way into the menu on small screens, so as clear as the other controls and a comfortable tap target. It
+                hangs into the gutter so its icon lines up with the icons of the page's breadcrumbs and title
+            --}}
             <button type="button"
-                    class="grid size-9 cursor-pointer place-items-center self-center rounded-md text-fg-subtle transition hover:bg-surface-2 hover:text-fg md:hidden"
+                    @class([
+                        'relative -ml-[5px] grid size-10 shrink-0 cursor-pointer place-items-center self-center rounded-md text-fg-muted transition hover:bg-surface-2 hover:text-fg',
+                        'md:hidden' => !$sidebarLayout,
+                        'lg:hidden' => $sidebarLayout,
+                    ])
                     x-ref="mobileMenuButton"
+                    x-bind:class="menuOpen && 'text-fg!'"
                     x-on:click="menuOpen = !menuOpen; accountOpen = false; teamOpen = false; themeOpen = false; closePalette(); if (menuOpen && $event.detail === 0) focusFirstMenuItem($refs.mobileMenu)"
                     aria-controls="chief-shell-mobile-menu"
                     x-bind:aria-expanded="menuOpen.toString()">
-                <span class="sr-only">{{ __('chief::ui.shell.toggle_main_menu') }}</span>
+                <span class="sr-only">{{ __('chief::ui.shell.toggle_main_menu') }}@if($menuAttention->isNotEmpty()), {{ $menuAttention->implode(', ') }}@endif</span>
                 <i class="fa fa-fw fa-bars" x-show="!menuOpen"></i>
                 <i class="fa fa-fw fa-xmark" x-cloak x-show="menuOpen"></i>
+                @if($menuAttention->isNotEmpty())
+                    <span class="absolute top-2 right-2 size-2 rounded-full bg-red-500 ring-2 ring-surface dark:bg-red-400" x-show="!menuOpen" aria-hidden="true"></span>
+                @endif
             </button>
 
             {{-- The logo's padding and hover area hang into the gutter, so the logo lines up with the page content, like the account menu on the right --}}
             <div x-ref="shellLeft" class="flex items-stretch gap-2 md:-ml-2">
-                <div class="relative flex items-center">
-                    <a href="{{ $tool['href'] }}"
-                       @class([
-                           'text flex h-10 items-center px-1 pr-2 text-fg transition hover:bg-surface-2',
-                           'gap-3' => empty($toolLogoUrl) && !empty($tool['brandIcon']),
-                           'gap-2' => !empty($toolLogoUrl) || empty($tool['brandIcon']),
-                           'rounded-l-lg' => config('chief.shell.app_switcher') && config('chief.shell.command_palette'),
-                           'rounded-lg' => !(config('chief.shell.app_switcher') && config('chief.shell.command_palette')),
-                       ])>
-                        <span class="grid size-9 shrink-0 place-items-center rounded-md text-accent">
-                            @if(!empty($toolLogoUrl))
-                                <img src="{{ $toolLogoUrl }}" alt="" class="max-h-8 max-w-8">
-                            @elseif(!empty($tool['brandIcon']))
-                                <span class="fa-stack text-[1rem] leading-none">
-                                    <i class="fad {{ $tool['icon'] }} fa-stack-2x"></i>
-                                    <i class="fab {{ $tool['brandIcon'] }} fa-stack-1x" style="font-size: 8px;"></i>
-                                </span>
-                            @else
-                                <i class="fad fa-fw {{ $tool['icon'] }} text-2xl"></i>
-                            @endif
-                        </span>
-                        <span class="hidden max-w-48 truncate text-sm font-semibold md:block">{{ $tool['title'] ?? $tool['name'] }}</span>
-                    </a>
-                    @if(config('chief.shell.app_switcher') && config('chief.shell.command_palette'))
-                        <button type="button"
-                                class="flex h-10 cursor-pointer items-center rounded-r-lg px-1.5 text-fg transition hover:bg-surface-2"
-                                x-on:click="togglePalette('switcher')"
-                                x-bind:aria-expanded="paletteOpen.toString()"
-                                aria-haspopup="dialog"
-                                aria-label="{{ __('chief::ui.shell.switch_app') }}"
-                                data-toggle="tooltip"
-                                data-title="{{ __('chief::ui.shell.switch_app') }} (⌘J)">
-                            <i class="fa fa-fw fa-chevron-down text-[10px] text-fg-faint"></i>
-                        </button>
-                    @endif
-                </div>
+                @include('chief::partial.shell.logo')
 
-                @unless($menuItems->isEmpty())
+                @unless($menuItems->isEmpty() || $sidebarLayout)
                     <div class="hidden w-px self-center bg-line md:block"></div>
                 @endunless
             </div>
 
-            @unless($menuItems->isEmpty())
+            @if($menuItems->isNotEmpty() && !$sidebarLayout)
                 <div
                     x-ref="shellMenu"
                     data-shell-menu-auto-center="{{ $fullwidthMenu ? 'true' : 'false' }}"
@@ -244,12 +249,10 @@
                 </div>
             @else
                 <div class="flex-1"></div>
-            @endunless
+            @endif
 
-            <div class="flex flex-1 items-center gap-1 md:hidden">
-                <i class="fa-fw {{ $mobileIcon }} text-sm text-accent"></i>
-                <span class="min-w-0 truncate text-sm font-medium text-fg">{{ $mobileTitle }}</span>
-            </div>
+            {{-- Where the menu is in the drawer, keeps the actions on the right --}}
+            <div @class(['flex-1', 'md:hidden' => !$sidebarLayout, 'lg:hidden' => $sidebarLayout])></div>
 
             <div x-ref="shellActions" @class([
                 'flex items-center gap-1 self-center',
@@ -290,7 +293,7 @@
 
                             <div x-cloak
                                  x-show="themeOpen"
-                                 x-on:click.away="themeOpen = false"
+                                 x-on:click.away="if ($el.offsetParent !== null) themeOpen = false"
                                  x-transition.origin.top.right
                                  class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
                                  role="menu"
@@ -353,7 +356,7 @@
                                  x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
                                  x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
                                  x-on:keydown.escape.stop="teamOpen = false; $refs.teamMenuButton.focus()"
-                                 x-on:click.away="teamOpen = false"
+                                 x-on:click.away="if ($el.offsetParent !== null) teamOpen = false"
                                  x-transition.origin.top.right
                                  class="absolute right-0 top-full z-50 mt-2 flex max-h-[calc(100dvh-5rem)] w-80 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
                                  role="menu">
@@ -383,47 +386,11 @@
                              x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
                              x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
                              x-on:keydown.escape.stop="accountOpen = false; $refs.accountMenuButton.focus()"
-                             x-on:click.away="accountOpen = false"
+                             x-on:click.away="if ($el.offsetParent !== null) accountOpen = false"
                              x-transition.origin.top.right
                              class="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-lg border border-line bg-surface shadow-xl"
                              role="menu">
-                            <div class="flex items-center gap-3 px-4 py-3">
-                                <img class="size-9 rounded-lg" src="{{ auth()->user()->avatar_url }}" alt="">
-                                <div class="min-w-0 flex-1">
-                                    <div class="truncate text-sm font-medium text-fg">{{ auth()->user() }}</div>
-                                    <div class="truncate text-xs text-fg-subtle">{{ auth()->user()->email }}</div>
-                                </div>
-                            </div>
-
-                            @if(config('chief.shell.theme_selector', true))
-                                <div class="border-t border-line px-3 py-2.5" role="none">
-                                    <div class="flex gap-1 rounded-md bg-surface-2 p-1">
-                                        <button type="button"
-                                                class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
-                                                x-bind:class="themeButtonClasses('light')"
-                                                x-on:click="setTheme('light')">
-                                            <i class="fad fa-fw fa-sun-bright text-[11px]"></i>
-                                            <span>{{ __('chief::ui.shell.light') }}</span>
-                                        </button>
-                                        <button type="button"
-                                                class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
-                                                x-bind:class="themeButtonClasses('dark')"
-                                                x-on:click="setTheme('dark')">
-                                            <i class="fad fa-fw fa-moon text-[11px]"></i>
-                                            <span>{{ __('chief::ui.shell.dark') }}</span>
-                                        </button>
-                                        <button type="button"
-                                                class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
-                                                x-bind:class="themeButtonClasses('system')"
-                                                x-on:click="setTheme('system')">
-                                            <i class="fad fa-fw fa-display text-[11px]"></i>
-                                            <span>{{ __('chief::ui.shell.system') }}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @include('chief::partial.account.dropdown_items')
+                            @include('chief::partial.shell.account-menu')
                         </div>
                     </div>
                 @endauth
@@ -440,7 +407,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          id="chief-shell-mobile-menu"
-         class="fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm md:hidden"
+         @class(['fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm', 'md:hidden' => !$sidebarLayout, 'lg:hidden' => $sidebarLayout])
          x-bind:style="{ top: `${mobileMenuTop}px` }"
          x-on:click="menuOpen = false">
         <div x-show="menuOpen"
@@ -457,36 +424,166 @@
              x-on:keydown.escape.stop="menuOpen = false; $refs.mobileMenuButton.focus()"
              x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget) && $event.relatedTarget !== $refs.mobileMenuButton) menuOpen = false"
              class="h-full w-72 overflow-y-auto overscroll-contain border-r border-line bg-surface shadow-xl">
-            <div class="p-2">
-                @foreach($menuItems as $item)
-                    @php
-                        $active = $item['active'] ?? false;
-                        $href = $item['href'] ?? '#';
-                        $icon = $item['icon'] ?? null;
-                    @endphp
-                    <a href="{{ $href }}"
-                       @class([
-                           'group flex min-h-12 items-center gap-3 rounded-md px-3 py-3 text-base font-medium transition outline-none',
-                           'bg-surface-2 text-fg' => $active,
-                           'text-fg-muted hover:bg-surface-2 hover:text-fg focus-visible:bg-surface-2 focus-visible:text-fg' => !$active,
-                       ])
-                       @if(!empty($item['wire'])) wire:navigate @endif
-                       x-on:click="menuOpen = false">
-                        @if($icon)
-                            <i @class([
-                                'fa-fw text-base',
-                                $icon,
-                                'text-accent' => $active,
-                                'text-fg-faint group-hover:text-fg-muted' => !$active,
-                            ])></i>
-                        @endif
-                        <span class="truncate">{{ $item['text'] ?? $item['label'] ?? '' }}</span>
-                        <span class="ml-auto">@include('chief::partial.shell.nav-badge', ['item' => $item])</span>
-                    </a>
-                @endforeach
+            <div class="space-y-0.5 p-2">
+                @include('chief::partial.shell.nav-tree', ['menuItems' => $mainMenuItems, 'touch' => true])
             </div>
+            @if($pinnedMenuItems->isNotEmpty())
+                <div class="space-y-0.5 border-t border-line p-2">
+                    @include('chief::partial.shell.nav-tree', ['menuItems' => $pinnedMenuItems, 'touch' => true])
+                </div>
+            @endif
         </div>
     </div>
+
+    @if($sidebarLayout)
+        {{--
+            The full height below the brand border, with what the header holds elsewhere: the app, team, search and account.
+            Collapsed (`data-shell-sidebar` on the html element, remembered per browser) it is a rail of icons; the app's
+            content moves right by its width either way.
+        --}}
+        <aside class="fixed top-1 bottom-0 left-0 z-30 hidden w-60 flex-col border-r border-line bg-surface lg:flex group-data-[shell-sidebar=collapsed]/chief:w-16">
+            <div class="flex h-[53px] shrink-0 items-center border-b border-line px-3 group-data-[shell-sidebar=collapsed]/chief:justify-center group-data-[shell-sidebar=collapsed]/chief:px-0">
+                @include('chief::partial.shell.logo', ['rail' => true])
+            </div>
+
+            <div class="shrink-0 space-y-2 px-3 pt-3">
+                @auth
+                    @if(config('chief.teams') && auth()->user()->team)
+                        <div class="relative" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) teamOpen = false">
+                            <button type="button"
+                                    class="flex h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 text-left transition hover:bg-surface-2 group-data-[shell-sidebar=collapsed]/chief:justify-center group-data-[shell-sidebar=collapsed]/chief:px-0"
+                                    x-ref="sidebarTeamButton"
+                                    x-on:click="teamOpen = !teamOpen; accountOpen = false; themeOpen = false; closePalette(); hideRailTip(); if (teamOpen && $event.detail === 0) focusFirstMenuItem($refs.sidebarTeamMenu)"
+                                    x-on:keydown.arrow-down.prevent="if (!teamOpen) $el.click(); focusFirstMenuItem($refs.sidebarTeamMenu)"
+                                    x-on:mouseenter="showRailTip($el)"
+                                    x-on:mouseleave="hideRailTip()"
+                                    data-shell-label="{{ auth()->user()->team->name }}"
+                                    x-bind:aria-expanded="teamOpen.toString()"
+                                    aria-haspopup="menu">
+                                <span class="sr-only">{{ __('chief::ui.shell.open_team_menu') }}</span>
+                                <img class="size-7 shrink-0 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
+                                <span class="min-w-0 flex-1 truncate text-sm font-medium text-fg group-data-[shell-sidebar=collapsed]/chief:hidden">{{ auth()->user()->team->name }}</span>
+                                {{-- Font Awesome's display rule outranks hiding the icon itself --}}
+                                <span class="group-data-[shell-sidebar=collapsed]/chief:hidden"><i class="fa fa-fw fa-chevron-down text-[10px] text-fg-faint"></i></span>
+                            </button>
+
+                            <div x-cloak
+                                 x-ref="sidebarTeamMenu"
+                                 x-show="teamOpen"
+                                 x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
+                                 x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
+                                 x-on:keydown.escape.stop="teamOpen = false; $refs.sidebarTeamButton.focus()"
+                                 x-on:click.away="if ($el.offsetParent !== null) teamOpen = false"
+                                 x-transition.origin.top.left
+                                 class="absolute top-full left-0 z-50 mt-1 flex max-h-[calc(100dvh-8rem)] w-72 flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-xl group-data-[shell-sidebar=collapsed]/chief:top-0 group-data-[shell-sidebar=collapsed]/chief:left-full group-data-[shell-sidebar=collapsed]/chief:mt-0 group-data-[shell-sidebar=collapsed]/chief:ml-3"
+                                 role="menu">
+                                @include('chief::partial.team.dropdown_items')
+                            </div>
+                        </div>
+                    @endif
+                @endauth
+
+                @if(config('chief.shell.command_palette'))
+                    <button type="button"
+                            class="flex h-8 w-full cursor-pointer items-center gap-2 rounded-md border border-line bg-surface-2 px-2 text-xs text-fg-subtle transition hover:border-line-strong hover:bg-surface-3 hover:text-fg-muted group-data-[shell-sidebar=collapsed]/chief:justify-center group-data-[shell-sidebar=collapsed]/chief:px-0"
+                            x-on:click="openPalette(); hideRailTip()"
+                            x-on:mouseenter="showRailTip($el)"
+                            x-on:mouseleave="hideRailTip()"
+                            data-shell-label="{{ __('chief::ui.shell.search') }} (⌘K)">
+                        <i class="fa fa-fw fa-search"></i>
+                        <span class="flex-1 truncate text-left group-data-[shell-sidebar=collapsed]/chief:hidden">{{ __('chief::ui.shell.search_or_jump') }}</span>
+                        <span class="rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[10px] font-medium text-fg-subtle group-data-[shell-sidebar=collapsed]/chief:hidden">⌘K</span>
+                    </button>
+                @endif
+            </div>
+
+            <nav x-ref="shellSidebar" class="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain px-3 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="{{ __('chief::ui.shell.main_menu') }}">
+                @include('chief::partial.shell.nav-tree', ['menuItems' => $mainMenuItems])
+            </nav>
+
+            <div class="shrink-0 space-y-0.5 border-t border-line px-3 py-3">
+                @if($pinnedMenuItems->isNotEmpty())
+                    @include('chief::partial.shell.nav-tree', ['menuItems' => $pinnedMenuItems])
+                @endif
+
+                @stack('chief.shell.actions')
+
+                @guest
+                    @if(config('chief.shell.theme_selector', true) && $themeUpdateUrl)
+                        <div class="flex gap-1 rounded-md bg-surface-2 p-1 group-data-[shell-sidebar=collapsed]/chief:flex-col">
+                            @foreach(['light' => 'fa-sun-bright', 'dark' => 'fa-moon', 'system' => 'fa-display'] as $themeOption => $themeIcon)
+                                <button type="button"
+                                        class="flex flex-1 cursor-pointer items-center justify-center gap-1 rounded px-2 py-1 text-xs font-medium transition"
+                                        x-bind:class="themeButtonClasses(@js($themeOption))"
+                                        x-on:click="setTheme(@js($themeOption))"
+                                        aria-label="{{ __('chief::ui.shell.' . $themeOption) }}">
+                                    <i class="fad fa-fw {{ $themeIcon }} text-[11px]"></i>
+                                    <span class="group-data-[shell-sidebar=collapsed]/chief:hidden">{{ __('chief::ui.shell.' . $themeOption) }}</span>
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                @endguest
+
+                <div class="flex items-center gap-1 group-data-[shell-sidebar=collapsed]/chief:flex-col">
+                    @auth
+                        <div class="relative min-w-0 flex-1 group-data-[shell-sidebar=collapsed]/chief:flex-none" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) accountOpen = false">
+                            <button type="button"
+                                    class="flex h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 text-left transition hover:bg-surface-2 group-data-[shell-sidebar=collapsed]/chief:justify-center group-data-[shell-sidebar=collapsed]/chief:px-0"
+                                    x-ref="sidebarAccountButton"
+                                    x-on:click="accountOpen = !accountOpen; teamOpen = false; themeOpen = false; closePalette(); hideRailTip(); if (accountOpen && $event.detail === 0) focusFirstMenuItem($refs.sidebarAccountMenu)"
+                                    x-on:keydown.arrow-up.prevent="if (!accountOpen) $el.click(); focusFirstMenuItem($refs.sidebarAccountMenu)"
+                                    x-on:mouseenter="showRailTip($el)"
+                                    x-on:mouseleave="hideRailTip()"
+                                    data-shell-label="{{ auth()->user() }}"
+                                    x-bind:aria-expanded="accountOpen.toString()"
+                                    aria-haspopup="menu">
+                                <span class="sr-only">{{ __('chief::ui.shell.open_account_menu') }}</span>
+                                <img class="size-7 shrink-0 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
+                                <span class="min-w-0 flex-1 group-data-[shell-sidebar=collapsed]/chief:hidden">
+                                    <span class="block truncate text-sm font-medium text-fg">{{ auth()->user() }}</span>
+                                    <span class="block truncate text-xs text-fg-subtle">{{ auth()->user()->email }}</span>
+                                </span>
+                            </button>
+
+                            <div x-cloak
+                                 x-ref="sidebarAccountMenu"
+                                 x-show="accountOpen"
+                                 x-on:keydown.arrow-down.prevent="focusMenuItem($el, 1)"
+                                 x-on:keydown.arrow-up.prevent="focusMenuItem($el, -1)"
+                                 x-on:keydown.escape.stop="accountOpen = false; $refs.sidebarAccountButton.focus()"
+                                 x-on:click.away="if ($el.offsetParent !== null) accountOpen = false"
+                                 x-transition.origin.bottom.left
+                                 class="absolute bottom-full left-0 z-50 mb-2 max-h-[calc(100dvh-6rem)] w-72 overflow-y-auto rounded-lg border border-line bg-surface shadow-xl group-data-[shell-sidebar=collapsed]/chief:bottom-0 group-data-[shell-sidebar=collapsed]/chief:left-full group-data-[shell-sidebar=collapsed]/chief:mb-0 group-data-[shell-sidebar=collapsed]/chief:ml-3"
+                                 role="menu">
+                                @include('chief::partial.shell.account-menu')
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex-1"></div>
+                    @endauth
+
+                    <button type="button"
+                            class="grid size-8 shrink-0 cursor-pointer place-items-center rounded-md text-fg-faint transition hover:bg-surface-2 hover:text-fg-muted"
+                            x-on:click="toggleSidebar()"
+                            x-on:mouseenter="showRailTip($el)"
+                            x-on:mouseleave="hideRailTip()"
+                            data-shell-label="{{ __('chief::ui.shell.expand_sidebar') }}"
+                            x-bind:aria-label="sidebarCollapsed ? @js(__('chief::ui.shell.expand_sidebar')) : @js(__('chief::ui.shell.collapse_sidebar'))"
+                            x-bind:aria-expanded="(!sidebarCollapsed).toString()">
+                        <i class="fa fa-fw fa-sidebar text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- The label of what the pointer is on in the rail, outside the scrolling menu so it is not cut off --}}
+            <div x-cloak
+                 x-show="railTip.visible"
+                 x-bind:style="{ top: `${railTip.top}px`, left: `${railTip.left}px` }"
+                 x-text="railTip.text"
+                 class="pointer-events-none fixed z-50 -translate-y-1/2 rounded-md border border-line bg-surface-raised px-2 py-1 text-xs font-medium whitespace-nowrap text-fg shadow-lg"></div>
+        </aside>
+    @endif
 
     @if(config('chief.shell.command_palette'))
         <div x-cloak
@@ -589,14 +686,14 @@
                         </div>
                     @endif
 
-                    @foreach($menuItems as $item)
+                    @foreach($commandMenuItems as $item)
                         @php($label = $item['text'] ?? $item['label'] ?? '')
                         <a href="{{ $item['href'] ?? '#' }}"
                            class="group flex items-center gap-3 rounded-md px-3 py-2 text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
                            data-shell-command
                            data-shell-category="{{ $tool['name'] }}"
                            data-shell-title="{{ strtolower($label) }}"
-                           data-shell-body="{{ strtolower($tool['name']) }}"
+                           data-shell-body="{{ strtolower(trim($tool['name'] . ' ' . ($item['parent'] ?? ''))) }}"
                            x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
                            x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) }"
                            x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
@@ -609,7 +706,7 @@
                             @endif
                             <span class="min-w-0 flex-1">
                                 <span class="block truncate text-sm font-medium">{{ $label }}</span>
-                                <span class="block truncate text-xs text-fg-subtle">{{ $tool['name'] }} &gt; {{ $label }}</span>
+                                <span class="block truncate text-xs text-fg-subtle">{{ $tool['name'] }} &gt; @if(!empty($item['parent'])){{ $item['parent'] }} &gt; @endif{{ $label }}</span>
                             </span>
                             <i class="fa fa-fw fa-chevron-right text-xs text-fg-faint"></i>
                         </a>
@@ -662,6 +759,28 @@
                                 <i class="fa fa-fw fa-check text-xs text-fg-faint"></i>
                             </button>
                         @endforeach
+                    @endif
+
+                    @if($layoutCommand)
+                        <button type="button"
+                                class="group flex cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-left text-fg-muted transition data-[active=true]:bg-surface-2 data-[active=true]:text-fg"
+                                data-shell-command
+                                data-shell-category="Layout"
+                                data-shell-title="{{ strtolower($layoutCommand['label']) }}"
+                                data-shell-body="{{ strtolower($layoutCommand['description'] . ' layout menu navigation sidebar top bar') }}"
+                                x-show="!hasNestedPaletteContext() && matchesCommand(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody)"
+                                x-bind:style="{ order: paletteItemOrder(paletteQuery, $el.dataset.shellTitle, $el.dataset.shellCategory, $el.dataset.shellBody, 210) + 500 }"
+                                x-on:mousemove="activeIndex = visiblePaletteItems().indexOf($el); syncPaletteActive()"
+                                x-on:click="setLayout(@js($layoutCommand['layout'])); closePalette()">
+                            <span class="grid size-7 place-items-center rounded-md bg-surface-2 text-fg-subtle">
+                                <i class="fa-fw {{ $layoutCommand['icon'] }} text-sm"></i>
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium">{{ $layoutCommand['label'] }}</span>
+                                <span class="block truncate text-xs text-fg-subtle">Layout &gt; {{ $layoutCommand['description'] }}</span>
+                            </span>
+                            <i class="fa fa-fw fa-check text-xs text-fg-faint"></i>
+                        </button>
                     @endif
 
                     @foreach($apps as $app)

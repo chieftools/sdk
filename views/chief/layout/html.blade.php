@@ -6,6 +6,7 @@
 @php
     $themePreference = ChiefTools\SDK\Chief::themePreference();
     $theme = ChiefTools\SDK\Chief::theme();
+    $sidebarLayout = ChiefTools\SDK\Chief::shellLayout() === 'sidebar';
 @endphp
     <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
@@ -15,6 +16,8 @@
       style="--brand-color: {{ config('chief.brand.color', '#2ecc71') }}"
     @class([
         'antialiased',
+        // Lets the shell and the content follow the sidebar's `data-shell-sidebar` state
+        'group/chief' => $sidebarLayout,
         'dark' => $theme === 'dark',
         'h-full' => ($fullHeight ?? false) === true,
     ])>
@@ -37,6 +40,18 @@
                     } catch (error) {
                     }
                 })(document.documentElement);
+            </script>
+        @endif
+
+        @if($sidebarLayout)
+            {{-- Before the first paint, so a collapsed sidebar does not open and shut on every page --}}
+            <script>
+                try {
+                    if (localStorage.getItem('chief-shell-sidebar') === 'collapsed') {
+                        document.documentElement.dataset.shellSidebar = 'collapsed';
+                    }
+                } catch (error) {
+                }
             </script>
         @endif
 
@@ -85,7 +100,13 @@
         @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
-        <div id="app" class="chief-layout-app {{ ($fullHeight ?? false) === true ? 'h-full' : 'min-h-screen pb-16' }} border-t-4 border-brand">
+        {{-- The sidebar layout's sidebar is fixed on the left, so everything else moves right by its width --}}
+        <div id="app" @class([
+            'chief-layout-app border-t-4 border-brand',
+            'h-full' => ($fullHeight ?? false) === true,
+            'min-h-screen pb-16' => ($fullHeight ?? false) !== true,
+            'lg:pl-60 lg:group-data-[shell-sidebar=collapsed]/chief:pl-16' => $sidebarLayout,
+        ])>
             @yield('body')
         </div>
 

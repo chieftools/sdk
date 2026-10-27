@@ -9,6 +9,9 @@ use ChiefTools\SDK\Webhook\WebhookEvent;
 
 final class Chief
 {
+    /** The user preference that chooses the sidebar layout, where the app lets users choose. */
+    public const string SIDEBAR_LAYOUT_PREFERENCE = 'sidebar_layout';
+
     private static bool $runsMigrations = true;
 
     /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
@@ -168,6 +171,28 @@ final class Chief
     public static function registerWebhookHandler(WebhookEvent $event, string $handler): void
     {
         self::$webhookHandlers[enum_value($event)] = $handler;
+    }
+
+    /**
+     * Resolve the shell's layout for the current user.
+     *
+     * Returns `'topbar'` or `'sidebar'`: the app's `chief.shell.layout`, or
+     * the user's preference where the app lets users choose with
+     * `chief.shell.layout_switcher`. Only the modern shell has a sidebar.
+     */
+    public static function shellLayout(): string
+    {
+        if (config('chief.shell.variant') !== 'modern') {
+            return 'topbar';
+        }
+
+        $sidebar = config('chief.shell.layout') === 'sidebar';
+
+        if (config('chief.shell.layout_switcher')) {
+            $sidebar = (bool)(authenticated_user()?->getPreference(self::SIDEBAR_LAYOUT_PREFERENCE, $sidebar) ?? $sidebar);
+        }
+
+        return $sidebar ? 'sidebar' : 'topbar';
     }
 
     /**

@@ -443,3 +443,173 @@ test('the modern shell renders a menu item badge with its label for screen reade
         ->and(substr_count($html, 'rounded-full px-1.5'))->toBe(2)
         ->and($html)->toContain('bg-red-500/15');
 });
+
+test('the sidebar layout puts the menu in a sidebar with its groups, nested items and pinned items', function () {
+    config([
+        'chief.shell.variant' => 'modern',
+        'chief.shell.layout'  => 'sidebar',
+    ]);
+
+    auth()->setUser(new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]));
+    request()->attributes->set('team_hint', (new Team)->forceFill([
+        'name' => 'Current team',
+        'slug' => 'current',
+    ]));
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'shellTool'    => ['name' => 'Server Chief'],
+        'menuItems'    => [
+            ['href' => '/dashboard', 'icon' => 'fad fa-dashboard', 'text' => 'Dashboard', 'group' => 'overview'],
+            ['href' => '/servers', 'icon' => 'fad fa-server', 'text' => 'Servers', 'group' => 'fleet'],
+            [
+                'href'     => '/metrics',
+                'icon'     => 'fad fa-chart-line',
+                'text'     => 'Metrics',
+                'active'   => true,
+                'group'    => 'fleet',
+                'children' => [
+                    ['href' => '/metrics', 'text' => 'Overview', 'active' => false],
+                    ['href' => '/alerts', 'text' => 'Alert history', 'active' => true],
+                ],
+            ],
+            ['href' => '/sites', 'icon' => 'fad fa-globe', 'text' => 'Sites', 'group' => 'web', 'group_label' => 'Web'],
+            ['href' => '/settings', 'icon' => 'fad fa-sliders', 'text' => 'Settings', 'pinned' => true],
+        ],
+    ])->render();
+
+    preg_match('/x-ref="shellSidebar".*?<\/nav>/s', $html, $sidebar);
+    preg_match('/<header.*?<\/header>/s', $html, $header);
+
+    // The header names the app, not the page the user is on
+    expect($header[0] ?? '')
+        ->toContain('Server Chief')
+        ->not->toContain('Metrics')
+        ->not->toContain('Alert history');
+
+    expect($html)
+        ->toContain('data-shell-layout="sidebar"')
+        ->not->toContain('x-ref="shellMenu"')
+        ->toContain('x-on:click="toggleSidebar()"')
+        // The palette finds nested items under their parent, with its icon
+        ->toContain('Metrics &gt; Alert history')
+        ->toMatch('/href="\/alerts"[^>]*data-shell-command.*?fa-chart-line.*?Alert history<\/span>/s');
+
+    // A line between the overview and fleet groups, a heading above the labelled one, and the active child marked
+    expect($sidebar[0] ?? '')
+        ->toContain('Dashboard')
+        ->toContain('<div class="mx-3 my-2 border-t border-line group-data-[shell-sidebar=collapsed]/chief:mx-1"></div>')
+        ->toContain('Web</div>')
+        ->toMatch('/href="\/alerts"[^>]*aria-current="page"/')
+        ->not->toContain('Settings');
+});
+
+test('the top bar stays the layout unless an app opts in to the sidebar', function () {
+    config([
+        'chief.shell.variant' => 'modern',
+    ]);
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [
+            ['href' => '/dashboard', 'icon' => 'fad fa-dashboard', 'text' => 'Dashboard', 'active' => true],
+        ],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-shell-layout="topbar"')
+        ->toContain('x-ref="shellMenu"')
+        ->not->toContain('x-ref="shellSidebar"');
+});
+
+test('users choose the layout only where the app lets them', function () {
+    config([
+        'chief.shell.variant' => 'modern',
+        'chief.shell.layout'  => 'sidebar',
+    ]);
+
+    auth()->setUser((new User)->forceFill(['preferences' => ['sidebar_layout' => false]]));
+
+    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('sidebar');
+
+    config(['chief.shell.layout_switcher' => true]);
+
+    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('topbar');
+
+    auth()->forgetUser();
+
+    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('sidebar');
+
+    config(['chief.shell.variant' => 'legacy']);
+
+    expect(ChiefTools\SDK\Chief::shellLayout())->toBe('topbar');
+});
+
+test('apps that let users choose the layout get a preference, a switch and a palette command for it', function () {
+    if (!Route::has('account.preferences.toggle')) {
+        Route::post('account/preference/toggle', static fn (): array => [])->name('account.preferences.toggle');
+    }
+
+    config([
+        'chief.shell.variant'         => 'modern',
+        'chief.shell.layout'          => 'sidebar',
+        'chief.shell.layout_switcher' => true,
+        'chief.preferences'           => [],
+        'chief.preference_categories' => [],
+    ]);
+
+    (fn () => $this->registerShellLayoutPreference())->call(new ChiefTools\SDK\ServiceProvider(app()));
+
+    expect(config('chief.preferences.sidebar_layout'))->toMatchArray([0 => 'Use the sidebar layout', 3 => true, 4 => 'ui'])
+        ->and(config('chief.preference_categories.ui.name'))->toBe('Interface');
+
+    auth()->setUser(new User([
+        'name'  => 'Alex',
+        'email' => 'alex@example.com',
+    ]));
+    request()->attributes->set('team_hint', (new Team)->forceFill([
+        'name' => 'Current team',
+        'slug' => 'current',
+    ]));
+
+    $html = view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [],
+    ])->render();
+
+    expect($html)
+        ->toContain('data-layout-update-url="/account/preference/toggle"')
+        ->toContain('data-layout-preference="sidebar_layout"')
+        ->toContain("setLayout('topbar')")
+        ->toContain('Switch to top bar layout')
+        ->not->toContain('Switch to sidebar layout');
+});
+
+test('the menu button points out menu items that need attention on small screens', function () {
+    config([
+        'chief.shell.variant' => 'modern',
+    ]);
+
+    $render = static fn (array $item): string => view('chief::partial.menu', [
+        'logoRedirect' => '/',
+        'menuItems'    => [
+            ['href' => '/dashboard', 'icon' => 'fad fa-dashboard', 'text' => 'Dashboard', 'badge' => 2],
+            $item,
+        ],
+    ])->render();
+
+    $attention = $render(['href' => '/alerts', 'icon' => 'fad fa-bell', 'text' => 'Alerts', 'badge' => 3, 'badge_tone' => 'danger', 'badge_label' => '3 alerts firing']);
+    $quiet     = $render(['href' => '/alerts', 'icon' => 'fad fa-bell', 'text' => 'Alerts', 'badge' => 0, 'badge_tone' => 'danger']);
+
+    expect($attention)
+        ->toContain('Toggle main menu, 3 alerts firing</span>')
+        ->toContain('ring-2 ring-surface dark:bg-red-400" x-show="!menuOpen"');
+
+    // Neither an ordinary badge nor an empty one counts
+    expect($quiet)
+        ->toContain('Toggle main menu</span>')
+        ->not->toContain('ring-2 ring-surface dark:bg-red-400');
+});

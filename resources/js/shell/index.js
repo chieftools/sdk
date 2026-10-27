@@ -22,6 +22,24 @@ function commandParts(query) {
     };
 }
 
+// The sidebar layout's collapsed state lives on the html element, which Livewire's navigation replaces, so it is
+// kept per browser and applied again after each navigation
+function storedSidebarCollapsed() {
+    try {
+        return localStorage.getItem('chief-shell-sidebar') === 'collapsed';
+    } catch (error) {
+        return false;
+    }
+}
+
+function applySidebarCollapsed(collapsed) {
+    if (collapsed) {
+        document.documentElement.dataset.shellSidebar = 'collapsed';
+    } else {
+        delete document.documentElement.dataset.shellSidebar;
+    }
+}
+
 function currentAlpine() {
     if (typeof window === 'undefined') {
         return null;
@@ -37,6 +55,11 @@ function registerChiefShellBridge() {
 
     document.addEventListener('alpine:init', () => registerChiefShell(currentAlpine()));
     document.addEventListener('livewire:navigating', () => registerChiefShell(currentAlpine()));
+    document.addEventListener('livewire:navigated', () => {
+        if (document.querySelector('[data-shell-layout="sidebar"]')) {
+            applySidebarCollapsed(storedSidebarCollapsed());
+        }
+    });
 
     registrationBridgeRegistered = true;
 }
@@ -72,9 +95,15 @@ function chiefShell() {
         menuScrolledFromStart: false,
         menuScrolledToEnd: false,
         mobileMenuTop: 0,
+        sidebarCollapsed: false,
+        railTip: {visible: false, text: '', top: 0, left: 0},
 
         init() {
             this.shellElement = this.$el;
+            if (this.shellElement.dataset.shellLayout === 'sidebar') {
+                this.sidebarCollapsed = storedSidebarCollapsed();
+                applySidebarCollapsed(this.sidebarCollapsed);
+            }
             this.remoteSearchUrl = this.shellElement.dataset.commandPaletteSearchUrl || null;
             this.themeUpdateUrl = this.shellElement.dataset.themeUpdateUrl || null;
             this.theme = this.shellElement.dataset.themePreference || this.shellElement.dataset.theme || 'light';
@@ -86,7 +115,8 @@ function chiefShell() {
             };
             this.systemThemeQuery.addEventListener?.('change', this.systemThemeHandler);
             this.applyTheme();
-            this.desktopMenuQuery = window.matchMedia('(min-width: 768px)');
+            // The sidebar layout shows its menu from the lg breakpoint, the top bar from md
+            this.desktopMenuQuery = window.matchMedia(this.shellElement.dataset.shellLayout === 'sidebar' ? '(min-width: 1024px)' : '(min-width: 768px)');
             this.desktopMenuHandler = event => {
                 if (event.matches) {
                     this.menuOpen = false;
@@ -101,7 +131,10 @@ function chiefShell() {
 
                 this.lockPageScroll(open);
             });
-            this.$nextTick(() => this.watchShellChrome());
+            this.$nextTick(() => {
+                this.watchShellChrome();
+                this.$refs.shellSidebar?.querySelector('[aria-current="page"]')?.scrollIntoView({block: 'nearest'});
+            });
         },
 
         destroy() {
@@ -117,6 +150,61 @@ function chiefShell() {
             if (this.shellLayoutFrame) {
                 cancelAnimationFrame(this.shellLayoutFrame);
             }
+        },
+
+        // Saves the user's layout as their preference and reloads, as the layout is drawn on the server
+        setLayout(layout) {
+            const url = this.shellElement.dataset.layoutUpdateUrl;
+
+            if (!url || layout === this.shellElement.dataset.shellLayout) {
+                return;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({identity: `preference:${this.shellElement.dataset.layoutPreference}`, state: layout === 'sidebar'}),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    }
+                })
+                .catch(() => {});
+        },
+
+        toggleSidebar() {
+            this.sidebarCollapsed = !this.sidebarCollapsed;
+            this.accountOpen = false;
+            this.teamOpen = false;
+            this.hideRailTip();
+
+            applySidebarCollapsed(this.sidebarCollapsed);
+
+            try {
+                localStorage.setItem('chief-shell-sidebar', this.sidebarCollapsed ? 'collapsed' : 'expanded');
+            } catch (error) {}
+        },
+
+        // The collapsed sidebar shows only icons, so it names what the pointer or focus is on
+        showRailTip(element) {
+            if (!this.sidebarCollapsed || this.teamOpen || this.accountOpen) {
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+
+            this.railTip = {visible: true, text: element.dataset.shellLabel || '', top: rect.top + rect.height / 2, left: rect.right + 12};
+        },
+
+        hideRailTip() {
+            this.railTip.visible = false;
         },
 
         resolvedTheme() {

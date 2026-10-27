@@ -13,7 +13,14 @@
                 }
             })
                 .then((response) => response.json())
-                .then((response) => this.on = response.state ?? this.on);
+                .then((response) => {
+                    this.on = response.state ?? this.on;
+
+                    // The layout is drawn on the server, so it changes with the page
+                    if (preference === '{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}') {
+                        window.location.reload();
+                    }
+                });
         },
     }">
         @foreach($categories as $categoryKey => $preferences)

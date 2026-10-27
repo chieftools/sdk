@@ -74,6 +74,8 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $this->loadConfig();
 
+        $this->registerShellLayoutPreference();
+
         $this->registerAuth();
 
         $this->registerGraphQLSubscriptions();
@@ -160,6 +162,28 @@ class ServiceProvider extends IlluminateServiceProvider
             'auth.guards.chief_team' => array_merge([
                 'driver' => 'chief_remote_team',
             ], config('auth.guards.chief_team', [])),
+        ]);
+    }
+
+    /**
+     * Apps that let users choose the shell's layout get a preference for it, on by default when the app's own layout is
+     * the sidebar, in the interface category.
+     */
+    private function registerShellLayoutPreference(): void
+    {
+        if (config('chief.shell.variant') !== 'modern' || !config('chief.shell.layout_switcher')) {
+            return;
+        }
+
+        config([
+            'chief.preferences.' . Chief::SIDEBAR_LAYOUT_PREFERENCE => config('chief.preferences.' . Chief::SIDEBAR_LAYOUT_PREFERENCE) ?? [
+                'Use the sidebar layout',
+                'Show the menu in a sidebar on the left of larger screens, which you can collapse to icons, instead of in a bar at the top.',
+                'sidebar',
+                config('chief.shell.layout') === 'sidebar',
+                'ui',
+            ],
+            'chief.preference_categories.ui'                        => config('chief.preference_categories.ui') ?? ['name' => 'Interface'],
         ]);
     }
 

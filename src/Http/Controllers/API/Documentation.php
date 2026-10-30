@@ -18,7 +18,7 @@ class Documentation
                 $this->protocol('rest'),
                 $this->protocol('graphql'),
             ])->filter()->values(),
-            'teamTokensUrl'                  => chief_base_url('teams'),
+            'teamTokensUrl'                  => chief_base_url('team/select'),
         ]);
     }
 

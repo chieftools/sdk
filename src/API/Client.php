@@ -218,6 +218,7 @@ class Client
                 audience: $data['audience'] ?? null,
                 expiresAt: $data['expires_at'] ? Carbon::createFromTimestamp($data['expires_at']) : null,
                 plainTextToken: $data['access_token'],
+                authorizationDetails: ChiefRemoteAccessToken::normalizeAuthorizationDetails($data['authorization_details'] ?? []),
             );
         } catch (GuzzleException) {
             return null;
@@ -229,7 +230,7 @@ class Client
      *
      * @param string $token
      *
-     * @return array{id: string, name: string, scopes: list<string>, user_id: string|null, team_id: int|null, team_role?: string|null, expires_at: int|null, audience?: string|null}|null
+     * @return array{id: string, name: string, scopes: list<string>, user_id: string|null, team_id: int|null, team_role?: string|null, expires_at: int|null, audience?: string|null, authorization_details?: list<array{type: string, identifier: string}>}|null
      */
     public function validateAccessToken(string $token): ?array
     {

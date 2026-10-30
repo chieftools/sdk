@@ -84,6 +84,7 @@ abstract readonly class RemoteAccessTokenGuard
             teamRole: isset($response['team_role']) ? MembershipRole::tryFrom($response['team_role']) : null,
             audience: $response['audience'] ?? null,
             expiresAt: $expires ?: null,
+            authorizationDetails: ChiefRemoteAccessToken::normalizeAuthorizationDetails($response['authorization_details'] ?? []),
         );
 
         $authenticatable = $this->resolveAuthenticatableForRemoteToken($remoteToken);

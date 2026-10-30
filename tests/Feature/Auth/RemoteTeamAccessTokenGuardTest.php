@@ -52,3 +52,28 @@ it('rejects a team token when the team header names another team', function () {
 
     $guard($request);
 })->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header does not match the team this token is limited to.');
+
+it('reads the authorization details of a team token', function () {
+    $team    = new Team;
+    $team->forceFill(['id' => 905, 'slug' => 'fern-valley', 'name' => 'Fern Valley'])->save();
+    $token   = RandomToken::generate('ctt', 36);
+    $request = Request::create('/api/example');
+    $request->headers->set('Authorization', 'Bearer ' . $token);
+
+    cache()->put($token->cacheKey(), [
+        'id'                    => 'synthetic-token',
+        'name'                  => 'Synthetic token',
+        'scopes'                => [],
+        'team_id'               => 905,
+        'expires_at'            => null,
+        'authorization_details' => [
+            ['type' => 'synthetic:zone', 'identifier' => 'fern-valley.example'],
+        ],
+    ]);
+
+    $guard = new RemoteTeamAccessTokenGuard('api', app(Client::class), app(CacheManager::class));
+
+    expect($guard($request)->getChiefRemoteAccessToken()->authorizationDetails)->toBe([
+        ['type' => 'synthetic:zone', 'identifier' => 'fern-valley.example'],
+    ]);
+});

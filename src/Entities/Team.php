@@ -220,7 +220,7 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
             return Chief::teamModel()::query()->where($field ?? 'slug', '=', $value)->first();
         }
 
-        return $user->teams()->where($field ?? 'slug', '=', $value)->first();
+        return $user->accessibleTeams()->where($field ?? 'slug', '=', $value)->first();
     }
 
     // Authenticatable

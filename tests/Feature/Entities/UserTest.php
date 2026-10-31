@@ -74,3 +74,35 @@ it('limits admin access tokens to the teams the admin is a member of', function 
 
     $user->currentTeam(teamContextRequest('birch-hollow'));
 })->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header was not found.');
+
+it('uses the team of a team limited access token instead of the first team without a team hint', function () {
+    $user    = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    $limited = createTeamContextTeam('birch-hollow', $user);
+
+    $user->withChiefRemoteAccessToken(teamContextAccessToken(teamId: $limited->id));
+
+    expect($user->currentTeam(teamContextRequest())->is($limited))->toBeTrue();
+});
+
+it('rejects a team header outside the team of a team limited access token', function () {
+    $user    = createTeamContextUser();
+    $limited = createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user);
+
+    $user->withChiefRemoteAccessToken(teamContextAccessToken(teamId: $limited->id));
+
+    $user->currentTeam(teamContextRequest('birch-hollow'));
+})->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header was not found.');
+
+it('limits the accessible teams to the team of a team limited access token', function () {
+    $user    = createTeamContextUser();
+    $limited = createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user);
+
+    expect($user->accessibleTeams()->pluck('slug')->all())->toBe(['amber-grove', 'birch-hollow']);
+
+    $user->withChiefRemoteAccessToken(teamContextAccessToken(teamId: $limited->id));
+
+    expect($user->accessibleTeams()->pluck('slug')->all())->toBe(['amber-grove']);
+});

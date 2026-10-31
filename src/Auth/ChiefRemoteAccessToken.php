@@ -83,6 +83,12 @@ readonly class ChiefRemoteAccessToken
         return in_array($scope, $this->scopes, true);
     }
 
+    /** Determine if the token has any scope of the given app, the app scope itself or any of its children. */
+    public function hasAnyScopeFor(string $appId): bool
+    {
+        return array_any($this->scopes, static fn (string $scope): bool => $scope === $appId || str_starts_with($scope, "{$appId}:"));
+    }
+
     /** Determine if the token is limited to specific resources of the given app. */
     public function isRestrictedFor(string $appId): bool
     {

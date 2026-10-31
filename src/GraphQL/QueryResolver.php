@@ -122,7 +122,7 @@ abstract class QueryResolver
     protected function authorizeFor(User $user, $ability, $args = []): void
     {
         if (!$this->gate()->forUser($user)->check($ability, $args)) {
-            throw new AuthorizationException(trans('api.msg_not_authorized', ['path' => $this->fieldPath()]));
+            throw new AuthorizationException("You are not authorized to access `{$this->fieldPath()}`.");
         }
     }
 

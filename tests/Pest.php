@@ -49,7 +49,7 @@ function teamContextRequest(?string $teamSlug = null): Request
     return $request;
 }
 
-function teamContextAccessToken(): ChiefRemoteAccessToken
+function teamContextAccessToken(?int $teamId = null): ChiefRemoteAccessToken
 {
     return new ChiefRemoteAccessToken(
         id: 'synthetic-token',
@@ -57,7 +57,7 @@ function teamContextAccessToken(): ChiefRemoteAccessToken
         prefix: 'ctp',
         scopes: [],
         userId: '5f0e3c3a-9b51-4e0e-8a77-3f2b1d1c6e42',
-        teamId: null,
+        teamId: $teamId,
         expiresAt: null,
     );
 }

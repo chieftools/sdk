@@ -22,10 +22,28 @@ class AuthenticatedTeam extends AuthenticatedEntityResolver
         }
 
         $team = $this->filled('hint')
-            ? $user->teams()->where('slug', '=', $this->input('hint'))->first()
+            ? $this->resolveHintedTeam($user)
             : $user->currentTeam();
 
+        if ($team === null) {
+            return null;
+        }
+
         $user->setCurrentTeam($team);
+
+        return $team;
+    }
+
+    /** A token limited to one team never resolves another team, even one the user is a member of. */
+    private function resolveHintedTeam(User $user): ?Team
+    {
+        $team = $user->teams()->where('slug', '=', $this->input('hint'))->first();
+
+        $tokenTeamId = $user->getChiefRemoteAccessToken()?->teamId;
+
+        if ($team === null || ($tokenTeamId !== null && $team->id !== $tokenTeamId)) {
+            return null;
+        }
 
         return $team;
     }

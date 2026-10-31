@@ -42,7 +42,7 @@
             </div>
         </x-tw::panel>
 
-        @if($protocols->isNotEmpty())
+        @if($protocols->isNotEmpty() || $mcp !== null)
             <div class="flex flex-col gap-4">
                 <x-tw::panel icon="fa-server" title="APIs">
                     <ul role="list" class="-mx-5 -my-4 divide-y divide-line">
@@ -74,6 +74,40 @@
                                 </article>
                             </li>
                         @endforeach
+
+                        @if($mcp !== null)
+                            <li id="mcp">
+                                <article class="flex items-start gap-3 px-5 py-4 sm:px-6">
+                                    <span class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg">
+                                        <i class="fad fa-fw fa-microchip-ai" aria-hidden="true"></i>
+                                    </span>
+
+                                    <div class="min-w-0 flex-1">
+                                        <h2 class="text-lg font-medium text-fg">MCP server</h2>
+                                        <p class="mt-1 text-sm text-fg-muted">Connect AI assistants and agents with the Model Context Protocol.</p>
+
+                                        <div class="mt-4 flex flex-wrap gap-3">
+                                            @if($mcp['documentation_url'])
+                                                <x-tw::button :href="$mcp['documentation_url']" target="_blank" rel="noopener noreferrer" icon="fa-books">
+                                                    Open documentation
+                                                </x-tw::button>
+                                            @endif
+
+                                            <div class="flex min-w-0 max-w-full rounded-md shadow-xs">
+                                                <code class="min-w-0 truncate rounded-l-md border border-line bg-surface-2 px-3 py-2 font-mono text-sm leading-4 text-fg" title="{{ $mcp['endpoint'] }}">{{ $mcp['endpoint'] }}</code>
+                                                <button type="button"
+                                                        data-clipboard="#mcp"
+                                                        data-clipboard-value="{{ $mcp['endpoint'] }}"
+                                                        aria-label="Copy the MCP server URL"
+                                                        class="-ml-px inline-flex shrink-0 items-center rounded-r-md border border-line bg-surface-2 px-3 text-sm text-fg-muted hover:bg-surface-3 hover:text-fg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500">
+                                                    <i class="fal fa-fw fa-copy" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            </li>
+                        @endif
                     </ul>
                 </x-tw::panel>
 

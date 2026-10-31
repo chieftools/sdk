@@ -205,6 +205,64 @@ function chief_developer_docs_url(?string $page = null, ?string $ref = null, arr
     ]));
 }
 
+/** Get the URL MCP clients connect to, null when the application has no MCP server. */
+function chief_mcp_endpoint(): ?string
+{
+    return chief_http_url(config('chief.mcp.endpoint') ?? config('chief.auth.audiences.mcp'));
+}
+
+/**
+ * Get the single developer documentation link of the menus: the API documentation, which also covers the MCP server, or else the MCP documentation.
+ *
+ * @return array{label: string, href: string, target: ?string, icon: string}|null
+ */
+function chief_developer_documentation_link(): ?array
+{
+    if (Illuminate\Support\Facades\Route::has('api.docs')) {
+        return [
+            'label'  => chief_mcp_endpoint() === null ? 'API documentation' : 'API & MCP documentation',
+            'href'   => route('api.docs'),
+            'target' => null,
+            'icon'   => 'fa-rectangle-api',
+        ];
+    }
+
+    $mcpDocumentationUrl = chief_mcp_documentation_url();
+
+    if ($mcpDocumentationUrl === null) {
+        return null;
+    }
+
+    return [
+        'label'  => 'MCP documentation',
+        'href'   => $mcpDocumentationUrl,
+        'target' => '_blank',
+        'icon'   => 'fa-microchip-ai',
+    ];
+}
+
+/** Get the url to the documentation on connecting MCP clients, null when the application has no MCP server or documentation. */
+function chief_mcp_documentation_url(): ?string
+{
+    return chief_mcp_endpoint() === null ? null : chief_http_url(config('chief.mcp.documentation_url'));
+}
+
+/** Get the value as an absolute http(s) URL, null for anything else. */
+function chief_http_url(mixed $url): ?string
+{
+    if (!is_string($url)) {
+        return null;
+    }
+
+    $url = trim($url);
+
+    if (!filter_var($url, FILTER_VALIDATE_URL) || !in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true)) {
+        return null;
+    }
+
+    return $url;
+}
+
 /** Get the url to the Chief roadmap site for the current application. */
 function chief_roadmap_url(?string $ref = null, array $query = []): string
 {

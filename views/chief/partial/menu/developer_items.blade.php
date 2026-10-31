@@ -1,3 +1,3 @@
-@if(Illuminate\Support\Facades\Route::has('api.docs'))
-    <x-chief::account.menu-link :href="route('api.docs')" :active="active('api/docs')" text="API documentation" icon="fa-rectangle-api"/>
+@if(($developerDocumentationLink = chief_developer_documentation_link()) !== null)
+    <x-chief::account.menu-link :href="$developerDocumentationLink['href']" :target="$developerDocumentationLink['target']" :active="active('api/docs')" :text="$developerDocumentationLink['label']" :icon="$developerDocumentationLink['icon']"/>
 @endif

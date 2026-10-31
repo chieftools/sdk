@@ -19,6 +19,10 @@ class Documentation
                 $this->protocol('graphql'),
             ])->filter()->values(),
             'teamTokensUrl'                  => chief_base_url('team/select'),
+            'mcp'                            => chief_mcp_endpoint() === null ? null : [
+                'endpoint'          => chief_mcp_endpoint(),
+                'documentation_url' => chief_mcp_documentation_url(),
+            ],
         ]);
     }
 
@@ -35,7 +39,7 @@ class Documentation
             return null;
         }
 
-        $documentationUrl = $this->configuredUrl($configuration['documentation_url'] ?? null)
+        $documentationUrl = chief_http_url($configuration['documentation_url'] ?? null)
             ?? $this->routeUrl($configuration['documentation_route'] ?? null);
         $playgroundUrl    = $this->routeUrl($configuration['playground_route'] ?? null);
 
@@ -62,22 +66,6 @@ class Documentation
             'documentation_url' => $documentationUrl,
             'playground_url'    => $playgroundUrl,
         ];
-    }
-
-    private function configuredUrl(mixed $url): ?string
-    {
-        if (!is_string($url)) {
-            return null;
-        }
-
-        $url    = trim($url);
-        $scheme = parse_url($url, PHP_URL_SCHEME);
-
-        if (!filter_var($url, FILTER_VALIDATE_URL) || !in_array($scheme, ['http', 'https'], true)) {
-            return null;
-        }
-
-        return $url;
     }
 
     private function routeUrl(mixed $routeName): ?string

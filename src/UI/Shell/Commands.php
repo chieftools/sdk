@@ -60,18 +60,19 @@ class Commands
     /** @return \Illuminate\Support\Collection<int, array<string, mixed>> */
     public static function developer(): Collection
     {
-        $commands = collect();
+        $link = chief_developer_documentation_link();
 
-        if (Route::has('api.docs')) {
-            $commands->push([
-                'label'       => 'API documentation',
-                'href'        => route('api.docs'),
-                'icon'        => 'fad fa-rectangle-api',
-                'description' => 'Developer',
-            ]);
+        if ($link === null) {
+            return collect();
         }
 
-        return $commands;
+        return collect([[
+            'label'       => $link['label'],
+            'href'        => $link['href'],
+            'target'      => $link['target'],
+            'icon'        => "fad {$link['icon']}",
+            'description' => 'Developer',
+        ]]);
     }
 
     /** @return \Illuminate\Support\Collection<int, array<string, mixed>> */

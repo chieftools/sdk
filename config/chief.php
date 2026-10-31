@@ -131,6 +131,16 @@ return [
 
     ],
 
+    'mcp' => [
+
+        // The URL MCP clients connect to, null uses the MCP audience. Apps without an MCP server have neither.
+        'endpoint' => null,
+
+        // Documentation on connecting MCP clients, linked from the developer menus and the API documentation.
+        'documentation_url' => null,
+
+    ],
+
     'graphql' => [
 
         'namespace' => [

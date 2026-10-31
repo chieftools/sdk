@@ -20,7 +20,7 @@ class TokenAnyScopeDirective extends BaseDirective implements FieldMiddleware
                 $scopes = $this->directiveArgValue('scopes')
                           ?? throw new DefinitionException("Missing argument 'scopes' for directive '@tokenAnyScope'.");
 
-                if ($context->user() === null) {
+                if (!$context->isAuthenticated()) {
                     return null;
                 }
 

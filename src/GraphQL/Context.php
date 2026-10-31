@@ -59,12 +59,25 @@ class Context implements GraphQLContext
         return $this->request;
     }
 
+    /** Determine if the request is authenticated as a user or as a team. */
+    public function isAuthenticated(): bool
+    {
+        return $this->user !== null || $this->team !== null;
+    }
+
+    /**
+     * The access token of the authenticated user, or of the authenticated team when using a team token.
+     *
+     * The team is only consulted when there is no user, a user's current team never carries the user's token.
+     */
     public function token(): ?ChiefRemoteAccessToken
     {
-        if (!$this->user instanceof AuthenticatesWithRemoteToken) {
+        $authenticated = $this->user ?? $this->team;
+
+        if (!$authenticated instanceof AuthenticatesWithRemoteToken) {
             return null;
         }
 
-        return $this->user->getChiefRemoteAccessToken();
+        return $authenticated->getChiefRemoteAccessToken();
     }
 }

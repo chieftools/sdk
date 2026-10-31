@@ -1,4 +1,4 @@
 extend type User {
     "The teams the user belongs to."
-    teams: [Team!]! @viewerOnly @tokenScopes(scopes: ["teams"]) @with(relation: "teams")
+    teams: [Team!]! @viewerOnly @tokenScopes(scopes: ["teams"]) @field(resolver: "ChiefTools\\SDK\\GraphQL\\Resolvers\\UserTeams")
 }

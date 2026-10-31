@@ -200,7 +200,23 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             return Chief::teamModel()::query()->where('slug', '=', $slug)->first();
         }
 
-        return $this->teams()->where('slug', '=', $slug)->first();
+        return $this->accessibleTeams()->where('slug', '=', $slug)->first();
+    }
+    /**
+     * The teams the user is a member of, limited to the team of the access token when the token is limited to one team.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<covariant \ChiefTools\SDK\Entities\Team, $this, covariant \ChiefTools\SDK\Entities\PivotEntity>
+     */
+    public function accessibleTeams(): BelongsToMany
+    {
+        $relation    = $this->teams();
+        $tokenTeamId = $this->getChiefRemoteAccessToken()?->teamId;
+
+        if ($tokenTeamId !== null) {
+            $relation->whereKey($tokenTeamId);
+        }
+
+        return $relation;
     }
     /** Admins can open any team in the apps, access tokens are always limited to the teams the user is a member of. */
     public function canAccessAllTeams(): bool
@@ -227,6 +243,12 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function defaultOrFirstTeam(): Team
     {
+        // A token limited to one team never falls back to the default team when that is another team
+        if ($this->getChiefRemoteAccessToken()?->teamId !== null) {
+            return $this->accessibleTeams()->first()
+                ?? throw new AuthenticationException('The user does not have access to applications.');
+        }
+
         return $this->defaultTeam
             ?? $this->teams()->first()
             ?? throw new AuthenticationException('The user does not have access to applications.');
@@ -243,7 +265,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             return null;
         }
 
-        return $this->memoizedCurrentTeam = $this->teams()->where('slug', '=', $sessionHint)->first();
+        return $this->memoizedCurrentTeam = $this->accessibleTeams()->where('slug', '=', $sessionHint)->first();
     }
     public function getMemoizedCurrentTeam(): ?Team
     {

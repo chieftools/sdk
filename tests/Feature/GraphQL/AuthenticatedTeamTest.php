@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
 use ChiefTools\SDK\GraphQL\Resolvers\AuthenticatedTeam;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use ChiefTools\SDK\GraphQL\Exceptions\MissingScopeException;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -21,13 +22,14 @@ function resolveAuthenticatedTeamFor(User $user, ?string $hint): mixed
     return app(AuthenticatedTeam::class)(null, ['hint' => $hint], new Context($request), test()->createStub(ResolveInfo::class));
 }
 
-function authenticatedTeamToken(User $user, ?int $teamId): ChiefRemoteAccessToken
+/** @param list<string> $scopes */
+function authenticatedTeamToken(User $user, ?int $teamId, array $scopes = ['teams']): ChiefRemoteAccessToken
 {
     return new ChiefRemoteAccessToken(
         id: 'synthetic-token',
         name: 'Synthetic token',
         prefix: 'ctp',
-        scopes: [],
+        scopes: $scopes,
         userId: $user->chief_id,
         teamId: $teamId,
         expiresAt: Carbon::now()->addDay(),
@@ -72,3 +74,35 @@ it('does not resolve a hinted team the user does not belong to', function () {
     expect(resolveAuthenticatedTeamFor($user, 'birch-hollow'))->toBeNull()
         ->and(resolveAuthenticatedTeamFor($user, 'unknown-team'))->toBeNull();
 });
+
+it('resolves the team a token is limited to instead of the first team without a hint', function () {
+    $user    = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    $limited = createTeamContextTeam('birch-hollow', $user);
+
+    $user->withChiefRemoteAccessToken(authenticatedTeamToken($user, teamId: $limited->id));
+
+    expect(resolveAuthenticatedTeamFor($user, null)?->is($limited))->toBeTrue();
+});
+
+it('resolves the team for a token with only a scope of this app', function () {
+    config(['chief.id' => 'grovechief']);
+
+    $user = createTeamContextUser();
+    $team = createTeamContextTeam('amber-grove', $user);
+
+    $user->withChiefRemoteAccessToken(authenticatedTeamToken($user, teamId: null, scopes: ['grovechief:trees:read']));
+
+    expect(resolveAuthenticatedTeamFor($user, null)?->is($team))->toBeTrue();
+});
+
+it('refuses to resolve the team for a token without the teams scope or a scope of this app', function () {
+    config(['chief.id' => 'grovechief']);
+
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+
+    $user->withChiefRemoteAccessToken(authenticatedTeamToken($user, teamId: null, scopes: ['profile', 'grovechiefextra:read']));
+
+    resolveAuthenticatedTeamFor($user, null);
+})->throws(MissingScopeException::class, "The 'team' field requires one of the following scopes: ['teams', 'grovechief']");

@@ -1,11 +1,68 @@
 <div x-cloak
-     x-data="{ open: false, loadLazy: false, showBugReportBtn: false, statusTheme: null }"
+     x-data="{
+         open: false,
+         loadLazy: false,
+         showBugReportBtn: false,
+         status: null,
+         statusEvents: [],
+         statusFailed: false,
+         statusLoadedAt: 0,
+         get statusColor() {
+             if (this.statusFailed || this.status === null) {
+                 return 'bg-fg-faint';
+             }
+
+             return {
+                 none: 'bg-green',
+                 minor: 'bg-amber',
+                 major: 'bg-red',
+                 critical: 'bg-red',
+                 maintenance: 'bg-blue',
+             }[this.status.indicator] ?? 'bg-fg-faint';
+         },
+         get statusDescription() {
+             if (this.statusFailed) {
+                 return 'View system status';
+             }
+
+             return this.status?.description ?? 'Checking system status…';
+         },
+         async loadStatus() {
+             if (Date.now() - this.statusLoadedAt < 60000) {
+                 return;
+             }
+
+             this.statusLoadedAt = Date.now();
+
+             try {
+                 const response = await fetch(@js(chief_status_url('api/v2/summary.json')), { signal: AbortSignal.timeout(5000) });
+
+                 if (!response.ok) {
+                     throw new Error(`Status page responded with ${response.status}`);
+                 }
+
+                 const summary = await response.json();
+
+                 this.status = summary.status ?? null;
+                 this.statusEvents = [
+                     ...(summary.incidents ?? []),
+                     ...(summary.scheduled_maintenances ?? []).filter((maintenance) => maintenance.status === 'in_progress'),
+                 ].slice(0, 3);
+                 this.statusFailed = this.status === null;
+             } catch {
+                 this.statusFailed = this.status === null;
+             }
+         },
+     }"
      x-on:click.away="open = false"
      x-on:mouseover="loadLazy = true"
-     x-init="$watch('loadLazy', () => {
-         showBugReportBtn = window.SENTRY_FEEDBACK && window.SENTRY_FEEDBACK.attachTo($refs.sentryBugReportBtn, {}) !== null;
-         statusTheme = statusTheme ?? document.documentElement.dataset.theme ?? 'light';
-     })"
+     x-init="
+         $watch('loadLazy', () => {
+             showBugReportBtn = window.SENTRY_FEEDBACK && window.SENTRY_FEEDBACK.attachTo($refs.sentryBugReportBtn, {}) !== null;
+             loadStatus();
+         });
+         $watch('open', (isOpen) => isOpen && loadStatus());
+     "
      class="fixed bottom-6 right-6 z-50">
     <button x-on:click="open = !open; loadLazy = true" type="button" class="bg-brand hover:bg-brand-600 text-accent-fg px-2 py-1.5 rounded-md" aria-label="Support" aria-expanded="false" aria-haspopup="true" x-bind:aria-expanded="open.toString()">
         <i x-bind:class="{'opacity-0': open}" class="transition-opacity fad fa-fw fa-messages-question !absolute mt-1"></i>
@@ -38,8 +95,17 @@
 
             <hr class="my-2 bg-line border-0 h-px">
 
-            <template x-if="loadLazy">
-                <iframe x-bind:src="`https://status.chief.tools/badge?theme=${statusTheme}`" sandbox="allow-popups allow-top-navigation-by-user-activation" class="ml-0.5" width="250" height="30" frameborder="0" scrolling="no" style="color-scheme: none"></iframe>
+            <a href="{{ chief_status_url() }}" target="_blank" rel="noopener" class="group text-fg-muted hover:bg-brand hover:text-accent-fg flex items-center gap-2 text-sm p-1.5 rounded" tabindex="-1">
+                <span class="flex w-4.5 shrink-0 justify-center">
+                    <span x-bind:class="statusColor" class="size-2.5 rounded-full bg-fg-faint"></span>
+                </span>
+                <span x-text="statusDescription" class="truncate">Checking system status…</span>
+            </a>
+            <template x-for="statusEvent in statusEvents" x-bind:key="statusEvent.id">
+                <a x-bind:href="statusEvent.shortlink" x-bind:title="statusEvent.name" target="_blank" rel="noopener" class="text-muted hover:text-fg flex gap-2 text-xs px-1.5 pb-1" tabindex="-1">
+                    <span class="w-4.5 shrink-0"></span>
+                    <span x-text="statusEvent.name" class="truncate"></span>
+                </a>
             </template>
         </div>
     </div>

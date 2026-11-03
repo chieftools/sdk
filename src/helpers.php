@@ -293,6 +293,14 @@ function chief_changelog_url(?string $ref = null, array $query = []): string
     ]));
 }
 
+/** Get the url to the Chief status page or one of its paths, like `api/v2/summary.json`. */
+function chief_status_url(?string $path = null): string
+{
+    $base = rtrim(config('chief.status_url'), '/');
+
+    return $path === null ? $base : "{$base}/" . ltrim($path, '/');
+}
+
 /**
  * Check if we can reach the outside internet.
  *

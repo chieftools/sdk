@@ -177,6 +177,8 @@ return [
 
     'roadmap_url' => env('CHIEF_ROADMAP_URL', 'https://roadmap.chief.app'),
 
+    'status_url' => env('CHIEF_STATUS_URL', 'https://status.chief.tools'),
+
     'response' => [
 
         'securityheaders' => [

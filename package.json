@@ -32,7 +32,7 @@
         "prettier-plugin-tailwindcss": "^0.7.3"
     },
     "peerDependencies": {
-        "@sentry/browser": "^10.0.0",
+        "@sentry/browser": "^11.0.0",
         "alpinejs": "^3.15.0",
         "clipboard": "^2.0.0",
         "tippy.js": "^6.3.0"

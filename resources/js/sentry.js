@@ -58,7 +58,6 @@ if (window.SENTRY !== undefined && window.SENTRY !== null && window.SENTRY.DSN) 
                   ]
                 : []),
         ],
-        sendDefaultPii: true,
         tracesSampleRate: enableSentryTracing ? window.SENTRY.TRACES_SAMPLE_RATE : 0.0,
         tracePropagationTargets: [firstPartyHostMatcher],
         replaysSessionSampleRate: enableSentryTracing ? (window.SENTRY.REPLAYS_SAMPLE_RATE ?? 0.0) : 0.0,

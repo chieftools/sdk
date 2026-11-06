@@ -398,3 +398,61 @@ test('command palette search requires authentication', function () {
     $this->getJson('/api/chief/ui/commands/search?q=domains')
         ->assertUnauthorized();
 });
+
+test('command palette manager finds nothing with providers that need a current team in the global team view', function () {
+    $item = new Item(id: 'server:1', type: 'server', title: 'ember-web', url: '/servers/1', category: 'Server Chief');
+
+    $everywhere = new class($item) implements Provider
+    {
+        public function __construct(
+            private Item $item,
+        ) {}
+
+        public function key(): string
+        {
+            return 'serverchief.servers';
+        }
+
+        public function label(): string
+        {
+            return 'Servers';
+        }
+
+        public function scopes(): array
+        {
+            return ['Servers'];
+        }
+
+        public function search(Query $query): iterable
+        {
+            yield $this->item;
+        }
+    };
+
+    $currentTeamOnly = new class implements Provider
+    {
+        public function key(): string
+        {
+            return 'serverchief.settings';
+        }
+
+        public function label(): string
+        {
+            return 'Settings';
+        }
+
+        public function scopes(): array
+        {
+            return ['Settings'];
+        }
+
+        public function search(Query $query): iterable
+        {
+            yield throw ChiefTools\SDK\Exceptions\NoCurrentTeam::inGlobalTeamView();
+        }
+    };
+
+    config(['chief.shell.command_palette_providers' => [$everywhere, $currentTeamOnly]]);
+
+    expect(app(Manager::class)->search(new Query('ember', 8))->pluck('title')->all())->toBe(['ember-web']);
+});

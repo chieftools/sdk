@@ -2,23 +2,33 @@
     @php
         /** @var \ChiefTools\SDK\Entities\Team $_chief_team */
 
-        $_current_team = auth()->user()->team;
-        $_other_teams = auth()->user()->teams->reject(fn ($team) => $team->is($_current_team))->values();
+        $_in_global_view = auth()->user()->inGlobalTeamView();
+        $_current_team = $_in_global_view ? null : auth()->user()->team;
+        $_other_teams = auth()->user()->teams->reject(fn ($team) => $_current_team !== null && $team->is($_current_team))->values();
         $_can_switch_team = Illuminate\Support\Facades\Route::has('team.switch');
+        $_can_switch_global = !$_in_global_view && Illuminate\Support\Facades\Route::has('team.switch.global');
         $_show_team_search = $_other_teams->count() >= 7;
         $_team_palette_scope = config('app.title', config('app.name', 'Chief Tools')) . ' > Teams > ';
     @endphp
 
     <div class="shrink-0 px-3 pt-3 pb-3" role="none">
         <div class="flex items-center gap-3 px-1" role="none">
-            <img class="size-9 rounded-lg" src="{{ $_current_team->avatar_url }}" alt="">
-            <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-medium text-fg">{{ $_current_team }}</div>
-                <div class="truncate text-xs text-fg-subtle">{{ __('chief::ui.shell.current_team') }}</div>
-            </div>
+            @if($_in_global_view)
+                <span class="grid size-9 place-items-center rounded-lg bg-surface-2 text-fg-muted"><i class="fad fa-fw fa-layer-group"></i></span>
+                <div class="min-w-0 flex-1">
+                    <div class="truncate text-sm font-medium text-fg">{{ __('chief::ui.shell.all_teams') }}</div>
+                    <div class="truncate text-xs text-fg-subtle">{{ __('chief::ui.shell.all_teams_description') }}</div>
+                </div>
+            @else
+                <img class="size-9 rounded-lg" src="{{ $_current_team->avatar_url }}" alt="">
+                <div class="min-w-0 flex-1">
+                    <div class="truncate text-sm font-medium text-fg">{{ $_current_team }}</div>
+                    <div class="truncate text-xs text-fg-subtle">{{ __('chief::ui.shell.current_team') }}</div>
+                </div>
+            @endif
         </div>
 
-        @if(Illuminate\Support\Facades\Route::has('team.chief.manage.plan') || Illuminate\Support\Facades\Route::has('team.chief.manage.single'))
+        @if($_current_team !== null && (Illuminate\Support\Facades\Route::has('team.chief.manage.plan') || Illuminate\Support\Facades\Route::has('team.chief.manage.single')))
             <div class="mt-3 flex gap-1.5" role="none">
                 @if(Illuminate\Support\Facades\Route::has('team.chief.manage.plan'))
                     <a href="{{ route('team.chief.manage.plan', [$_current_team]) }}"
@@ -46,6 +56,19 @@
             </div>
         @endif
     </div>
+
+    @if($_can_switch_global)
+        <div class="shrink-0 border-t border-line p-1.5" role="none">
+            <a href="{{ route('team.switch.global') }}"
+               class="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition outline-none hover:bg-surface-2 focus-visible:bg-surface-2"
+               role="menuitem">
+                <span class="grid size-6 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-muted"><i class="fad fa-fw fa-layer-group text-[11px]"></i></span>
+                <span class="min-w-0 flex-1">
+                    <span class="block truncate text-sm font-medium text-fg">{{ __('chief::ui.shell.all_teams') }}</span>
+                </span>
+            </a>
+        </div>
+    @endif
 
     @if($_other_teams->isNotEmpty())
         <div class="flex min-h-0 flex-col border-t border-line"
@@ -152,7 +175,7 @@
                     <span class="min-w-0 flex-1 truncate">New team</span>
                 </a>
             @else
-                <a href="{{ route('team.chief.manage', [$_current_team]) }}"
+                <a href="{{ route('team.chief.manage', [$_current_team ?? auth()->user()->defaultOrFirstTeam()]) }}"
                    target="_blank"
                    rel="noopener"
                    class="group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium text-fg-muted transition hover:bg-surface-2 hover:text-fg outline-none focus-visible:bg-surface-2 focus-visible:text-fg"

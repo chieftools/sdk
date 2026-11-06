@@ -113,8 +113,12 @@ class Commands
         return $commands;
     }
 
-    /** @return \Illuminate\Support\Collection<int, array<string, mixed>> */
-    public static function teamSwitcher(User $user, Team $currentTeam): Collection
+    /**
+     * Without a current team the user is in the global team view, which combines all teams, every team is offered then.
+     *
+     * @return \Illuminate\Support\Collection<int, array<string, mixed>>
+     */
+    public static function teamSwitcher(User $user, ?Team $currentTeam): Collection
     {
         if (!Route::has('team.switch')) {
             return collect();
@@ -124,7 +128,7 @@ class Commands
 
         /** @var \Illuminate\Support\Collection<int, array<string, mixed>> $commands */
         $commands = $user->teams
-            ->reject(static fn (Team $team): bool => $team->is($currentTeam))
+            ->reject(static fn (Team $team): bool => $currentTeam !== null && $team->is($currentTeam))
             ->map(static fn (Team $team): array => [
                 'label'       => "Switch to {$team} team",
                 'href'        => route('team.switch', [$team]),
@@ -133,6 +137,16 @@ class Commands
                 'description' => (string)$team,
             ])
             ->values();
+
+        if ($currentTeam !== null && Route::has('team.switch.global')) {
+            $commands->prepend([
+                'label'       => 'Switch to all teams',
+                'href'        => route('team.switch.global'),
+                'icon'        => 'fad fa-layer-group',
+                'category'    => "{$appTitle} > Teams",
+                'description' => __('chief::ui.shell.all_teams'),
+            ]);
+        }
 
         return $commands;
     }

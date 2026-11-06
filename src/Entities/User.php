@@ -13,6 +13,7 @@ use ChiefTools\SDK\Auth\HasRemoteToken;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use Illuminate\Database\Eloquent\Builder;
+use ChiefTools\SDK\Exceptions\NoCurrentTeam;
 use Illuminate\Auth\AuthenticationException;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -22,6 +23,7 @@ use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
@@ -81,6 +83,11 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     ];
 
     private ?Team $memoizedCurrentTeam;
+
+    private bool $inGlobalTeamView = false;
+
+    /** @var \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\Team>|null */
+    private ?EloquentCollection $memoizedGlobalTeams = null;
 
     // Attributes
     public function __toString(): string
@@ -163,13 +170,27 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
 
     // Team helpers
+    /** @throws \ChiefTools\SDK\Exceptions\NoCurrentTeam in the global team view, which combines all teams of the user, and in the team selection */
     public function currentTeam(?Request $request = null): Team
     {
+        if ($this->inGlobalTeamView) {
+            throw NoCurrentTeam::inGlobalTeamView();
+        }
+
         if (isset($this->memoizedCurrentTeam)) {
             return $this->memoizedCurrentTeam;
         }
 
         $request ??= request();
+
+        // Falling back to another team for the global team view would show or change the data of a team the user did not choose
+        if ($this->requestsGlobalTeamView($request)) {
+            throw NoCurrentTeam::inGlobalTeamView();
+        }
+
+        if ($this->requestsTeamSelection($request)) {
+            throw NoCurrentTeam::inTeamSelection();
+        }
 
         $fromRequest = $request->attributes->get('team_hint') ??
                        $request->route('team_hint');
@@ -194,6 +215,60 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         }
 
         return $this->memoizedCurrentTeam = $this->findAccessibleTeamBySlug($fromRequest) ?? $this->defaultOrFirstTeam();
+    }
+    /** The global team view combines all teams of the user, it has no current team. */
+    public function inGlobalTeamView(): bool
+    {
+        return $this->inGlobalTeamView || $this->requestsGlobalTeamView();
+    }
+    /** The URL of the request, or the team header of a request without a team in the URL, names the global team view instead of a team. */
+    public function requestsGlobalTeamView(?Request $request = null): bool
+    {
+        if (!Chief::globalTeamEnabled()) {
+            return false;
+        }
+
+        $request ??= request();
+
+        $fromRequest = $request->attributes->get('team_hint') ??
+                       $request->route('team_hint');
+
+        if ($fromRequest !== null) {
+            return $fromRequest === Chief::GLOBAL_TEAM_HINT;
+        }
+
+        return trim((string)$request->header('x-chief-team')) === Chief::GLOBAL_TEAM_HINT;
+    }
+    /** The URL of the request asks the user to choose the team to continue with. */
+    public function requestsTeamSelection(?Request $request = null): bool
+    {
+        if (!config('chief.teams')) {
+            return false;
+        }
+
+        $request ??= request();
+
+        $fromRequest = $request->attributes->get('team_hint') ??
+                       $request->route('team_hint');
+
+        return $fromRequest === Chief::SELECT_TEAM_HINT;
+    }
+    /**
+     * The teams the user works with: every team the user can access in the global team view, otherwise the current team.
+     *
+     * Admins only combine the teams they are a member of, opening any other team stays an explicit choice.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, \ChiefTools\SDK\Entities\Team>
+     */
+    public function teamsInContext(): EloquentCollection
+    {
+        if (!$this->inGlobalTeamView()) {
+            return new EloquentCollection([$this->currentTeam()]);
+        }
+
+        return $this->memoizedGlobalTeams ??= $this->accessibleTeams()->get()->each(static function (Team $team): void {
+            $team->preventsLazyLoading = false;
+        });
     }
     public function findAccessibleTeamBySlug(string $slug): ?Team
     {
@@ -231,6 +306,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         $team->preventsLazyLoading = false;
 
         $this->memoizedCurrentTeam = $team;
+        $this->inGlobalTeamView    = false;
 
         url()->defaults(['team_hint' => $team->slug]);
 
@@ -243,9 +319,24 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         $team->maybeUpdateLastActivity();
     }
+    /** The global team view is never remembered in the session, requests without a team in the URL keep using the last team opened. */
+    public function setGlobalTeamView(): void
+    {
+        unset($this->memoizedCurrentTeam);
+
+        $this->inGlobalTeamView = true;
+
+        url()->defaults(['team_hint' => Chief::GLOBAL_TEAM_HINT]);
+        request()->attributes->set('team_hint', Chief::GLOBAL_TEAM_HINT);
+
+        // An empty team model from the container would pass for the current team
+        app()->bind(Chief::teamModel(), static fn () => throw NoCurrentTeam::inGlobalTeamView());
+    }
     public function clearCurrentTeam(): void
     {
         unset($this->memoizedCurrentTeam);
+
+        $this->inGlobalTeamView = false;
     }
     public function defaultOrFirstTeam(): Team
     {

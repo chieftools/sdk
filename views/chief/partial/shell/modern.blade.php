@@ -47,13 +47,18 @@
         $appsSource = rescue(fn () => chief_apps(null) ?? collect(), collect(), false);
     }
 
-    $teamHint    = 'current';
-    $currentTeam = null;
+    $teamHint         = 'current';
+    $currentTeam      = null;
+    $inGlobalTeamView = auth()->check() && config('chief.teams') && auth()->user()->inGlobalTeamView();
 
-    if (auth()->check()) {
+    // The global team view has no current team, links to other apps open the last team opened there
+    if (auth()->check() && !$inGlobalTeamView) {
         $currentTeam = rescue(fn () => auth()->user()?->team, null, false);
         $teamHint = $currentTeam?->slug ?? $currentTeam?->id ?? 'current';
     }
+
+    $showTeamMenu  = config('chief.teams') && ($currentTeam !== null || $inGlobalTeamView);
+    $teamMenuLabel = $inGlobalTeamView ? __('chief::ui.shell.all_teams') : $currentTeam?->name;
 
     $resolveAppUrl = static function ($app) use ($teamHint): string {
         $template = data_get($app, 'url_template') ?? data_get($app, 'urlTemplate');
@@ -169,7 +174,7 @@
      data-theme-preference="{{ $themePreference }}"
      data-tool="{{ $tool['id'] }}"
      @if($commandPaletteSearchUrl) data-command-palette-search-url="{{ $commandPaletteSearchUrl }}" @endif
-     @if($commandPaletteSearchUrl && config('chief.teams') && $currentTeam !== null) data-team-slug="{{ $currentTeam->slug }}" @endif
+     @if($commandPaletteSearchUrl && $showTeamMenu) data-team-slug="{{ $inGlobalTeamView ? ChiefTools\SDK\Chief::GLOBAL_TEAM_HINT : $currentTeam->slug }}" @endif
      @if($themeUpdateUrl) data-theme-update-url="{{ $themeUpdateUrl }}" @endif
      @if($layoutSwitchable) data-layout-update-url="{{ route('account.preferences.toggle', [], false) }}" data-layout-preference="{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}" @endif
      @class([
@@ -341,7 +346,7 @@
                 @endguest
 
                 @auth
-                    @if(config('chief.teams') && auth()->user()->team)
+                    @if($showTeamMenu)
                         <div class="relative" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) teamOpen = false">
                             <button type="button"
                                     class="relative grid size-9 cursor-pointer place-items-center rounded-lg transition hover:bg-surface-2"
@@ -351,7 +356,11 @@
                                     x-bind:aria-expanded="teamOpen.toString()"
                                     aria-haspopup="menu">
                                 <span class="sr-only">{{ __('chief::ui.shell.open_team_menu') }}</span>
-                                <img class="size-8 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
+                                @if($inGlobalTeamView)
+                                    <span class="grid size-8 place-items-center rounded-md bg-surface-2 text-fg-muted"><i class="fad fa-fw fa-layer-group text-sm"></i></span>
+                                @else
+                                    <img class="size-8 rounded-md" src="{{ $currentTeam->avatar_url }}" alt="">
+                                @endif
                                 <span class="absolute bottom-0 right-0 grid size-4 place-items-center rounded-sm border-2 border-surface bg-accent text-[7px] font-bold leading-none text-accent-fg">T</span>
                             </button>
 
@@ -380,7 +389,7 @@
                                 aria-haspopup="menu">
                             <span class="sr-only">{{ __('chief::ui.shell.open_account_menu') }}</span>
                             <img class="size-8 rounded-md" src="{{ auth()->user()->avatar_url }}" alt="">
-                            @if(config('chief.teams') && auth()->user()->team)
+                            @if($showTeamMenu)
                                 <span class="absolute bottom-0 right-0 grid size-4 place-items-center rounded-sm border-2 border-surface bg-accent text-[7px] font-bold leading-none text-accent-fg">P</span>
                             @endif
                         </button>
@@ -453,7 +462,7 @@
 
             <div class="shrink-0 space-y-2 px-3 pt-3">
                 @auth
-                    @if(config('chief.teams') && auth()->user()->team)
+                    @if($showTeamMenu)
                         <div class="relative" x-on:focusout="if ($event.relatedTarget && !$el.contains($event.relatedTarget)) teamOpen = false">
                             <button type="button"
                                     class="flex h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg px-1.5 text-left transition hover:bg-surface-2 group-data-[shell-sidebar=collapsed]/chief:justify-center group-data-[shell-sidebar=collapsed]/chief:px-0"
@@ -462,12 +471,16 @@
                                     x-on:keydown.arrow-down.prevent="if (!teamOpen) $el.click(); focusFirstMenuItem($refs.sidebarTeamMenu)"
                                     x-on:mouseenter="showRailTip($el)"
                                     x-on:mouseleave="hideRailTip()"
-                                    data-shell-label="{{ auth()->user()->team->name }}"
+                                    data-shell-label="{{ $teamMenuLabel }}"
                                     x-bind:aria-expanded="teamOpen.toString()"
                                     aria-haspopup="menu">
                                 <span class="sr-only">{{ __('chief::ui.shell.open_team_menu') }}</span>
-                                <img class="size-7 shrink-0 rounded-md" src="{{ auth()->user()->team->avatar_url }}" alt="">
-                                <span class="min-w-0 flex-1 truncate text-sm font-medium text-fg group-data-[shell-sidebar=collapsed]/chief:hidden">{{ auth()->user()->team->name }}</span>
+                                @if($inGlobalTeamView)
+                                    <span class="grid size-7 shrink-0 place-items-center rounded-md bg-surface-2 text-fg-muted"><i class="fad fa-fw fa-layer-group text-xs"></i></span>
+                                @else
+                                    <img class="size-7 shrink-0 rounded-md" src="{{ $currentTeam->avatar_url }}" alt="">
+                                @endif
+                                <span class="min-w-0 flex-1 truncate text-sm font-medium text-fg group-data-[shell-sidebar=collapsed]/chief:hidden">{{ $teamMenuLabel }}</span>
                                 {{-- Font Awesome's display rule outranks hiding the icon itself --}}
                                 <span class="group-data-[shell-sidebar=collapsed]/chief:hidden"><i class="fa fa-fw fa-chevron-down text-[10px] text-fg-faint"></i></span>
                             </button>

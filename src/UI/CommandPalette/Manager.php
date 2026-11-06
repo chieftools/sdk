@@ -4,6 +4,7 @@ namespace ChiefTools\SDK\UI\CommandPalette;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use ChiefTools\SDK\Exceptions\NoCurrentTeam;
 use Illuminate\Contracts\Container\Container;
 
 readonly class Manager
@@ -20,13 +21,27 @@ readonly class Manager
         }
 
         return $this->scopedProviders($this->providers(), $query)
-            ->flatMap(static fn (Provider $provider): iterable => $provider->search($query))
+            ->flatMap(static fn (Provider $provider): array => self::searchProvider($provider, $query))
             ->sortBy([
                 ['score', 'desc'],
                 ['title', 'asc'],
             ])
             ->take($query->limit)
             ->values();
+    }
+
+    /**
+     * Providers that ask for the current team do not support the global team view yet, they find nothing there.
+     *
+     * @return list<\ChiefTools\SDK\UI\CommandPalette\Item>
+     */
+    private static function searchProvider(Provider $provider, Query $query): array
+    {
+        try {
+            return collect($provider->search($query))->values()->all();
+        } catch (NoCurrentTeam) {
+            return [];
+        }
     }
 
     /** @return \Illuminate\Support\Collection<int, \ChiefTools\SDK\UI\CommandPalette\Provider> */

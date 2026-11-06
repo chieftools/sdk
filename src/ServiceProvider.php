@@ -23,6 +23,7 @@ use ChiefTools\SDK\GraphQL\ContextFactory;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Routing\Route as RoutingRoute;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
@@ -31,6 +32,7 @@ use ChiefTools\SDK\Mail\ReportingFailoverTransport;
 use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
@@ -76,6 +78,8 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register(): void
     {
         $this->loadConfig();
+
+        $this->registerGlobalTeamRouteMacro();
 
         $this->registerShellLayoutPreference();
 
@@ -166,6 +170,17 @@ class ServiceProvider extends IlluminateServiceProvider
                 'driver' => 'chief_remote_team',
             ], config('auth.guards.chief_team', [])),
         ]);
+    }
+
+    /** Lets a route open in the global team view, which combines all teams of the user, registered before the app loads its routes. */
+    private function registerGlobalTeamRouteMacro(): void
+    {
+        RoutingRoute::macro('allowsGlobalTeam', function (): RoutingRoute {
+            /** @var \Illuminate\Routing\Route $this */
+            $this->action[Chief::GLOBAL_TEAM_ROUTE_ACTION] = true;
+
+            return $this;
+        });
     }
 
     /**
@@ -276,7 +291,20 @@ class ServiceProvider extends IlluminateServiceProvider
     {
         $router = $this->app['router'];
 
-        $router->model('team_hint', Chief::teamModel());
+        // The global team view and the team selection have no team to bind, their hint stays a string the team URL context handles
+        $router->bind('team_hint', static function (string $value): mixed {
+            if ($value === Chief::GLOBAL_TEAM_HINT && Chief::globalTeamEnabled()) {
+                return $value;
+            }
+
+            if ($value === Chief::SELECT_TEAM_HINT && config('chief.teams')) {
+                return $value;
+            }
+
+            $teamModel = Chief::teamModel();
+
+            return (new $teamModel)->resolveRouteBinding($value) ?? throw (new ModelNotFoundException)->setModel($teamModel, [$value]);
+        });
         $router->aliasMiddleware('team', Middleware\TeamUrlContext::class);
         $router->aliasMiddleware('scope', Middleware\EnsureTokenHasScope::class);
         $router->aliasMiddleware('audience', Middleware\EnsureTokenHasAudience::class);

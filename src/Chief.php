@@ -3,6 +3,8 @@
 namespace ChiefTools\SDK;
 
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use ChiefTools\SDK\Webhook\WebhookEvent;
@@ -11,6 +13,15 @@ final class Chief
 {
     /** The user preference that chooses the sidebar layout, where the app lets users choose. */
     public const string SIDEBAR_LAYOUT_PREFERENCE = 'sidebar_layout';
+
+    /** The team hint in the URL of the global team view, which combines all teams of the user. Team slugs are 8 characters, so it never matches a team. */
+    public const string GLOBAL_TEAM_HINT = 'global';
+
+    /** The team hint in the URL that asks the user to choose the team to continue with, links to a page of any team use it. */
+    public const string SELECT_TEAM_HINT = 'select';
+
+    /** The route action key that lets a route open in the global team view. */
+    public const string GLOBAL_TEAM_ROUTE_ACTION = 'chief_global_team';
 
     private static bool $runsMigrations = true;
 
@@ -37,6 +48,9 @@ final class Chief
 
     private static ?Closure $authenticationExceptionJsonResponseHandler = null;
 
+    /** @var (\Closure(\Illuminate\Http\Request, \ChiefTools\SDK\Entities\User): (\ChiefTools\SDK\Entities\Team|null))|null */
+    private static ?Closure $globalTeamLinkResolver = null;
+
     /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
     public static function useUserModel(string $userModel): void
     {
@@ -59,6 +73,43 @@ final class Chief
     public static function teamModel(): string
     {
         return self::$teamModel;
+    }
+
+    /** The app enables the global team view by naming the route the team switcher opens it on. */
+    public static function globalTeamEnabled(): bool
+    {
+        return config('chief.teams') && config('chief.global_team_home') !== null;
+    }
+
+    /** Routes allow the global team view with `->allowsGlobalTeam()`, or with the route action key on their route group. */
+    public static function allowsGlobalTeam(?Route $route): bool
+    {
+        return self::globalTeamEnabled() && $route?->getAction(self::GLOBAL_TEAM_ROUTE_ACTION) === true;
+    }
+
+    /**
+     * Links on pages of the global team view to a page that needs a team ask the user to choose one. A page of one
+     * thing of a team, like a server, can name its team instead: the resolver gets the request of the link.
+     *
+     * @param (\Closure(\Illuminate\Http\Request, \ChiefTools\SDK\Entities\User): (\ChiefTools\SDK\Entities\Team|null))|null $resolver
+     */
+    public static function registerGlobalTeamLinkResolver(?Closure $resolver): void
+    {
+        self::$globalTeamLinkResolver = $resolver;
+    }
+
+    /** The team the app names for a link from the global team view, only a team the user works with there. */
+    public static function teamForGlobalTeamLink(Request $request, User $user): ?Team
+    {
+        $team = self::$globalTeamLinkResolver === null ? null : (self::$globalTeamLinkResolver)($request, $user);
+
+        return $team !== null && $user->teamsInContext()->contains($team) ? $team : null;
+    }
+
+    /** Swap the team hint in the path of the URL, the query string stays as is. */
+    public static function replaceTeamHint(string $url, string $from, string $to): string
+    {
+        return preg_replace('#/' . preg_quote($from, '#') . '(?=/|\?|$)#', "/{$to}", $url, 1) ?? $url;
     }
 
     public static function ignoreMigrations(): void

@@ -106,3 +106,26 @@ it('limits the accessible teams to the team of a team limited access token', fun
 
     expect($user->accessibleTeams()->pluck('slug')->all())->toBe(['amber-grove']);
 });
+
+it('combines only the teams an admin is a member of in the global team view', function () {
+    config(['chief.global_team_home' => 'dashboard']);
+
+    $user = createTeamContextUser(isAdmin: true);
+    createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow');
+
+    $user->setGlobalTeamView();
+
+    expect($user->teamsInContext()->pluck('slug')->all())->toBe(['amber-grove']);
+});
+
+it('works with the current team only outside the global team view', function () {
+    $user = createTeamContextUser();
+    $team = createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user);
+
+    $user->setCurrentTeam($team);
+
+    expect($user->inGlobalTeamView())->toBeFalse()
+        ->and($user->teamsInContext()->pluck('slug')->all())->toBe(['amber-grove']);
+});

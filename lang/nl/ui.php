@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'footer' => [
+    'footer'      => [
         'label'                  => 'Voettekst',
         'blog'                   => 'Blog',
         'docs'                   => 'Documentatie',
@@ -12,7 +12,7 @@ return [
         'hosted_in_europe'       => 'Gehost in Europa',
         'chief_tools_product'    => 'Een product van Chief Tools.',
     ],
-    'shell'  => [
+    'shell'       => [
         'collapse_sidebar'           => 'Zijbalk inklappen',
         'expand_sidebar'             => 'Zijbalk uitklappen',
         'sidebar'                    => 'Zijbalk',
@@ -38,6 +38,8 @@ return [
         'follow_device_appearance'   => 'De weergave van je apparaat volgen',
         'open_team_menu'             => 'Teammenu openen',
         'current_team'               => 'Huidig team',
+        'all_teams'                  => 'Alle teams',
+        'all_teams_description'      => 'Elk team waar je lid van bent',
         'find_team'                  => 'Team zoeken...',
         'no_teams_found'             => 'Geen teams gevonden.',
         'switch_team_anywhere'       => 'Overal van team wisselen',
@@ -54,5 +56,13 @@ return [
         'all_commands'               => 'Alle commando\'s',
         'all_apps'                   => 'Alle apps',
         'scope_results'              => 'Gebruik > om resultaten te filteren',
+    ],
+    'team_select' => [
+        'title'     => 'Kies een team',
+        'intro'     => 'Kies het team waarmee je verder wilt.',
+        'none'      => 'Je hebt voor geen van je teams toegang tot deze pagina.',
+        'no_access' => 'Je hebt voor dit team geen toegang tot deze pagina',
+        'default'   => 'standaard',
+        'manage'    => 'Teams beheren',
     ],
 ];

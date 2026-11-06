@@ -22,6 +22,7 @@ Route::group(config('chief.routes.web-api'), function () use ($authenticationMid
 
     Route::get('chief/ui/commands/search', Controllers\Shell\CommandsSearch::class)
         ->middleware('throttle:60,1')
+        ->allowsGlobalTeam()
         ->name('chief.shell.commands.search');
 
     Route::match(['get', 'post'], 'graphql/web', Controllers\API\GraphQL::class)->middleware([

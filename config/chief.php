@@ -59,6 +59,12 @@ return [
 
     'teams' => true,
 
+    /*
+     * The global team view combines all teams of the user on the routes that allow it, with `->allowsGlobalTeam()` or
+     * `'chief_global_team' => true` on their route group. Name the route the team switcher opens it on to enable it.
+     */
+    'global_team_home' => null,
+
     'queue' => [
 
         'monitor' => env('QUEUE_MONITOR_URL'),

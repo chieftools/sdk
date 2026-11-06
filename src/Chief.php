@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK;
 
 use Closure;
+use Illuminate\Routing\Route;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
 use ChiefTools\SDK\Webhook\WebhookEvent;
@@ -11,6 +12,15 @@ final class Chief
 {
     /** The user preference that chooses the sidebar layout, where the app lets users choose. */
     public const string SIDEBAR_LAYOUT_PREFERENCE = 'sidebar_layout';
+
+    /** The team hint in the URL of the global team view, which combines all teams of the user. Team slugs are 8 characters, so it never matches a team. */
+    public const string GLOBAL_TEAM_HINT = 'global';
+
+    /** The team hint in the URL that asks the user to choose the team to continue with, links to a page of any team use it. */
+    public const string SELECT_TEAM_HINT = 'select';
+
+    /** The route action key that lets a route open in the global team view. */
+    public const string GLOBAL_TEAM_ROUTE_ACTION = 'chief_global_team';
 
     private static bool $runsMigrations = true;
 
@@ -59,6 +69,24 @@ final class Chief
     public static function teamModel(): string
     {
         return self::$teamModel;
+    }
+
+    /** The app enables the global team view by naming the route the team switcher opens it on. */
+    public static function globalTeamEnabled(): bool
+    {
+        return config('chief.teams') && config('chief.global_team_home') !== null;
+    }
+
+    /** Routes allow the global team view with `->allowsGlobalTeam()`, or with the route action key on their route group. */
+    public static function allowsGlobalTeam(?Route $route): bool
+    {
+        return self::globalTeamEnabled() && $route?->getAction(self::GLOBAL_TEAM_ROUTE_ACTION) === true;
+    }
+
+    /** Swap the team hint in the path of the URL, the query string stays as is. */
+    public static function replaceTeamHint(string $url, string $from, string $to): string
+    {
+        return preg_replace('#/' . preg_quote($from, '#') . '(?=/|\?|$)#', "/{$to}", $url, 1) ?? $url;
     }
 
     public static function ignoreMigrations(): void

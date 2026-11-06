@@ -60,6 +60,10 @@ Route::group(config('chief.routes.web'), function () {
                 'prefix'     => 'team',
                 'middleware' => 'auth',
             ], function () {
+                if (ChiefTools\SDK\Chief::globalTeamEnabled()) {
+                    Route::get(ChiefTools\SDK\Chief::GLOBAL_TEAM_HINT . '/switch', Controllers\Team\SwitchToGlobal::class)->name('switch.global');
+                }
+
                 Route::get('{team}/switch', Controllers\Team\SwitchActive::class)->name('switch');
 
                 Route::get('{team}/chief', Controllers\Team\Manage::class)->name('chief.manage');

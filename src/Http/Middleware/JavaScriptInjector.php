@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Http\Middleware;
 
 use Closure;
+use ChiefTools\SDK\Chief;
 use Illuminate\Http\Request;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade as JavaScript;
 
@@ -52,7 +53,11 @@ class JavaScriptInjector
                     'chief_id' => $user->chief_id,
                 ],
                 'TEAM' => config('chief.teams') ? [
-                    'slug' => $user->team?->slug,
+                    'slug' => match (true) {
+                        $user->inGlobalTeamView()      => Chief::GLOBAL_TEAM_HINT,
+                        $user->requestsTeamSelection() => null,
+                        default                        => $user->team?->slug,
+                    },
                 ] : null,
             ]);
         }

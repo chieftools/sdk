@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'footer' => [
+    'footer'      => [
         'label'                  => 'Footer',
         'blog'                   => 'Blog',
         'docs'                   => 'Docs',
@@ -12,7 +12,7 @@ return [
         'hosted_in_europe'       => 'Hosted in Europe',
         'chief_tools_product'    => 'A Chief Tools product.',
     ],
-    'shell'  => [
+    'shell'       => [
         'collapse_sidebar'           => 'Collapse sidebar',
         'expand_sidebar'             => 'Expand sidebar',
         'sidebar'                    => 'Sidebar',
@@ -38,6 +38,8 @@ return [
         'follow_device_appearance'   => 'Follow the device appearance',
         'open_team_menu'             => 'Open team menu',
         'current_team'               => 'Current team',
+        'all_teams'                  => 'All teams',
+        'all_teams_description'      => 'Every team you are a member of',
         'find_team'                  => 'Find a team...',
         'no_teams_found'             => 'No teams match your search.',
         'switch_team_anywhere'       => 'Switch teams from anywhere',
@@ -54,5 +56,13 @@ return [
         'all_commands'               => 'All commands',
         'all_apps'                   => 'All apps',
         'scope_results'              => 'Use > to scope results',
+    ],
+    'team_select' => [
+        'title'     => 'Select a team',
+        'intro'     => 'Choose the team to continue with.',
+        'none'      => "You don't have access to this page for any of your teams.",
+        'no_access' => "You don't have access to this page for this team",
+        'default'   => 'default',
+        'manage'    => 'Manage teams',
     ],
 ];

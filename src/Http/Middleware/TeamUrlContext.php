@@ -83,8 +83,11 @@ class TeamUrlContext
 
         abort_if($routeHint === null, 404, 'The global team view is not available for this request.');
 
-        // Links on pages of the global team view point to every route with the global team hint, the user chooses the team for pages that need one
-        return redirect()->to(Chief::replaceTeamHint($request->fullUrl(), Chief::GLOBAL_TEAM_HINT, Chief::SELECT_TEAM_HINT));
+        // Links on pages of the global team view point to every route with the global team hint, pages that need a team open for the
+        // team the app names for them, like the team of a server, or the user chooses the team
+        $team = Chief::teamForGlobalTeamLink($request, $user);
+
+        return redirect()->to(Chief::replaceTeamHint($request->fullUrl(), Chief::GLOBAL_TEAM_HINT, $team->slug ?? Chief::SELECT_TEAM_HINT));
     }
 
     /** Livewire finds its update endpoint the same way: the route name ends with `livewire.update`, custom routes can have a prefix. */

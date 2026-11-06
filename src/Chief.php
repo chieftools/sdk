@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK;
 
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Entities\User;
@@ -47,6 +48,9 @@ final class Chief
 
     private static ?Closure $authenticationExceptionJsonResponseHandler = null;
 
+    /** @var (\Closure(\Illuminate\Http\Request, \ChiefTools\SDK\Entities\User): (\ChiefTools\SDK\Entities\Team|null))|null */
+    private static ?Closure $globalTeamLinkResolver = null;
+
     /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
     public static function useUserModel(string $userModel): void
     {
@@ -81,6 +85,25 @@ final class Chief
     public static function allowsGlobalTeam(?Route $route): bool
     {
         return self::globalTeamEnabled() && $route?->getAction(self::GLOBAL_TEAM_ROUTE_ACTION) === true;
+    }
+
+    /**
+     * Links on pages of the global team view to a page that needs a team ask the user to choose one. A page of one
+     * thing of a team, like a server, can name its team instead: the resolver gets the request of the link.
+     *
+     * @param (\Closure(\Illuminate\Http\Request, \ChiefTools\SDK\Entities\User): (\ChiefTools\SDK\Entities\Team|null))|null $resolver
+     */
+    public static function registerGlobalTeamLinkResolver(?Closure $resolver): void
+    {
+        self::$globalTeamLinkResolver = $resolver;
+    }
+
+    /** The team the app names for a link from the global team view, only a team the user works with there. */
+    public static function teamForGlobalTeamLink(Request $request, User $user): ?Team
+    {
+        $team = self::$globalTeamLinkResolver === null ? null : (self::$globalTeamLinkResolver)($request, $user);
+
+        return $team !== null && $user->teamsInContext()->contains($team) ? $team : null;
     }
 
     /** Swap the team hint in the path of the URL, the query string stays as is. */

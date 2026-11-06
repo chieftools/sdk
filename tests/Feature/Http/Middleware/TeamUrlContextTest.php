@@ -127,6 +127,23 @@ it('asks to choose the team for a page that needs one when it is linked from the
     expect(handleTeamUrlContext($page, $page)->headers->get('Location'))->toEndWith('/team/select/dashboard?tab=open');
 });
 
+it('opens a page that needs a team for the team the app names for a link from the global team view', function () {
+    config(['chief.global_team_home' => 'overview']);
+
+    createTeamContextTeam('cedar-ridge');
+
+    $page = teamUrlContextRequest('GET', '/team/global/dashboard?tab=open');
+
+    Chief::registerGlobalTeamLinkResolver(static fn () => ChiefTools\SDK\Entities\Team::query()->where('slug', 'birch-hollow')->first());
+
+    expect(handleTeamUrlContext($page, $page)->headers->get('Location'))->toEndWith('/team/birch-hollow/dashboard?tab=open');
+
+    // Never a team the user is not a member of
+    Chief::registerGlobalTeamLinkResolver(static fn () => ChiefTools\SDK\Entities\Team::query()->where('slug', 'cedar-ridge')->first());
+
+    expect(handleTeamUrlContext($page, $page)->headers->get('Location'))->toEndWith('/team/select/dashboard?tab=open');
+})->after(fn () => Chief::registerGlobalTeamLinkResolver(null));
+
 it('keeps a Livewire component of the global team view in the global team view', function () {
     config(['chief.global_team_home' => 'overview']);
 

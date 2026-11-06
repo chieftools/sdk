@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK;
 
 use GuzzleHttp;
+use Livewire\Livewire;
 use ChiefTools\SDK\API\Client;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
@@ -56,6 +57,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->configureCookies();
 
         $this->configureGraphQL();
+
+        $this->configureLivewire();
 
         $this->configureMiddleware();
 
@@ -279,6 +282,16 @@ class ServiceProvider extends IlluminateServiceProvider
         $router->aliasMiddleware('audience', Middleware\EnsureTokenHasAudience::class);
         $router->aliasMiddleware('auth.auto', Middleware\AutoAuthenticate::class);
         $router->aliasMiddleware('request.secure', Middleware\ForceSecure::class);
+    }
+
+    private function configureLivewire(): void
+    {
+        if (!class_exists(Livewire::class)) {
+            return;
+        }
+
+        // Livewire matches persistent middleware by exact class name, so its component updates would otherwise skip our authenticate middleware and resolve route bindings for guests
+        Livewire::addPersistentMiddleware([Middleware\Authenticate::class]);
     }
 
     private function publishStaticFiles(): void

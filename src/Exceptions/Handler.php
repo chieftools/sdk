@@ -46,6 +46,11 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
+        // The login page redirects to another origin, which CORS blocks for a Livewire update, a 419 makes Livewire prompt for a page refresh instead
+        if ($request->hasHeader('X-Livewire')) {
+            return response()->json(['message' => $exception->getMessage()], 419);
+        }
+
         if ($this->shouldReturnJson($request, $exception)) {
             $customHandler = Chief::getAuthenticationExceptionJsonResponseHandler();
 

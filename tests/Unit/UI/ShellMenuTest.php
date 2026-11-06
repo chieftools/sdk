@@ -121,6 +121,7 @@ test('the modern shell renders configured menu and app switcher data', function 
         ->toContain('Chief Tools &gt; Account Chief')
         ->toContain('data-command-palette-search-url="')
         ->toContain('chief/ui/commands/search')
+        ->toContain('data-team-slug="current"')
         ->toContain('No results found.')
         ->toContain('src="/icons/domainchief.svg"')
         ->toContain('Search or jump to...')

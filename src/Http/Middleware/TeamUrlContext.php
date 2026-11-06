@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
 /**
- * Sets the current team from the team slug in the URL, pages without one use the last team opened in the session.
+ * Sets the current team from the team slug in the URL. Requests without one use the team from the `X-Chief-Team` header,
+ * which the command palette and web GraphQL clients send for the team of their page, or the last team opened in the session.
  *
  * Livewire component updates post to an endpoint without a team slug. Livewire runs this middleware again as persistent
  * middleware with a request for the page the component was rendered on, so every browser tab keeps the team of its page.
@@ -47,8 +48,8 @@ class TeamUrlContext
 
         $route?->forgetParameter('team_hint');
 
-        // A component update keeps the team to this request, so a tab on another team does not take over the session
-        $user->setCurrentTeam($team, remember: !$isComponentUpdate);
+        // Only opening a page of a team remembers it, component updates and requests with a team header keep it to the request so tabs on other teams don't take over the session
+        $user->setCurrentTeam($team, remember: $routeHint !== null && !$isComponentUpdate);
 
         return $next($request);
     }

@@ -11,6 +11,7 @@ uses(LazilyRefreshDatabase::class);
 beforeEach(function () {
     Route::get('team/{team_hint}/dashboard', static fn () => 'dashboard');
     Route::get('tlds', static fn () => 'tlds');
+    Route::get('api/chief/ui/commands/search', static fn () => 'search');
     Route::post('livewire/update', static fn () => 'update')->name('default-livewire.update');
 
     $this->user = createTeamContextUser();
@@ -30,6 +31,19 @@ it('remembers the team of a page in the session', function () {
 
     expect($this->user->currentTeam()->slug)->toBe('birch-hollow')
         ->and(session('chief_team_hint'))->toBe('birch-hollow');
+});
+
+it('uses the team from the team header of a request without a team in the URL without remembering it', function () {
+    session()->put('chief_team_hint', 'amber-grove');
+
+    $search = teamUrlContextRequest('GET', '/api/chief/ui/commands/search');
+
+    $search->headers->set('X-Chief-Team', 'birch-hollow');
+
+    handleTeamUrlContext($search, $search);
+
+    expect($this->user->team->slug)->toBe('birch-hollow')
+        ->and(session('chief_team_hint'))->toBe('amber-grove');
 });
 
 it('leaves the team to the page of the component on the Livewire update endpoint', function () {

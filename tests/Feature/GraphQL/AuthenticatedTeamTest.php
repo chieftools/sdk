@@ -106,3 +106,15 @@ it('refuses to resolve the team for a token without the teams scope or a scope o
 
     resolveAuthenticatedTeamFor($user, null);
 })->throws(MissingScopeException::class, "The 'team' field requires one of the following scopes: ['teams', 'grovechief']");
+
+it('does not remember the resolved team in the session for the next page opened without a team', function () {
+    $user   = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    $hinted = createTeamContextTeam('birch-hollow', $user);
+
+    session()->put('chief_team_hint', 'amber-grove');
+
+    expect(resolveAuthenticatedTeamFor($user, 'birch-hollow')?->is($hinted))->toBeTrue()
+        ->and($user->team->is($hinted))->toBeTrue()
+        ->and(session('chief_team_hint'))->toBe('amber-grove');
+});

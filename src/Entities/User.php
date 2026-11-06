@@ -95,9 +95,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function team(): Attribute
     {
+        // The current team is memoized already, a cached attribute would keep a team read before the current team changes in the request
         return Attribute::make(
             get: fn () => $this->currentTeam(),
-        );
+        )->withoutObjectCaching();
     }
     public function timezone(): Attribute
     {
@@ -223,7 +224,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         return $this->is_admin && !$this->hasChiefRemoteAccessToken();
     }
-    public function setCurrentTeam(Team $team): void
+    /** A remembered team is stored in the session, requests without a team in the URL use it. */
+    public function setCurrentTeam(Team $team, bool $remember = true): void
     {
         // Prevent lazy loading violations for the current team
         $team->preventsLazyLoading = false;
@@ -231,7 +233,11 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         $this->memoizedCurrentTeam = $team;
 
         url()->defaults(['team_hint' => $team->slug]);
-        session()->put('chief_team_hint', $team->slug);
+
+        if ($remember) {
+            session()->put('chief_team_hint', $team->slug);
+        }
+
         request()->attributes->set('team_hint', $team);
         app()->bind(Chief::teamModel(), static fn () => $team);
 

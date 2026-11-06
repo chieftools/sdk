@@ -32,7 +32,8 @@ class AuthenticatedTeam extends AuthenticatedEntityResolver
             return null;
         }
 
-        $user->setCurrentTeam($team);
+        // Web GraphQL requests come from a page of one team, remembering it would hand the team of this tab to the next page opened without one
+        $user->setCurrentTeam($team, remember: false);
 
         return $team;
     }

@@ -47,7 +47,8 @@
         $appsSource = rescue(fn () => chief_apps(null) ?? collect(), collect(), false);
     }
 
-    $teamHint = 'current';
+    $teamHint    = 'current';
+    $currentTeam = null;
 
     if (auth()->check()) {
         $currentTeam = rescue(fn () => auth()->user()?->team, null, false);
@@ -168,6 +169,7 @@
      data-theme-preference="{{ $themePreference }}"
      data-tool="{{ $tool['id'] }}"
      @if($commandPaletteSearchUrl) data-command-palette-search-url="{{ $commandPaletteSearchUrl }}" @endif
+     @if($commandPaletteSearchUrl && config('chief.teams') && $currentTeam !== null) data-team-slug="{{ $currentTeam->slug }}" @endif
      @if($themeUpdateUrl) data-theme-update-url="{{ $themeUpdateUrl }}" @endif
      @if($layoutSwitchable) data-layout-update-url="{{ route('account.preferences.toggle', [], false) }}" data-layout-preference="{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}" @endif
      @class([

@@ -650,11 +650,18 @@ function chiefShell() {
             url.searchParams.set('q', this.paletteQuery);
             url.searchParams.set('limit', '8');
 
+            const headers = {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            };
+
+            // Search the team of this page, the session holds the team of the page opened last which can be another tab
+            if (this.shellElement.dataset.teamSlug) {
+                headers['X-Chief-Team'] = this.shellElement.dataset.teamSlug;
+            }
+
             fetch(url, {
-                headers: {
-                    Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
+                headers,
                 credentials: 'same-origin',
                 signal: this.remoteSearchAbort.signal,
             })

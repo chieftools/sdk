@@ -291,7 +291,8 @@ class ServiceProvider extends IlluminateServiceProvider
         }
 
         // Livewire matches persistent middleware by exact class name, so its component updates would otherwise skip our authenticate middleware and resolve route bindings for guests
-        Livewire::addPersistentMiddleware([Middleware\Authenticate::class]);
+        // The team context runs again for the page of the component as well, the update endpoint has no team slug and would fall back to the team in the session
+        Livewire::addPersistentMiddleware([Middleware\Authenticate::class, Middleware\TeamUrlContext::class]);
     }
 
     private function publishStaticFiles(): void

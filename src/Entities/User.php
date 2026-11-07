@@ -82,7 +82,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'preferences' => 'array',
     ];
 
-    private ?Team $memoizedCurrentTeam;
+    /** Never unset this property, Eloquent stores an unset property that is assigned again as an attribute of the user. */
+    private ?Team $memoizedCurrentTeam = null;
 
     private bool $inGlobalTeamView = false;
 
@@ -322,7 +323,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     /** The global team view is never remembered in the session, requests without a team in the URL keep using the last team opened. */
     public function setGlobalTeamView(): void
     {
-        unset($this->memoizedCurrentTeam);
+        $this->memoizedCurrentTeam = null;
 
         $this->inGlobalTeamView = true;
 
@@ -334,7 +335,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function clearCurrentTeam(): void
     {
-        unset($this->memoizedCurrentTeam);
+        $this->memoizedCurrentTeam = null;
 
         $this->inGlobalTeamView = false;
     }
@@ -366,7 +367,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function getMemoizedCurrentTeam(): ?Team
     {
-        return $this->memoizedCurrentTeam ?? null;
+        return $this->memoizedCurrentTeam;
     }
 
     // Preference helpers

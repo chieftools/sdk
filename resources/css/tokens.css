@@ -187,6 +187,21 @@ hr {
 }
 
 /*
+  Livewire's navigation progress bar runs along the 4px brand border at the top
+  of every page, so it matches it: as tall as the border, and a darker shade of
+  the brand color so it reads as the border filling up. Takes the place of
+  `livewire.navigate.progress_bar_color` and Livewire's 2px bar. `html` keeps
+  these ahead of the styles Livewire injects later.
+*/
+html #nprogress {
+    --livewire-progress-bar-color: var(--color-brand-800, color-mix(in oklab, var(--color-brand) 65%, black));
+}
+
+html #nprogress .bar {
+    height: 4px;
+}
+
+/*
   Repoint @tailwindcss/typography prose output at our tokens in dark mode.
   Imported package CSS cannot reliably override the plugin's `--tw-prose-*`
   variables after bundling, so these target the generated prose elements

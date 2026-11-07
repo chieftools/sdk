@@ -61,3 +61,25 @@ function teamContextAccessToken(?int $teamId = null): ChiefRemoteAccessToken
         expiresAt: null,
     );
 }
+
+/** @param array<string, mixed> $attributes */
+function createWebhookEndpoint(Team $team, array $attributes = []): ChiefTools\SDK\Webhook\Outbound\Models\Endpoint
+{
+    return ChiefTools\SDK\Webhook\Outbound\Models\Endpoint::query()->create([
+        'team_id' => $team->getKey(),
+        'url'     => 'https://hooks.example.com/chief',
+        'events'  => [ChiefTools\SDK\Webhook\Outbound\Models\Endpoint::ALL_EVENTS],
+        'secret'  => 'whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw',
+        'status'  => ChiefTools\SDK\Webhook\Outbound\Enums\EndpointStatus::ENABLED,
+        ...$attributes,
+    ]);
+}
+
+/** Resolves every webhook host to the given public addresses, or one of example.com, so tests never hit DNS. */
+function resolveWebhookHostsTo(string ...$addresses): void
+{
+    app()->instance(
+        ChiefTools\SDK\Webhook\Outbound\Security\UrlGuard::class,
+        new ChiefTools\SDK\Webhook\Outbound\Security\UrlGuard(static fn (string $host): array => $addresses === [] ? ['93.184.215.14'] : $addresses),
+    );
+}

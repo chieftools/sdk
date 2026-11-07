@@ -128,6 +128,15 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
 
         $this->save();
     }
+
+    /** The webhook endpoints the team's plan allows, -1 for no limit, which is the default until plans set one. */
+    public function webhookEndpointsLimit(): int
+    {
+        $limits = $this->limits;
+
+        return (int)($limits['webhook_endpoints'] ?? -1);
+    }
+
     public function maybeUpdateLastActivity(): void
     {
         if (!$this->shouldUpdateLastActivity()) {

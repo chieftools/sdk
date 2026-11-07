@@ -6,4 +6,7 @@ parameters:
     level: 4
     paths:
         - src
+    excludePaths:
+        # Livewire and Flux are not installed in the SDK, apps that use these pages test them
+        - src/Webhook/Outbound/Livewire
     tmpDir: .tmp/phpstan

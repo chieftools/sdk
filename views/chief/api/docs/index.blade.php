@@ -42,6 +42,28 @@
             </div>
         </x-tw::panel>
 
+        @if($webhooks !== null)
+            <x-tw::panel id="webhooks" icon="fa-webhook" title="Webhooks">
+                <div class="flex flex-col gap-4 text-sm text-fg-muted">
+                    <p>
+                        Get a signed HTTPS request when something happens in your team instead of polling the API. The guide lists the events, their payloads, and how to verify deliveries.
+                    </p>
+
+                    <div class="flex flex-wrap gap-3">
+                        <x-tw::button :href="$webhooks['documentation_url']" target="_blank" rel="noopener noreferrer" icon="fa-book-open">
+                            Webhooks guide
+                        </x-tw::button>
+
+                        @if($webhooks['manage_url'])
+                            <x-tw::button :href="$webhooks['manage_url']" type="white" icon="fa-webhook">
+                                Manage webhooks
+                            </x-tw::button>
+                        @endif
+                    </div>
+                </div>
+            </x-tw::panel>
+        @endif
+
         @if($protocols->isNotEmpty() || $mcp !== null)
             <div class="flex flex-col gap-4">
                 <x-tw::panel icon="fa-server" title="APIs">

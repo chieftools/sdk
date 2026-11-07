@@ -71,6 +71,54 @@ return [
 
     ],
 
+    /*
+     * Outbound webhooks the app sends to endpoints its teams configure, see `\ChiefTools\SDK\Webhook\Outbound\Webhooks`.
+     * Apps that publish this config keep only the keys they set, the defaults live in `\ChiefTools\SDK\Webhook\Outbound\WebhookConfig`.
+     */
+    'webhooks' => [
+
+        'enabled' => false,
+
+        // The backed enum implementing `\ChiefTools\SDK\Webhook\Outbound\Contracts\WebhookEventType` with the app's events
+        'events' => null,
+
+        // The queue delivery jobs run on, null for the default queue
+        'queue' => null,
+
+        'api_version' => 'v1',
+
+        // Defaults to "{App}-Webhooks/1.0"
+        'user_agent' => null,
+
+        'retention_days' => 30,
+
+        // Seconds to wait after each failed attempt, the delivery fails after the last one
+        'retry_schedule' => [60, 300, 1800, 7200, 21600, 43200, 86400, 86400],
+
+        // Disable an endpoint after it only failed for this many days
+        'disable_after_days' => 5,
+
+        // Requests an endpoint gets at the same time and per second, so a slow or small receiver is not flooded and
+        // cannot hold every queue worker. Exact with a cache store that counts atomically, like Redis, Memcached or the
+        // database, the file and array stores can let an extra request through when workers count at the same moment
+        'max_concurrent_per_endpoint' => 2,
+        'max_per_second_per_endpoint' => 10,
+
+        // Allows plain HTTP and private addresses, never enable this in production
+        'allow_private_addresses' => env('CHIEF_WEBHOOKS_ALLOW_PRIVATE_ADDRESSES', false),
+
+        // The app page the webhooks pages sit under in their breadcrumbs: `['title' => 'Settings', 'route' => 'settings']`
+        'breadcrumb_parent' => null,
+
+        // How IDs show in payloads and the dashboard, match the app's API: empty prefixes for plain ULIDs
+        'id_prefixes' => [
+            'endpoint' => 'webhook_',
+            'event'    => 'event_',
+            'delivery' => 'delivery_',
+        ],
+
+    ],
+
     'guards' => [
 
         'api' => ['chief', 'chief_team'],

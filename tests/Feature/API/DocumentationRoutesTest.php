@@ -161,3 +161,27 @@ test('only http URLs are used for the MCP server', function () {
     expect(chief_mcp_endpoint())->toBe('https://app.example.test/mcp')
         ->and(chief_mcp_documentation_url())->toBeNull();
 });
+
+test('the API documentation links to the webhooks guide and the webhooks of the team the user worked in last', function () {
+    config(['chief.id' => 'lanternchief', 'chief.docs_url' => 'https://docs.example.test']);
+    Route::get('team/{team_hint}/settings/webhooks', static fn (): null => null)->name('webhooks');
+    app('router')->getRoutes()->refreshNameLookups();
+
+    $webhooks = static fn (): ?array => app(ChiefTools\SDK\Http\Controllers\API\Documentation::class)()->getData()['webhooks'];
+
+    // Without a team to go back to, the user chooses one
+    expect($webhooks())->toBe([
+        'documentation_url' => 'https://docs.example.test/developers/lanternchief/webhooks?ref=lanternchief',
+        'manage_url'        => url('team/select/settings/webhooks'),
+    ]);
+
+    url()->defaults(['team_hint' => 'amber-grove']);
+
+    expect($webhooks()['manage_url'])->toBe(url('team/amber-grove/settings/webhooks'));
+});
+
+test('the API documentation leaves out webhooks for apps that send none', function () {
+    config(['chief.webhooks.enabled' => false]);
+
+    expect(app(ChiefTools\SDK\Http\Controllers\API\Documentation::class)()->getData()['webhooks'])->toBeNull();
+});

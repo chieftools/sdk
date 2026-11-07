@@ -4,6 +4,7 @@ namespace ChiefTools\SDK\Http\Controllers\API;
 
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Route;
+use ChiefTools\SDK\Webhook\Outbound\WebhookConfig;
 use Illuminate\Routing\Exceptions\UrlGenerationException;
 
 class Documentation
@@ -23,7 +24,28 @@ class Documentation
                 'endpoint'          => chief_mcp_endpoint(),
                 'documentation_url' => chief_mcp_documentation_url(),
             ],
+            'webhooks'                       => $this->webhooks(),
         ]);
+    }
+
+    /**
+     * The app's webhooks guide, `/developers/{app}/webhooks`, and its page to manage endpoints for the team the user last
+     * worked in, or a choice of team when there is none. Null when the app sends no webhooks.
+     *
+     * @return array{documentation_url: string, manage_url: ?string}|null
+     */
+    private function webhooks(): ?array
+    {
+        if (!WebhookConfig::enabled()) {
+            return null;
+        }
+
+        return [
+            'documentation_url' => chief_developer_docs_url(trim(config('chief.id') . '/webhooks', '/')),
+            'manage_url'        => Route::has('webhooks')
+                ? $this->routeUrl('webhooks', ['team_hint' => url()->getDefaultParameters()['team_hint'] ?? 'select'])
+                : null,
+        ];
     }
 
     /**
@@ -68,14 +90,15 @@ class Documentation
         ];
     }
 
-    private function routeUrl(mixed $routeName): ?string
+    /** @param array<string, string> $parameters */
+    private function routeUrl(mixed $routeName, array $parameters = []): ?string
     {
         if (!is_string($routeName) || !Route::has($routeName)) {
             return null;
         }
 
         try {
-            return route($routeName);
+            return route($routeName, $parameters);
         } catch (UrlGenerationException) {
             return null;
         }

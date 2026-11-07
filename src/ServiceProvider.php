@@ -24,8 +24,10 @@ use ChiefTools\SDK\Socialite\ChiefProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Routing\Route as RoutingRoute;
+use Illuminate\Routing\Router as RoutingRouter;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Nuwave\Lighthouse\Events as LighthouseEvents;
+use ChiefTools\SDK\Webhook\Outbound\WebhookConfig;
 use ChiefTools\SDK\Auth\RemoteTeamAccessTokenGuard;
 use ChiefTools\SDK\Auth\RemoteUserAccessTokenGuard;
 use ChiefTools\SDK\Mail\ReportingFailoverTransport;
@@ -35,6 +37,8 @@ use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
+use ChiefTools\SDK\Webhook\Outbound\Console as WebhookCommands;
+use ChiefTools\SDK\Webhook\Outbound\Livewire as WebhookLivewire;
 use Nuwave\Lighthouse\Subscriptions\SubscriptionServiceProvider;
 use Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
@@ -78,6 +82,8 @@ class ServiceProvider extends IlluminateServiceProvider
     public function register(): void
     {
         $this->loadConfig();
+
+        $this->registerWebhookRoutesMacro();
 
         $this->registerGlobalTeamRouteMacro();
 
@@ -132,7 +138,25 @@ class ServiceProvider extends IlluminateServiceProvider
             Commands\DownloadPricing::class,
             Commands\QueueHealthCheck::class,
             Commands\GraphQL\BroadcastPong::class,
+            WebhookCommands\PruneWebhooks::class,
+            WebhookCommands\DispatchDueDeliveries::class,
         ]);
+
+        if (WebhookConfig::enabled()) {
+            $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
+                $schedule->command(WebhookCommands\DispatchDueDeliveries::class)
+                         ->everyMinute()
+                         ->onOneServer()
+                         ->withoutOverlapping()
+                         ->runInBackground();
+
+                $schedule->command(WebhookCommands\PruneWebhooks::class)
+                         ->dailyAt('03:30')
+                         ->onOneServer()
+                         ->withoutOverlapping()
+                         ->runInBackground();
+            });
+        }
 
         if (!empty(config('chief.queue.monitor'))) {
             $this->app->afterResolving(Schedule::class, static function (Schedule $schedule) {
@@ -170,6 +194,18 @@ class ServiceProvider extends IlluminateServiceProvider
                 'driver' => 'chief_remote_team',
             ], config('auth.guards.chief_team', [])),
         ]);
+    }
+
+    /**
+     * Registers the webhooks pages under a prefix in the app's team route group: `webhooks` lists the endpoints,
+     * `webhooks.events` the events and `webhooks.endpoint` shows one endpoint. Needs Livewire and Flux.
+     */
+    private function registerWebhookRoutesMacro(): void
+    {
+        RoutingRouter::macro('chiefWebhooks', function (string $prefix = 'webhooks'): void {
+            /** @var \Illuminate\Routing\Router $this */
+            WebhookLivewire\Routes::register($this, $prefix);
+        });
     }
 
     /** Lets a route open in the global team view, which combines all teams of the user, registered before the app loads its routes. */
@@ -321,6 +357,11 @@ class ServiceProvider extends IlluminateServiceProvider
         // Livewire matches persistent middleware by exact class name, so its component updates would otherwise skip our authenticate middleware and resolve route bindings for guests
         // The team context runs again for the page of the component as well, the update endpoint has no team slug and would fall back to the team in the session
         Livewire::addPersistentMiddleware([Middleware\Authenticate::class, Middleware\TeamUrlContext::class]);
+
+        if (WebhookConfig::enabled()) {
+            Livewire::component('chief-webhooks.delivery-details', WebhookLivewire\DeliveryDetails::class);
+            Livewire::component('chief-webhooks.event-details', WebhookLivewire\EventDetails::class);
+        }
     }
 
     private function publishStaticFiles(): void
@@ -333,10 +374,16 @@ class ServiceProvider extends IlluminateServiceProvider
             static::basePath('database/migrations') => database_path('migrations'),
         ], 'chief-migrations');
 
+        $this->publishes([
+            static::basePath('database/migrations/webhooks') => database_path('migrations'),
+        ], 'chief-webhooks-migrations');
+
         if (Chief::runsMigrations()) {
-            $this->loadMigrationsFrom([
+            $this->loadMigrationsFrom(array_filter([
                 static::basePath('database/migrations'),
-            ]);
+                // Only apps that send webhooks get their tables
+                WebhookConfig::enabled() ? static::basePath('database/migrations/webhooks') : null,
+            ]));
         }
     }
 

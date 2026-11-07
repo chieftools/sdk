@@ -44,6 +44,7 @@ use Nuwave\Lighthouse\Subscriptions\Contracts\StoresSubscriptions;
 use Illuminate\Support\ServiceProvider as IlluminateServiceProvider;
 use ChiefTools\SDK\GraphQL\Subscriptions\Storage\RedisStorageManager;
 use ChiefTools\SDK\Broadcasting\Channels\LighthouseSubscriptionChannel;
+use ChiefTools\SDK\Webhook\Outbound\Http\ApiRoutes as WebhookApiRoutes;
 use Nuwave\Lighthouse\Subscriptions\Storage\RedisStorageManager as LighthouseRedisStorageManager;
 
 class ServiceProvider extends IlluminateServiceProvider
@@ -205,6 +206,11 @@ class ServiceProvider extends IlluminateServiceProvider
         RoutingRouter::macro('chiefWebhooks', function (string $prefix = 'webhooks'): void {
             /** @var \Illuminate\Routing\Router $this */
             WebhookLivewire\Routes::register($this, $prefix);
+        });
+
+        RoutingRouter::macro('chiefWebhooksApi', function (string $scope, string $prefix = 'webhooks'): void {
+            /** @var \Illuminate\Routing\Router $this */
+            WebhookApiRoutes::register($this, $scope, $prefix);
         });
     }
 

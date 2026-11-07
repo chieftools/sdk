@@ -80,6 +80,22 @@ it('uses the team of the page for a Livewire component update instead of the tea
         ->and(session('chief_team_hint'))->toBe('amber-grove');
 });
 
+it('keeps the team of the page out of the attributes of the user on a Livewire component update', function () {
+    session()->put('chief_team_hint', 'amber-grove');
+
+    $update = teamUrlContextRequest('POST', '/livewire/update');
+
+    app()->instance('request', $update);
+
+    expect($this->user->team->slug)->toBe('amber-grove');
+
+    handleTeamUrlContext($update, teamUrlContextRequest('GET', '/team/birch-hollow/dashboard'));
+
+    expect($this->user->team->slug)->toBe('birch-hollow')
+        ->and($this->user->getAttributes())->not->toHaveKey('memoizedCurrentTeam')
+        ->and($this->user->isDirty())->toBeFalse();
+});
+
 it('uses the team in the session for a Livewire component update on a page without a team in the URL', function () {
     session()->put('chief_team_hint', 'birch-hollow');
 

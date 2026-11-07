@@ -101,12 +101,16 @@
         @include('chief::layout.partial.jsvars')
     </head>
     <body class="{{ $bodyClass ?? '' }} {{ ($fullHeight ?? false) === true ? 'h-full' : '' }}">
-        {{-- The sidebar is fixed on the left, so everything else moves right by its width, on pages whose shell has one --}}
+        {{--
+            The sidebar is fixed on the left, so everything else moves right by its width, on pages whose shell has one.
+            Those pages get their brand border from the shell, which keeps it in place above the sidebar, so the content
+            keeps only its space: a border of its own would show as a second one when the page is overscrolled.
+        --}}
         <div id="app" @class([
             'chief-layout-app border-t-4 border-brand',
             'h-full' => ($fullHeight ?? false) === true,
             'min-h-screen pb-16' => ($fullHeight ?? false) !== true,
-            'lg:has-[[data-shell-layout=sidebar]]:pl-60 lg:group-data-[shell-sidebar=collapsed]/chief:has-[[data-shell-layout=sidebar]]:pl-16' => $sidebarLayout,
+            'lg:has-[[data-shell-layout=sidebar]]:pl-60 lg:group-data-[shell-sidebar=collapsed]/chief:has-[[data-shell-layout=sidebar]]:pl-16 lg:has-[[data-shell-layout=sidebar]]:border-t-0 lg:has-[[data-shell-layout=sidebar]]:pt-1' => $sidebarLayout,
         ])>
             @yield('body')
         </div>

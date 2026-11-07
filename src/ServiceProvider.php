@@ -4,6 +4,7 @@ namespace ChiefTools\SDK;
 
 use GuzzleHttp;
 use Livewire\Livewire;
+use Dedoc\Scramble\Scramble;
 use ChiefTools\SDK\API\Client;
 use Sentry\Laravel\Integration;
 use Illuminate\Auth\AuthManager;
@@ -35,6 +36,7 @@ use Laravel\Socialite\Contracts\Factory as Socialite;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use ChiefTools\SDK\Scramble\WebhooksApiDefinitionMatcher;
 use Illuminate\Database\Eloquent\MissingAttributeException;
 use ChiefTools\SDK\GraphQL\Listeners\BuildExtensionsResponse;
 use ChiefTools\SDK\Webhook\Outbound\Console as WebhookCommands;
@@ -66,6 +68,8 @@ class ServiceProvider extends IlluminateServiceProvider
         $this->configureGraphQL();
 
         $this->configureLivewire();
+
+        $this->configureScramble();
 
         $this->configureMiddleware();
 
@@ -368,6 +372,17 @@ class ServiceProvider extends IlluminateServiceProvider
             Livewire::component('chief-webhooks.delivery-details', WebhookLivewire\DeliveryDetails::class);
             Livewire::component('chief-webhooks.event-details', WebhookLivewire\EventDetails::class);
         }
+    }
+
+    /** Lets Scramble infer the SDK's webhooks API from its source, which it skips for every class in `vendor`. */
+    private function configureScramble(): void
+    {
+        if (!class_exists(Scramble::class)) {
+            return;
+        }
+
+        // Scramble configures its own classes the same way, the configuration class is marked internal regardless
+        Scramble::infer()->configure()->buildDefinitionsUsingAstFor([new WebhooksApiDefinitionMatcher]); // @phpstan-ignore method.internalClass
     }
 
     private function publishStaticFiles(): void

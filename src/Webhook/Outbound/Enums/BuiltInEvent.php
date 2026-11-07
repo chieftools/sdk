@@ -2,6 +2,7 @@
 
 namespace ChiefTools\SDK\Webhook\Outbound\Enums;
 
+use ChiefTools\SDK\Webhook\Outbound\Attributes\WebhookObject;
 use ChiefTools\SDK\Webhook\Outbound\Contracts\WebhookEventType;
 
 /**
@@ -10,6 +11,7 @@ use ChiefTools\SDK\Webhook\Outbound\Contracts\WebhookEventType;
 enum BuiltInEvent: string implements WebhookEventType
 {
     /** Someone sent a test event to check the endpoint receives and verifies deliveries. */
+    #[WebhookObject('array{id: string, url: string, description: string|null}')]
     case TEST = 'webhook_endpoint.test';
 
     public function group(): string

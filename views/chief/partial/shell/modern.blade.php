@@ -450,6 +450,9 @@
     </div>
 
     @if($sidebarLayout)
+        {{-- The brand border stays in place above the sidebar, instead of scrolling away with the content and leaving a gap above it --}}
+        <div class="pointer-events-none fixed inset-x-0 top-0 z-40 hidden h-1 bg-brand lg:block" aria-hidden="true"></div>
+
         {{--
             The full height below the brand border, with what the header holds elsewhere: the app, team, search and account.
             Collapsed (`data-shell-sidebar` on the html element, remembered per browser) it is a rail of icons; the app's

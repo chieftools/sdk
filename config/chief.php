@@ -250,15 +250,9 @@ return [
 
     ],
 
-    'webhooks' => [
-
-        ChiefTools\SDK\Webhook\WebhookEvent::TEAM_UPDATED->value    => ChiefTools\SDK\Webhook\Handlers\TeamUpdated::class,
-        ChiefTools\SDK\Webhook\WebhookEvent::TEAM_DESTROYED->value  => ChiefTools\SDK\Webhook\Handlers\TeamDestroyed::class,
-        ChiefTools\SDK\Webhook\WebhookEvent::ACCOUNT_CLOSED->value  => ChiefTools\SDK\Webhook\Handlers\AccountClosed::class,
-        ChiefTools\SDK\Webhook\WebhookEvent::ACCOUNT_UPDATED->value => ChiefTools\SDK\Webhook\Handlers\AccountUpdated::class,
-        ChiefTools\SDK\Webhook\WebhookEvent::TOKEN_DESTROYED->value => ChiefTools\SDK\Webhook\Handlers\TokenDestroyed::class,
-
-    ],
+    // Handlers of Account Chief webhooks, keyed by `\ChiefTools\SDK\Webhook\WebhookEvent` value, that replace or add to
+    // the SDK's default handlers for team, account and token changes
+    'webhook_handlers' => [],
 
     'analytics' => [
 

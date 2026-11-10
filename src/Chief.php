@@ -23,6 +23,20 @@ final class Chief
     /** The route action key that lets a route open in the global team view. */
     public const string GLOBAL_TEAM_ROUTE_ACTION = 'chief_global_team';
 
+    /**
+     * The handlers of the Account Chief webhooks every app handles. Kept in code, not config, so an app's config can
+     * never drop them, apps override them with `chief.webhook_handlers` or `registerWebhookHandler()`.
+     *
+     * @var array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>>
+     */
+    private const array DEFAULT_WEBHOOK_HANDLERS = [
+        WebhookEvent::TEAM_UPDATED->value    => Webhook\Handlers\TeamUpdated::class,
+        WebhookEvent::TEAM_DESTROYED->value  => Webhook\Handlers\TeamDestroyed::class,
+        WebhookEvent::ACCOUNT_CLOSED->value  => Webhook\Handlers\AccountClosed::class,
+        WebhookEvent::ACCOUNT_UPDATED->value => Webhook\Handlers\AccountUpdated::class,
+        WebhookEvent::TOKEN_DESTROYED->value => Webhook\Handlers\TokenDestroyed::class,
+    ];
+
     private static bool $runsMigrations = true;
 
     /** @param class-string<\ChiefTools\SDK\Entities\User> $userModel */
@@ -200,16 +214,23 @@ final class Chief
         self::$authenticationExceptionJsonResponseHandler = $handler;
     }
 
-    /** @return array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>> */
+    /**
+     * The handler of every Account Chief webhook the app handles: the SDK's defaults, then the app's `chief.webhook_handlers`
+     * config, then the handlers registered at runtime, each overriding the ones before.
+     *
+     * Handlers in `chief.webhooks` are still read for apps that configured them there before it held the outbound
+     * webhooks config, only entries keyed by a webhook event are taken so the outbound settings are never mistaken for one.
+     *
+     * @return array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>>
+     */
     public static function webhookHandlers(): array
     {
-        $handlers = config('chief.webhooks', []);
-
-        if (!is_array($handlers)) {
-            $handlers = [];
-        }
-
-        return array_merge($handlers, self::$webhookHandlers);
+        return array_merge(
+            self::DEFAULT_WEBHOOK_HANDLERS,
+            self::configuredWebhookHandlers('chief.webhooks'),
+            self::configuredWebhookHandlers('chief.webhook_handlers'),
+            self::$webhookHandlers,
+        );
     }
 
     /** @return class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>|null */
@@ -222,6 +243,27 @@ final class Chief
     public static function registerWebhookHandler(WebhookEvent $event, string $handler): void
     {
         self::$webhookHandlers[enum_value($event)] = $handler;
+    }
+
+    /**
+     * The handlers in a config key, keyed by a webhook event.
+     *
+     * @return array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>>
+     */
+    private static function configuredWebhookHandlers(string $key): array
+    {
+        $handlers = config($key, []);
+
+        if (!is_array($handlers)) {
+            return [];
+        }
+
+        /** @var array<string, class-string<\ChiefTools\SDK\Webhook\Handlers\Handler>> */
+        return array_filter(
+            $handlers,
+            static fn (mixed $handler, int|string $event): bool => is_string($event) && is_string($handler) && WebhookEvent::tryFrom($event) !== null,
+            ARRAY_FILTER_USE_BOTH,
+        );
     }
 
     /**

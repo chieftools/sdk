@@ -79,14 +79,31 @@ it('does not trust malformed authentication retry states', function () {
         ->and(ChiefProvider::hasAuthenticationRetryState(Crypt::encryptString('unrelated-state')))->toBeFalse();
 });
 
-it('preserves OAuth error descriptions', function () {
+it('describes denied authorization requests', function () {
     $this->get('/login/callback?error=access_denied&error_description=The+user+denied+the+request.')
         ->assertRedirect(url('/'))
         ->assertSessionHas('message', [
-            'text' => 'Authentication failed (The user denied the request.), please try again!',
+            'text' => 'Authentication failed (The authorization request was denied), please try again!',
             'type' => 'warning',
         ]);
 });
+
+it('never reflects the OAuth error description from the callback query string', function (string $error) {
+    $this->get('/login/callback?' . http_build_query([
+        'error'             => $error,
+        'error_description' => '<img src=x onerror=alert(1)>',
+    ]))
+        ->assertRedirect(url('/'))
+        ->assertSessionHas('message', [
+            'text' => $error === 'access_denied'
+                ? 'Authentication failed (The authorization request was denied), please try again!'
+                : 'Authentication failed, please try again!',
+            'type' => 'warning',
+        ]);
+})->with([
+    'denied request' => ['access_denied'],
+    'other error'    => ['invalid_scope'],
+]);
 
 it('rejects callbacks without application-accessible teams before creating a local user', function () {
     $remote = new ChiefUser([

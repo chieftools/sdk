@@ -55,9 +55,7 @@ class Callback
 
     private function authenticationFailed(Request $request, ?string $description = null): RedirectResponse
     {
-        $description ??= $request->filled('error_description')
-            ? $request->string('error_description')->toString()
-            : null;
+        $description ??= $this->describeAuthorizationError($request);
 
         $message = $description !== null
             ? " ({$description})"
@@ -67,5 +65,27 @@ class Callback
             'text' => "Authentication failed{$message}, please try again!",
             'type' => 'warning',
         ]);
+    }
+
+    /**
+     * Describe a failed authorization without reflecting the provider's error description.
+     *
+     * The callback query string can be crafted by anyone, so only known error codes map to a fixed description.
+     */
+    private function describeAuthorizationError(Request $request): ?string
+    {
+        if ($request->isNotFilled('error')) {
+            return null;
+        }
+
+        logger()->info('chief.auth.authorization_error', [
+            'error'             => $request->string('error')->limit(100)->toString(),
+            'error_description' => $request->string('error_description')->limit(500)->toString(),
+        ]);
+
+        return match ($request->input('error')) {
+            'access_denied' => 'The authorization request was denied',
+            default         => null,
+        };
     }
 }

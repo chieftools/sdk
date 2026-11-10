@@ -25,7 +25,9 @@ Route::group(config('chief.routes.web-api'), function () use ($authenticationMid
         ->allowsGlobalTeam()
         ->name('chief.shell.commands.search');
 
+    // Session authenticated, so only accept XHR requests: GET and form posts can be triggered cross-site and would run mutations
     Route::match(['get', 'post'], 'graphql/web', Controllers\API\GraphQL::class)->middleware([
+        Nuwave\Lighthouse\Http\Middleware\EnsureXHR::class,
         Nuwave\Lighthouse\Http\Middleware\AcceptJson::class,
         ChiefTools\SDK\GraphQL\Middleware\AuthenticateWeb::class,
     ])->name('api.web');

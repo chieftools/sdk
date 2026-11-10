@@ -23,6 +23,29 @@ it('resolves SDK webhook handlers with enum cases', function () {
     expect(Chief::getWebhookHandler(WebhookEvent::TEAM_UPDATED))->toBe(TeamUpdated::class);
 });
 
+it('keeps the default webhook handlers when the app configures outbound webhooks', function () {
+    config(['chief.webhooks' => ['enabled' => true, 'api_version' => 'v1']]);
+
+    expect(Chief::getWebhookHandler(WebhookEvent::TEAM_UPDATED))->toBe(TeamUpdated::class)
+        ->and(Chief::getWebhookHandler(WebhookEvent::ACCOUNT_UPDATED))->toBe(AccountUpdated::class);
+});
+
+it('replaces a default webhook handler with the handler configured by the app', function () {
+    config(['chief.webhook_handlers' => [enum_value(WebhookEvent::TEAM_UPDATED) => RegisteredWebhookHandler::class]]);
+
+    expect(Chief::getWebhookHandler(WebhookEvent::TEAM_UPDATED))->toBe(RegisteredWebhookHandler::class);
+});
+
+it('still reads webhook handlers configured next to the outbound webhooks config', function () {
+    config(['chief.webhooks' => [
+        'enabled'                                => true,
+        enum_value(WebhookEvent::ACCOUNT_CLOSED) => RegisteredWebhookHandler::class,
+    ]]);
+
+    expect(Chief::getWebhookHandler(WebhookEvent::ACCOUNT_CLOSED))->toBe(RegisteredWebhookHandler::class)
+        ->and(Chief::webhookHandlers())->not->toHaveKey('enabled');
+});
+
 it('handles webhooks registered at runtime', function () {
     RegisteredWebhookHandler::$payload = null;
 

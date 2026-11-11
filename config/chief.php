@@ -9,10 +9,6 @@ return [
     // The secret Account Chief signs its webhooks to this app with, the `whsec_` secret of the app's endpoint in Account Chief
     'webhook_signing_secret' => env('CHIEF_WEBHOOK_SIGNING_SECRET'),
 
-    // Also accept Account Chief webhooks authenticated with the shared `services.chief.webhook_secret` header, turn
-    // this off once the signing secret is set and Account Chief signs its webhooks
-    'webhook_accept_legacy_secret' => env('CHIEF_WEBHOOK_ACCEPT_LEGACY_SECRET', true),
-
     'auth' => [
 
         'account' => env('CHIEF_AUTH_ACCOUNT', true),

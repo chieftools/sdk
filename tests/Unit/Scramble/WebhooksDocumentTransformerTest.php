@@ -2,7 +2,9 @@
 
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Generator;
+use Tests\Fixtures\Webhooks\ReferenceEventType;
 use ChiefTools\SDK\Scramble\WebhooksDocumentTransformer;
+use ChiefTools\SDK\Webhook\Outbound\Attributes\WebhookObject;
 
 function webhooksDocument(): array
 {
@@ -61,6 +63,27 @@ it('takes the object from a PHPDoc type, or leaves it open without one', functio
     ])
         ->and($schemas['LanternDimmedEvent']['properties']['data']['properties']['object']['type'])->toBe('object')
         ->and($schemas['WebhookEndpointTestEvent']['properties']['data']['properties']['object']['properties'])->toHaveKeys(['id', 'url', 'description']);
+});
+
+it('describes the object generically unless the event describes it', function () {
+    $schemas = webhooksDocument()['components']['schemas'];
+
+    expect($schemas['LanternLitEvent']['properties']['data']['properties']['object']['description'])->toBe(WebhookObject::DEFAULT_DESCRIPTION)
+        ->and($schemas['LanternDimmedEvent']['properties']['data']['properties']['object']['description'])->toBe(WebhookObject::DEFAULT_DESCRIPTION)
+        ->and($schemas['WebhookEndpointTestEvent']['properties']['data']['properties']['object']['description'])->toBe('The endpoint the test event was sent to.');
+});
+
+it('takes the object type and description from the enum for what a case leaves out', function () {
+    config(['chief.webhooks.events' => ReferenceEventType::class]);
+
+    $schemas = webhooksDocument()['components']['schemas'];
+    $docked  = $schemas['ShipDockedEvent']['properties']['data']['properties']['object'];
+    $sunk    = $schemas['ShipSunkEvent']['properties']['data']['properties']['object'];
+
+    expect($docked['description'])->toBe('A reference to the ship the event is about.')
+        ->and($docked['properties'])->toHaveKeys(['type', 'id'])
+        ->and($sunk['description'])->toBe('The ship as it was right before it sank.')
+        ->and($sunk['properties'])->toHaveKeys(['type', 'id']);
 });
 
 it('documents no webhooks while webhooks are disabled for the app', function () {

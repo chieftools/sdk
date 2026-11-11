@@ -11,7 +11,7 @@ use ChiefTools\SDK\Webhook\Outbound\Contracts\WebhookEventType;
 enum BuiltInEvent: string implements WebhookEventType
 {
     /** Someone sent a test event to check the endpoint receives and verifies deliveries. */
-    #[WebhookObject('array{id: string, url: string, description: string|null}')]
+    #[WebhookObject('array{id: string, url: string, description: string|null}', 'The endpoint the test event was sent to.')]
     case TEST = 'webhook_endpoint.test';
 
     public function group(): string

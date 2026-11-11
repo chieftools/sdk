@@ -106,13 +106,16 @@ class WebhooksDocumentTransformer implements DocumentTransformer
             ->setRequired(['id', 'type', 'timestamp', 'api_version', 'data']);
     }
 
+    /** The object's schema from the case's `WebhookObject`, falling back to the enum's for what the case leaves out. */
     private function objectType(ReflectionEnumBackedCase $case): Type
     {
-        $attribute = $case->getAttributes(WebhookObject::class)[0] ?? null;
+        $caseObject = ($case->getAttributes(WebhookObject::class)[0] ?? null)?->newInstance();
+        $enumObject = ((new ReflectionEnum($case->class))->getAttributes(WebhookObject::class)[0] ?? null)?->newInstance();
 
-        $type = $attribute === null ? new ObjectType : $this->type($attribute->newInstance()->type, $case);
+        $type = $caseObject->type ?? $enumObject->type ?? null;
 
-        return $type->setDescription('The resource the event is about, as the API returns it at the time of the event.');
+        return ($type === null ? new ObjectType : $this->type($type, $case))
+            ->setDescription($caseObject->description ?? $enumObject->description ?? WebhookObject::DEFAULT_DESCRIPTION);
     }
 
     /** The schema of a class, or of a PHPDoc type with class names resolved like in the enum's file. */

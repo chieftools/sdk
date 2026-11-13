@@ -5,8 +5,6 @@
 @endpush
 
 @push('head.style')
-    <link rel="stylesheet" href="https://esm.sh/graphiql/dist/style.css" />
-    <link rel="stylesheet" href="https://esm.sh/@graphiql/plugin-explorer/dist/style.css" />
     <style>
         html, body {
             height: 100%;
@@ -22,81 +20,28 @@
     </style>
 @endpush
 
+@push('head.script')
+    @php
+        // Self-hosted bundle copied to `public/js/graphiql` by the `@chieftools/sdk/vite` plugin, resolved
+        // with its own Vite instance so the app's build directory and hot file are left untouched
+        $graphiql = new Illuminate\Foundation\Vite;
+        $graphiql->useBuildDirectory('js/graphiql')->useHotFile(public_path('js/graphiql/hot'));
+
+        if (($nonce = Illuminate\Support\Facades\Vite::cspNonce()) !== null) {
+            $graphiql->useCspNonce($nonce);
+        }
+    @endphp
+    {{ $graphiql('index.js') }}
+@endpush
+
 @section('body')
     @include('partial.menu', ['fullwidthMenu' => true])
 
     <div class="container-fluid p-0" style="margin-top: 1px; height: calc(100% - 57px);">
-        <div id="graphiql">
+        <div id="graphiql" data-endpoint="{{ route('api.web') }}" @if(config('chief.graphql.subscriptions.enabled')) data-subscriptions @endif>
             <div style="text-align: center; margin-top: 20px;">
                 <i class="fal fa-3x fa-fw fa-circle-notch fa-spin"></i>
             </div>
         </div>
     </div>
 @endsection
-
-@push('body.script')
-    <script type="importmap">
-        {
-          "imports": {
-            "react": "https://esm.sh/react@19.1.0",
-            "react/": "https://esm.sh/react@19.1.0/",
-
-            "react-dom": "https://esm.sh/react-dom@19.1.0",
-            "react-dom/": "https://esm.sh/react-dom@19.1.0/",
-
-            "graphiql": "https://esm.sh/graphiql?standalone&external=react,react-dom,@graphiql/react,graphql",
-            "graphiql/": "https://esm.sh/graphiql/",
-            "@graphiql/plugin-explorer": "https://esm.sh/@graphiql/plugin-explorer?standalone&external=react,@graphiql/react,graphql",
-            "@graphiql/react": "https://esm.sh/@graphiql/react?standalone&external=react,react-dom,graphql,@graphiql/toolkit,@emotion/is-prop-valid",
-
-            "@graphiql/toolkit": "https://esm.sh/@graphiql/toolkit?standalone&external=graphql",
-            "graphql": "https://esm.sh/graphql@16.11.0",
-            "@emotion/is-prop-valid": "data:text/javascript,"
-          }
-        }
-    </script>
-    <script type="module">
-        import React from 'react';
-        import ReactDOM from 'react-dom/client';
-        import {GraphiQL, HISTORY_PLUGIN} from 'graphiql';
-        import {createGraphiQLFetcher} from '@graphiql/toolkit';
-        import {explorerPlugin} from '@graphiql/plugin-explorer';
-        import 'graphiql/setup-workers/esm.sh';
-
-        // Match GraphiQL's theme to the Chief shell theme. The shell sets `data-theme`
-        // on <html> (resolving 'system' to a concrete value before paint), so reading
-        // it here keeps the playground in sync with the rest of the app.
-        localStorage.setItem('graphiql:theme', document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
-
-        const fetcher = createGraphiQLFetcher({
-            url:     '{{ route('api.web') }}',
-            headers: {
-                'Accept':       'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                ...(window.TEAM && window.TEAM.slug ? {
-                    'X-Chief-Team': window.TEAM.slug,
-                } : {}),
-            },
-        });
-
-        function App() {
-            return React.createElement(GraphiQL, {
-                fetcher,
-                plugins:                      [HISTORY_PLUGIN, explorerPlugin()],
-                defaultQuery:                 '{\n' +
-                                                  '  viewer {\n' +
-                                                  '    name\n' +
-                                                  '  }\n' +
-                                                  '}\n',
-                introspectionQueryName:       'playgroundIntrospectionQuery',
-                defaultEditorToolsVisibility: true,
-            });
-        }
-
-        const container = document.getElementById('graphiql');
-        const root      = ReactDOM.createRoot(container);
-
-        root.render(React.createElement(App));
-    </script>
-@endpush

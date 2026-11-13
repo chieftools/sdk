@@ -10,10 +10,7 @@ use ChiefTools\SDK\Webhook\Outbound\Signing\Signer;
 const CHIEF_WEBHOOK_TEST_SIGNING_SECRET = 'whsec_c3ludGhldGljLXNpZ25pbmctc2VjcmV0LTI0Yg==';
 
 beforeEach(function () {
-    config([
-        'chief.webhook_signing_secret'  => CHIEF_WEBHOOK_TEST_SIGNING_SECRET,
-        'services.chief.webhook_secret' => 'synthetic-legacy-secret',
-    ]);
+    config(['chief.webhook_signing_secret' => CHIEF_WEBHOOK_TEST_SIGNING_SECRET]);
 });
 
 /** @param array<string, string> $headers */
@@ -58,7 +55,7 @@ it('accepts a delivery signed with any of the secrets of a rotation', function (
 it('refuses a signed delivery that was tampered with, expired or signed with another secret', function (Closure $headers) {
     $body = chiefWebhookBody();
 
-    chiefWebhookRequest($body, $headers($body) + ['X-Chief-Secret' => 'synthetic-legacy-secret'])->assertUnauthorized();
+    chiefWebhookRequest($body, $headers($body))->assertUnauthorized();
 })->with([
     'changed body'        => fn (string $body) => chiefWebhookSignatureHeaders(chiefWebhookBody('another-cache-key')),
     'old timestamp'       => fn (string $body) => chiefWebhookSignatureHeaders($body, timestamp: now()->subMinutes(6)->getTimestamp()),
@@ -93,22 +90,18 @@ it('handles a retry of a delivery whose earlier attempt failed', function () {
     expect(FailingOnceWebhookHandler::$calls)->toBe(2);
 });
 
-it('accepts the legacy secret header while it is allowed', function () {
-    chiefWebhookRequest(chiefWebhookBody(), ['X-Chief-Secret' => 'synthetic-legacy-secret'])->assertOk();
-    chiefWebhookRequest(chiefWebhookBody(), ['X-Chief-Secret' => 'wrong-secret'])->assertUnauthorized();
+it('refuses an unsigned delivery, also with the shared secret header it used to accept', function () {
+    config(['services.chief.webhook_secret' => 'synthetic-shared-secret']);
+
+    chiefWebhookRequest(chiefWebhookBody(), ['X-Chief-Secret' => 'synthetic-shared-secret'])->assertUnauthorized();
 });
 
-it('refuses the legacy secret header once it is turned off', function () {
-    config(['chief.webhook_accept_legacy_secret' => false]);
-
-    chiefWebhookRequest(chiefWebhookBody(), ['X-Chief-Secret' => 'synthetic-legacy-secret'])->assertUnauthorized();
-});
-
-it('accepts signed deliveries on apps without a legacy secret', function () {
-    config(['services.chief.webhook_secret' => null]);
+it('refuses every delivery when the app has no signing secret', function () {
+    config(['chief.webhook_signing_secret' => null]);
+    $this->withoutExceptionHandling();
     $body = chiefWebhookBody();
 
-    chiefWebhookRequest($body, chiefWebhookSignatureHeaders($body))->assertOk();
+    expect(fn () => chiefWebhookRequest($body, chiefWebhookSignatureHeaders($body)))->toThrow(RuntimeException::class, 'Missing a Chief webhook signing secret');
 });
 
 final class FailingOnceWebhookHandler implements Handler

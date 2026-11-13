@@ -1,0 +1,156 @@
+{
+  "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/graphqlMode.js": {
+    "file": "chunks/graphqlMode-cVJhHX4p.js",
+    "name": "graphqlMode",
+    "src": "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/graphqlMode.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_monaco-editor-BBCZ_2bb.js",
+      "index.js",
+      "_register-B8-_nfMo.js"
+    ]
+  },
+  "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/lite.js": {
+    "file": "chunks/lite-BqI6i1b8.js",
+    "name": "lite",
+    "src": "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/lite.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_monaco-editor-BBCZ_2bb.js",
+      "_register-B8-_nfMo.js",
+      "index.js"
+    ],
+    "dynamicImports": [
+      "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/graphqlMode.js"
+    ]
+  },
+  "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/babel.mjs": {
+    "file": "chunks/babel-C4LPTjCL.js",
+    "name": "babel",
+    "src": "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/babel.mjs",
+    "isDynamicEntry": true
+  },
+  "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/estree.mjs": {
+    "file": "chunks/estree-DCoUd_wj.js",
+    "name": "estree",
+    "src": "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/estree.mjs",
+    "isDynamicEntry": true
+  },
+  "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/graphql.mjs": {
+    "file": "chunks/graphql-CNP3xU9i.js",
+    "name": "graphql",
+    "src": "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/graphql.mjs",
+    "isDynamicEntry": true
+  },
+  "../../../node_modules/@graphiql/react/node_modules/prettier/standalone.mjs": {
+    "file": "chunks/standalone-CttwqOis.js",
+    "name": "standalone",
+    "src": "../../../node_modules/@graphiql/react/node_modules/prettier/standalone.mjs",
+    "isDynamicEntry": true
+  },
+  "../../../node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/codicon/codicon.ttf": {
+    "file": "assets/codicon-DF1abBS2.ttf",
+    "src": "../../../node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/codicon/codicon.ttf"
+  },
+  "../../../node_modules/monaco-editor/esm/vs/languages/definitions/graphql/graphql.js": {
+    "file": "chunks/graphql-fmXr3nnJ.js",
+    "name": "graphql",
+    "src": "../../../node_modules/monaco-editor/esm/vs/languages/definitions/graphql/graphql.js",
+    "isDynamicEntry": true
+  },
+  "../../../node_modules/monaco-editor/esm/vs/languages/features/json/jsonMode.js": {
+    "file": "chunks/jsonMode-EPSa8Kfk.js",
+    "name": "jsonMode",
+    "src": "../../../node_modules/monaco-editor/esm/vs/languages/features/json/jsonMode.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_register-B8-_nfMo.js",
+      "_wordPartOperations-CYH02vEJ.js",
+      "index.js",
+      "_mouseTarget-DFpR1AK3.js"
+    ],
+    "assets": [
+      "workers/json.worker-BfeARH1Q.js"
+    ]
+  },
+  "_monaco-editor-BBCZ_2bb.js": {
+    "file": "chunks/monaco-editor-BBCZ_2bb.js",
+    "name": "monaco-editor",
+    "imports": [
+      "_wordPartOperations-CYH02vEJ.js",
+      "_register-B8-_nfMo.js",
+      "index.js"
+    ],
+    "dynamicImports": [
+      "../../../node_modules/monaco-editor/esm/vs/languages/definitions/graphql/graphql.js"
+    ]
+  },
+  "_mouseTarget-DFpR1AK3.js": {
+    "file": "chunks/mouseTarget-DFpR1AK3.js",
+    "name": "mouseTarget",
+    "imports": [
+      "index.js"
+    ]
+  },
+  "_register-B8-_nfMo.js": {
+    "file": "chunks/register-B8-_nfMo.js",
+    "name": "register",
+    "imports": [
+      "_mouseTarget-DFpR1AK3.js",
+      "index.js"
+    ],
+    "dynamicImports": [
+      "../../../node_modules/monaco-editor/esm/vs/languages/features/json/jsonMode.js"
+    ],
+    "css": [
+      "assets/register-DUyGjifv.css"
+    ]
+  },
+  "_register-DUyGjifv.css": {
+    "file": "assets/register-DUyGjifv.css",
+    "src": "_register-DUyGjifv.css"
+  },
+  "_wordPartOperations-CYH02vEJ.js": {
+    "file": "chunks/wordPartOperations-CYH02vEJ.js",
+    "name": "wordPartOperations",
+    "imports": [
+      "index.js",
+      "_mouseTarget-DFpR1AK3.js",
+      "_register-B8-_nfMo.js"
+    ],
+    "css": [
+      "assets/wordPartOperations-e1IzRX0y.css"
+    ],
+    "assets": [
+      "assets/codicon-DF1abBS2.ttf"
+    ]
+  },
+  "_wordPartOperations-e1IzRX0y.css": {
+    "file": "assets/wordPartOperations-e1IzRX0y.css",
+    "src": "_wordPartOperations-e1IzRX0y.css"
+  },
+  "index.js": {
+    "file": "graphiql-CZ-ZLnyv.js",
+    "name": "index",
+    "src": "index.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "../../../node_modules/@graphiql/react/node_modules/prettier/standalone.mjs",
+      "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/graphql.mjs",
+      "_mouseTarget-DFpR1AK3.js",
+      "_monaco-editor-BBCZ_2bb.js",
+      "../../../node_modules/@graphiql/react/node_modules/monaco-graphql/esm/lite.js",
+      "_register-B8-_nfMo.js",
+      "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/estree.mjs",
+      "../../../node_modules/@graphiql/react/node_modules/prettier/plugins/babel.mjs"
+    ],
+    "css": [
+      "assets/index-BZfVY4On.css"
+    ],
+    "assets": [
+      "workers/json.worker-BfeARH1Q.js",
+      "workers/graphql.worker-DvSTz3cc.js",
+      "workers/editor.worker-CX7Cj20z.js"
+    ]
+  }
+}

@@ -4,6 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "build:graphiql": "vite build --config resources/js/graphiql/vite.config.js",
         "prettier": "prettier --write 'resources/{css,js}/{**/*,*}.{js,vue,css,less,scss,gql,graphql}'",
         "prettier:ci": "prettier --check 'resources/{css,js}/{**/*,*}.{js,vue,css,less,scss,gql,graphql}'"
     },
@@ -28,8 +29,15 @@
         "./resources/js/tooltips.js"
     ],
     "devDependencies": {
+        "@graphiql/toolkit": "1.0.1",
+        "graphiql": "6.0.1",
+        "graphql": "17.1.0",
         "prettier": "^3.8.3",
-        "prettier-plugin-tailwindcss": "^0.7.3"
+        "prettier-plugin-tailwindcss": "^0.7.3",
+        "pusher-js": "8.6.0",
+        "react": "19.3.1",
+        "react-dom": "19.3.1",
+        "vite": "8.3.8"
     },
     "peerDependencies": {
         "@sentry/browser": "^11.0.0",

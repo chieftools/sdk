@@ -13,9 +13,8 @@ use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 /**
  * Authenticates the webhooks Account Chief sends to the app.
  *
- * Deliveries are signed the Standard Webhooks way with `chief.webhook_signing_secret`. Until every app has that secret
- * the shared `services.chief.webhook_secret` header is still accepted, unless `chief.webhook_accept_legacy_secret` is
- * turned off. A delivery that carries a signature must have a valid one, the legacy header never makes up for it.
+ * Deliveries are signed the Standard Webhooks way with `chief.webhook_signing_secret`, the secret of the app's endpoint
+ * in Account Chief. A delivery that is not signed with it is refused.
  */
 class AuthenticateChief implements AuthenticatesRequests
 {
@@ -28,23 +27,14 @@ class AuthenticateChief implements AuthenticatesRequests
     public function handle(Request $request, Closure $next): mixed
     {
         $signingSecret = (string)config('chief.webhook_signing_secret');
-        $legacySecret  = config('chief.webhook_accept_legacy_secret', true) ? (string)config('services.chief.webhook_secret') : '';
 
-        if ($signingSecret === '' && $legacySecret === '') {
+        if ($signingSecret === '') {
             throw new RuntimeException('Missing a Chief webhook signing secret, not accepting any webhook calls!');
         }
 
-        if ($signingSecret !== '' && $request->hasHeader('webhook-signature')) {
-            abort_unless($this->hasValidSignature($request, $signingSecret), 401);
+        abort_unless($this->hasValidSignature($request, $signingSecret), 401);
 
-            return $this->handleOnce($request, $next);
-        }
-
-        $providedSecret = $request->header('X-Chief-Secret');
-
-        abort_unless($legacySecret !== '' && is_string($providedSecret) && hash_equals($legacySecret, $providedSecret), 401);
-
-        return $next($request);
+        return $this->handleOnce($request, $next);
     }
 
     private function hasValidSignature(Request $request, string $signingSecret): bool

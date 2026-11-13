@@ -31,7 +31,7 @@ Keep in mind that this package is not meant to be used standalone, but as a base
 
 - `ChiefTools\SDK\Middleware\AuthenticateChief`
   <br>Validates a request comes from [Chief Tools](https://chief.app/)
-  <br>Requires `services.chief.webhook_secret` configuration to be set to a random string
+  <br>Requires `chief.webhook_signing_secret` (`CHIEF_WEBHOOK_SIGNING_SECRET`) to be set to the signing secret of the app's endpoint in Account Chief
 - `ChiefTools\SDK\Middleware\AutoAuthenticate`
   <br>Uses both the `api` and `web` guard and sets the first that is authenticated
 - `ChiefTools\SDK\Middleware\ForceSecure`
@@ -88,12 +88,11 @@ Add the Chief service to the `config/services.php`:
 
 return [
     'chief' => [
-        'client_id'      => env('CHIEF_CLIENT_ID'),
-        'client_secret'  => env('CHIEF_CLIENT_SECRET'),
-        'webhook_secret' => env('CHIEF_SECRET'),
-        'base_url'       => env('CHIEF_BASE_URL', 'https://account.chief.app'),
-        'verify'         => env('CHIEF_VERIFY', true),
-        'redirect'       => '/login/callback',
+        'client_id'     => env('CHIEF_CLIENT_ID'),
+        'client_secret' => env('CHIEF_CLIENT_SECRET'),
+        'base_url'      => env('CHIEF_BASE_URL', 'https://account.chief.app'),
+        'verify'        => env('CHIEF_VERIFY', true),
+        'redirect'      => '/login/callback',
     ],
 ];
 ```

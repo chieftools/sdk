@@ -34,16 +34,23 @@
      vendor the file themselves. The path matches the `workerUrl`
      configured in `@chieftools/sdk/sentry`.
 
+   - Copies the prebuilt GraphiQL playground from the SDK package to
+     `<projectRoot>/public/js/graphiql` on every dev server start and
+     production build (replacing stale files when the build changed), so
+     the `api.playground` view serves it from the app's own origin.
+
   If the SDK picks up new CJS-only peer deps in the future, extend the
   `include` list here so every consuming app inherits the fix.
 */
-import {copyFileSync, existsSync, mkdirSync, statSync} from 'node:fs';
+import {copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, rmSync, statSync} from 'node:fs';
 import {dirname, join, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const sdkRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const replayWorkerSource = join(sdkRoot, 'files', 'sentry', 'replay-worker.min.js');
 const replayWorkerRelativeDest = join('public', 'js', 'sentry', 'replay-worker.min.js');
+const graphiqlSource = join(sdkRoot, 'files', 'graphiql');
+const graphiqlRelativeDest = join('public', 'js', 'graphiql');
 
 function syncReplayWorker(projectRoot) {
     if (!existsSync(replayWorkerSource)) {
@@ -65,6 +72,25 @@ function syncReplayWorker(projectRoot) {
     copyFileSync(replayWorkerSource, dest);
 }
 
+function syncGraphiQL(projectRoot) {
+    const sourceManifest = join(graphiqlSource, 'manifest.json');
+
+    if (!existsSync(sourceManifest)) {
+        return;
+    }
+
+    const dest = join(projectRoot, graphiqlRelativeDest);
+    const destManifest = join(dest, 'manifest.json');
+
+    // Every build file is content hashed, so an identical manifest means an identical build
+    if (existsSync(destManifest) && readFileSync(destManifest, 'utf8') === readFileSync(sourceManifest, 'utf8')) {
+        return;
+    }
+
+    rmSync(dest, {recursive: true, force: true});
+    cpSync(graphiqlSource, dest, {recursive: true});
+}
+
 export default function chiefSdk() {
     let projectRoot = process.cwd();
 
@@ -83,6 +109,7 @@ export default function chiefSdk() {
         },
         buildStart() {
             syncReplayWorker(projectRoot);
+            syncGraphiQL(projectRoot);
         },
     };
 }

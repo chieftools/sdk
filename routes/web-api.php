@@ -32,5 +32,5 @@ Route::group(config('chief.routes.web-api'), function () use ($authenticationMid
         ChiefTools\SDK\GraphQL\Middleware\AuthenticateWeb::class,
     ])->name('api.web');
 
-    Route::view('playground', 'chief::api.playground.' . config('chief.graphql.playground'))->name('api.playground');
+    Route::view('playground', 'chief::api.playground.graphiql')->name('api.playground');
 });

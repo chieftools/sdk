@@ -21,7 +21,7 @@ class EventResource extends JsonResource
              *
              * @example event_01m6v3f5aydrktmzrbpz1pqh7e
              */
-            'id' => $this->formatted_id,
+            'id' => (string)$this->formatted_id,
             /**
              * Event type.
              *

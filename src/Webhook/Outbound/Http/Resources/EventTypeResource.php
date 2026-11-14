@@ -27,13 +27,24 @@ class EventTypeResource extends JsonResource
              *
              * @example Availability
              */
-            'group' => $this->resource->group(),
+            'group' => $this->eventGroup(),
             /**
              * When the event is sent.
              *
              * @example A server stopped checking in.
              */
-            'description' => $this->resource->description(),
+            'description' => $this->eventDescription(),
         ];
+    }
+
+    /** The heading of the event type, typed here because the documentation does not follow calls on the interface. */
+    private function eventGroup(): string
+    {
+        return $this->resource->group();
+    }
+
+    private function eventDescription(): string
+    {
+        return $this->resource->description();
     }
 }

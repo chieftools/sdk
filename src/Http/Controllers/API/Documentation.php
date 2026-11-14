@@ -5,10 +5,13 @@ namespace ChiefTools\SDK\Http\Controllers\API;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Webhook\Outbound\WebhookConfig;
+use Dedoc\Scramble\Attributes\ExcludeRouteFromDocs;
 use Illuminate\Routing\Exceptions\UrlGenerationException;
 
 class Documentation
 {
+    /** The page that links the API documentation is no API endpoint itself. */
+    #[ExcludeRouteFromDocs]
     public function __invoke(): View
     {
         return view('chief::api.docs.index', [

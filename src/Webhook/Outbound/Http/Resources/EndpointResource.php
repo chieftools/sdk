@@ -31,7 +31,7 @@ class EndpointResource extends JsonResource
              *
              * @example webhook_01m6v2nkcfd8n7hg5r9t5k0ys6
              */
-            'id' => $this->formatted_id,
+            'id' => (string)$this->formatted_id,
             /**
              * HTTPS URL that receives the events.
              *

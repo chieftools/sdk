@@ -13,6 +13,7 @@ use GraphQL\Type\Definition\InterfaceType;
 use Nuwave\Lighthouse\Schema\SchemaBuilder;
 use Nuwave\Lighthouse\GraphQL as Lighthouse;
 use Nuwave\Lighthouse\Http\GraphQLController;
+use Dedoc\Scramble\Attributes\ExcludeRouteFromDocs;
 use Nuwave\Lighthouse\Support\Contracts\CreatesContext;
 use Nuwave\Lighthouse\Support\Contracts\CreatesResponse;
 use Illuminate\Contracts\Events\Dispatcher as EventsDispatcher;
@@ -47,6 +48,8 @@ class GraphQL extends GraphQLController
         ]);
     }
 
+    /** The discovery document of the GraphQL playground, no REST endpoint. */
+    #[ExcludeRouteFromDocs]
     public function discovery(): array
     {
         $name  = config('app.name');

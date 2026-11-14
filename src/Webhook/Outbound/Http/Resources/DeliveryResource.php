@@ -21,19 +21,19 @@ class DeliveryResource extends JsonResource
              *
              * @example delivery_01m6v3f5b0c8z6w4k2t9r7p5n3
              */
-            'id' => $this->formatted_id,
+            'id' => (string)$this->formatted_id,
             /**
              * ID of the endpoint it is sent to.
              *
              * @example webhook_01m6v2nkcfd8n7hg5r9t5k0ys6
              */
-            'endpoint_id' => $this->endpoint->formatted_id,
+            'endpoint_id' => (string)$this->endpoint->formatted_id,
             /**
              * ID of the event it sends.
              *
              * @example event_01m6v3f5aydrktmzrbpz1pqh7e
              */
-            'event_id' => $this->event->formatted_id,
+            'event_id' => (string)$this->event->formatted_id,
             /**
              * Type of the event it sends.
              *

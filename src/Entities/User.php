@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use ChiefTools\SDK\Exceptions\NoCurrentTeam;
 use Illuminate\Auth\AuthenticationException;
 use Stayallive\Laravel\Eloquent\UUID\UsesUUID;
+use ChiefTools\SDK\Enums\User\AppNotifications;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
@@ -32,6 +33,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @property string                                                                       $name
  * @property string                                                                       $email
  * @property string|null                                                                  $avatar_hash
+ * @property \ChiefTools\SDK\Enums\User\AppNotifications|null                             $app_notifications
  * @property string                                                                       $timezone
  * @property string|null                                                                  $chief_id
  * @property string                                                                       $password
@@ -77,9 +79,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         'two_factor_secret',
     ];
     protected $casts    = [
-        'is_admin'    => 'bool',
-        'last_login'  => 'datetime',
-        'preferences' => 'array',
+        'is_admin'          => 'bool',
+        'last_login'        => 'datetime',
+        'preferences'       => 'array',
+        'app_notifications' => AppNotifications::class,
     ];
 
     /** Never unset this property, Eloquent stores an unset property that is assigned again as an attribute of the user. */
@@ -351,6 +354,19 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             ?? $this->teams()->first()
             ?? throw new AuthenticationException('The user does not have access to applications.');
     }
+    /** Whether notifications from this app reach the user's phone through the Chief Tools app. */
+    public function wantsAppNotifications(): bool
+    {
+        return $this->app_notifications === AppNotifications::ENABLED;
+    }
+    /**
+     * Whether the user has a signed-in Chief Tools app with notifications on, also when this app is muted there. Settings
+     * for app notifications only show for these users, so the app is not hinted at to users who do not use it.
+     */
+    public function hasAppNotifications(): bool
+    {
+        return $this->app_notifications !== null;
+    }
     public function hasApplicationAccess(): bool
     {
         return $this->teams()->exists();
@@ -422,12 +438,13 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         Chief::teamModel()::createOrUpdateFromRemotes($remote->teams);
 
         $this->forceFill([
-            'name'            => $remote->getName(),
-            'email'           => $remote->getEmail(),
-            'timezone'        => $remote->timezone,
-            'password'        => empty($this->password) ? str_random(64) : null,
-            'avatar_hash'     => $remote->avatar_hash,
-            'default_team_id' => $remote->default_team_id,
+            'name'              => $remote->getName(),
+            'email'             => $remote->getEmail(),
+            'timezone'          => $remote->timezone,
+            'password'          => empty($this->password) ? str_random(64) : null,
+            'avatar_hash'       => $remote->avatar_hash,
+            'default_team_id'   => $remote->default_team_id,
+            'app_notifications' => $remote->app_notifications,
         ])->save();
 
         $this->teams()->sync(collect($remote->teams)

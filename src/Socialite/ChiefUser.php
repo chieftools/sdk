@@ -3,6 +3,7 @@
 namespace ChiefTools\SDK\Socialite;
 
 use Laravel\Socialite\Two\User;
+use ChiefTools\SDK\Enums\User\AppNotifications;
 
 class ChiefUser extends User
 {
@@ -17,6 +18,9 @@ class ChiefUser extends User
 
     /** The avatar hash for this user. */
     public readonly ?string $avatar_hash;
+
+    /** Whether this app can notify the user through the Chief Tools app, null without a signed-in app with notifications on. */
+    public readonly ?AppNotifications $app_notifications;
 
     /**
      * The teams the user is a member of.
@@ -38,9 +42,10 @@ class ChiefUser extends User
             $user['teams'] ?? [],
         );
 
-        $this->timezone        = $user['timezone'];
-        $this->is_admin        = (bool)($user['is_admin'] ?? false);
-        $this->avatar_hash     = $user['avatar_hash'];
-        $this->default_team_id = empty($user['default_team_id']) ? null : (int)$user['default_team_id'];
+        $this->timezone          = $user['timezone'];
+        $this->is_admin          = (bool)($user['is_admin'] ?? false);
+        $this->avatar_hash       = $user['avatar_hash'];
+        $this->app_notifications = is_string($user['app_notifications'] ?? null) ? AppNotifications::tryFrom($user['app_notifications']) : null;
+        $this->default_team_id   = empty($user['default_team_id']) ? null : (int)$user['default_team_id'];
     }
 }

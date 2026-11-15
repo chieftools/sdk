@@ -2,6 +2,7 @@
 
 use Tests\Fixtures\Models\User;
 use ChiefTools\SDK\Socialite\ChiefUser;
+use ChiefTools\SDK\Enums\User\AppNotifications;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -34,6 +35,30 @@ it('updates existing users through the model that initiated the remote sync', fu
         ->and($updatedUser->name)->toBe('Jordan Finch Updated')
         ->and(User::$updatedChiefIds)->toBe([$chiefId]);
 });
+
+it('keeps whether the user can be notified through the Chief Tools app', function (?string $appNotifications, bool $wants, bool $has) {
+    $chiefId = 'b7e4f2a1-6c3d-4e8f-9a0b-1d2c3e4f5a6b';
+
+    $user = User::createOrUpdateFromRemote(new ChiefUser([
+        'id'                => $chiefId,
+        'name'              => 'Rowan Hale',
+        'email'             => 'rowan@hale.example',
+        'timezone'          => 'Europe/Amsterdam',
+        'avatar_hash'       => 'hale12',
+        'default_team_id'   => null,
+        'teams'             => [],
+        'app_notifications' => $appNotifications,
+    ]))->refresh();
+
+    expect($user->app_notifications)->toBe(AppNotifications::tryFrom((string)$appNotifications))
+        ->and($user->wantsAppNotifications())->toBe($wants)
+        ->and($user->hasAppNotifications())->toBe($has);
+})->with([
+    'enabled'          => ['enabled', true, true],
+    'muted in the app' => ['muted', false, true],
+    'without the app'  => [null, false, false],
+    'unknown value'    => ['sometimes', false, false],
+]);
 
 it('uses the team from an exact team header', function () {
     $user = createTeamContextUser();

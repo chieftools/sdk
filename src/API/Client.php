@@ -13,9 +13,11 @@ use ChiefTools\SDK\Enums\TokenPrefix;
 use ChiefTools\SDK\Socialite\ChiefTeam;
 use ChiefTools\SDK\Socialite\ChiefUser;
 use GuzzleHttp\Exception\GuzzleException;
+use ChiefTools\SDK\API\DTO\AppNotification;
 use ChiefTools\SDK\Enums\Team\MembershipRole;
 use ChiefTools\SDK\Jobs\Reporting\ReportUsage;
 use ChiefTools\SDK\Auth\ChiefRemoteAccessToken;
+use ChiefTools\SDK\Jobs\Notifications\SendAppNotification;
 
 class Client
 {
@@ -588,6 +590,31 @@ class Client
         } catch (Exception) {
             // We don't really care if this fails, there will be next attempts
         }
+    }
+
+    /**
+     * Send a notification to users through the Chief Tools app.
+     *
+     * @return array{queued: int, muted: int, unavailable: int, duplicate: int, unknown: int} what happened per recipient
+     */
+    public function sendAppNotification(AppNotification $notification): array
+    {
+        $response = $this->http->post('/api/notifications', [
+            'json'    => $notification->toArray(),
+            'headers' => $this->internalAuthHeaders(),
+        ]);
+
+        if ($response->getStatusCode() !== 202) {
+            throw new RuntimeException("Could not send the app notification ({$response->getStatusCode()}).");
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    /** Send a notification to users through the Chief Tools app from a queued job. */
+    public static function sendAppNotificationAsync(AppNotification $notification): void
+    {
+        dispatch(new SendAppNotification($notification));
     }
 
     /**

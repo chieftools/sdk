@@ -99,6 +99,41 @@ return [
 
 That's all, you should be able to authenticate against Account Chief.
 
+### Outbound webhooks
+
+Apps send signed webhooks to the endpoints their teams add. The SDK stores events, delivers and retries them, and ships the settings pages, the REST API and the e-mails. An app only declares its events and calls them where things happen.
+
+#### Add webhooks to an app
+
+1. List the events as a backed enum implementing `ChiefTools\SDK\Webhook\Outbound\Contracts\WebhookEventType`, with `#[WebhookObject]` and `#[WebhookData]` on each case so the OpenAPI document describes the payloads.
+2. Enable them in `config/chief.php`. Only set what differs from the defaults in `WebhookConfig`, the `User-Agent` defaults to the app name, like `BackupChief-Webhooks/1.0`:
+   ```php
+   'webhooks' => [
+       'enabled'           => true,
+       'events'            => App\Enums\Webhook\EventType::class,
+       'queue'             => 'webhooks',
+       'breadcrumb_parent' => ['title' => 'Settings', 'route' => 'settings'],
+   ],
+   ```
+3. Give the queue its own Horizon supervisor with `tries` set to 1, the SDK schedules retries on the delivery itself.
+4. Extend `ChiefTools\SDK\Webhook\Outbound\EventSender` with one method per event that renders the API resource and calls `send()`. Call those methods from the code that makes the change, before any e-mail about it.
+5. Register the pages with `Route::chiefWebhooks('settings/webhooks')` in the team route group and the API with `Route::chiefWebhooksApi('<app>:webhooks')`. Add the `<app>:webhooks:read` and `<app>:webhooks:write` scopes and the webhooks capability to the app in Account Chief.
+6. Put `<x-chief::webhooks.settings-card :team="$team" description="..." />` on the settings page, with a `class` for the spacing between the page's cards.
+7. Listen for `EndpointFailing` and `EndpointDisabled` and send `ChiefTools\SDK\Webhook\Outbound\Mail\EndpointFailing` or `EndpointDisabled` to the team members whose notification preferences want it, with an idempotency key per endpoint and failure.
+8. Test with `ChiefTools\SDK\Webhook\Outbound\Testing\Webhooks::subscribe($team)` and `Webhooks::sent()`.
+
+#### Event conventions
+
+Receivers often handle events from several apps, so events with the same meaning look the same everywhere.
+
+- Name events `<resource>.<past tense verb>` in snake case, like `server.created` or `ip_list.updated`. The resource matches its API resource and ID prefix.
+- `data.object` is the resource as the API returns it at the time of the event. A `.deleted` event sends the resource as it was right before. Never send secrets or one-time tokens, like an enrollment token.
+- Every resource that can be created, changed and removed through the API or the app gets `.created`, `.updated` and `.deleted`. `.updated` covers changes a person or integration makes, not counters or timestamps the app updates on its own.
+- A problem and its end are a pair, like `server.offline` and `server.online` or `backup.failing` and `backup.recovered`. Send the opening event once per problem, not on every check, and the closing event only when the problem went away. A problem that ends for another reason, like a deleted rule, closes with a field that says why or without an event.
+- The closing event carries `<state>_since`, like `offline_since` or `failing_since`: when the app recorded the problem that the opening event announced, as an ISO 8601 UTC time. It is not the last contact or heartbeat.
+- Extra fields next to `object` are snake case and documented with `#[WebhookData]`. IDs of other resources use their API ID with prefix, like `run_id`. Enumerated values are extensible enums, receivers treat unknown values as unknown.
+- Group events in the enum like the app's settings and docs: the resource lifecycle first, then availability and alerts, then everything else.
+
 ### GraphQL API
 
 You will need to create a `routes/graphql/schema.graphql` in your own project with the following contents:

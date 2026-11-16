@@ -1,5 +1,6 @@
 @props([
     'endpoints',
+    'teamHint' => null,
 ])
 {{-- The rows of an endpoint list, shared by the webhooks page and any app page that lists the endpoints --}}
 @php
@@ -11,7 +12,7 @@
 <div {{ $attributes->class('divide-y divide-line') }}>
     @foreach($endpoints as $endpoint)
         @php($stats = $recent[$endpoint->id] ?? null)
-        <a href="{{ route('webhooks.endpoint', ['endpointId' => $endpoint->formatted_id]) }}" wire:navigate wire:key="endpoint-{{ $endpoint->id }}" class="flex flex-col gap-2 px-(--flux-bleed-x) py-3 hover:bg-zinc-50 sm:flex-row sm:items-center sm:gap-4 dark:hover:bg-white/5">
+        <a href="{{ route('webhooks.endpoint', array_filter(['team_hint' => $teamHint, 'endpointId' => $endpoint->formatted_id])) }}" wire:navigate wire:key="endpoint-{{ $endpoint->id }}" class="flex flex-col gap-2 px-(--flux-bleed-x) py-3 hover:bg-zinc-50 sm:flex-row sm:items-center sm:gap-4 dark:hover:bg-white/5">
             <div class="min-w-0 flex-1">
                 <div class="truncate font-mono text-sm font-medium text-fg">{{ $endpoint->url }}</div>
                 <div class="text-xs text-fg-subtle">

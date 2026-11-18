@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Exceptions\Handler;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 beforeEach(function () {
     $this->app->singleton(ExceptionHandler::class, Handler::class);
@@ -21,4 +22,12 @@ it('asks Livewire to refresh the page when a component update is unauthenticated
 it('redirects an unauthenticated page request to the login page', function () {
     $this->get('/protected')
         ->assertRedirect(route('login'));
+});
+
+it('does not name the model or the IDs when a model is not found', function () {
+    Route::get('/missing', static fn () => throw (new ModelNotFoundException)->setModel('App\Models\Secret', [42]));
+
+    $this->getJson('/missing')
+        ->assertNotFound()
+        ->assertExactJson(['message' => 'Not found.']);
 });

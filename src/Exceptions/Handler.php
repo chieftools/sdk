@@ -8,7 +8,9 @@ use Sentry\Laravel\Integration;
 use Illuminate\Support\Facades\View;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -19,6 +21,16 @@ class Handler extends ExceptionHandler
         }
 
         parent::report($e);
+    }
+
+    protected function prepareException(Throwable $e): Throwable
+    {
+        // Laravel keeps the message of a missing model, which names its class and the IDs that were looked up, and sends it in JSON responses even without debug
+        if ($e instanceof ModelNotFoundException) {
+            return new NotFoundHttpException('Not found.', $e);
+        }
+
+        return parent::prepareException($e);
     }
 
     protected function registerErrorViewPaths(): void

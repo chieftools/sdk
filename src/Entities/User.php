@@ -22,6 +22,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Grammars\SQLiteGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -158,9 +159,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
             $grammer = $query->getQuery()->grammar;
 
             match (true) {
-                $grammer instanceof MySqlGrammar    => $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]),
-                $grammer instanceof PostgresGrammar => $query->orderByRaw('CASE WHEN "teams"."id" = ? THEN \'-1\' ELSE "name" END ASC', [$this->default_team_id]),
-                default                             => throw new RuntimeException('Unsupported database grammar for teams relation ordering!'),
+                $grammer instanceof MySqlGrammar  => $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]),
+                $grammer instanceof PostgresGrammar,
+                $grammer instanceof SQLiteGrammar => $query->orderByRaw('CASE WHEN "teams"."id" = ? THEN \'-1\' ELSE "name" END ASC', [$this->default_team_id]),
+                default                           => throw new RuntimeException('Unsupported database grammar for teams relation ordering!'),
             };
         }, function (Builder $query) {
             $query->orderBy('name');

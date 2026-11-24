@@ -124,6 +124,23 @@ it('rejects a team bound token when the team header names another team of the us
     $guard(remoteGuardRequest($token, 'dune-ridge'));
 })->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header does not match the team this token is limited to.');
 
+it('rejects a team bound token for a restricted team without asking Account Chief again', function () {
+    $user  = createRemoteGuardUser();
+    $team  = createRemoteGuardTeam($user, 811, 'cedar-point');
+    createRemoteGuardTeam($user, 812, 'dune-ridge');
+    $user->teams()->updateExistingPivot($team->id, ['access_restricted' => true]);
+    $token = RandomToken::generate('ctp', 36);
+
+    cache()->put($token->cacheKey(), [...remoteGuardValidationResponse($user), 'team_id' => $team->id]);
+
+    $client = $this->mock(Client::class);
+    $client->shouldNotReceive('user');
+
+    $guard = new RemoteUserAccessTokenGuard('api', $client, app(CacheManager::class));
+
+    expect($guard(remoteGuardRequest($token, null)))->toBeNull();
+});
+
 function createRemoteGuardUser(): User
 {
     $user = new User;

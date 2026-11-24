@@ -1,7 +1,9 @@
 <?php
 
 use Tests\Fixtures\Models\User;
+use ChiefTools\SDK\Entities\Team;
 use ChiefTools\SDK\Socialite\ChiefUser;
+use Illuminate\Auth\AuthenticationException;
 use ChiefTools\SDK\Enums\User\AppNotifications;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -154,3 +156,88 @@ it('works with the current team only outside the global team view', function () 
     expect($user->inGlobalTeamView())->toBeFalse()
         ->and($user->teamsInContext()->pluck('slug')->all())->toBe(['amber-grove']);
 });
+
+it('keeps restricted teams as memberships when syncing from Account Chief', function () {
+    $chiefId = 'e3a1c9d2-4b7f-4c1e-9d3a-6f2b8c4e1a90';
+
+    $user = User::createOrUpdateFromRemote(new ChiefUser([
+        'id'              => $chiefId,
+        'name'            => 'Sasha Reed',
+        'email'           => 'sasha@reed.example',
+        'timezone'        => 'Europe/Amsterdam',
+        'avatar_hash'     => 'reed31',
+        'default_team_id' => 71,
+        'teams'           => [
+            syntheticRemoteMembership(71, 'amber-grove', accessRestricted: false),
+            syntheticRemoteMembership(72, 'birch-hollow', accessRestricted: true),
+        ],
+    ]))->refresh();
+
+    expect($user->teams->mapWithKeys(static fn (Team $team): array => [$team->slug => $team->isAccessRestricted()])->all())
+        ->toBe(['amber-grove' => false, 'birch-hollow' => true]);
+
+    User::createOrUpdateFromRemote(new ChiefUser([
+        'id'              => $chiefId,
+        'name'            => 'Sasha Reed',
+        'email'           => 'sasha@reed.example',
+        'timezone'        => 'Europe/Amsterdam',
+        'avatar_hash'     => 'reed31',
+        'default_team_id' => 71,
+        'teams'           => [
+            syntheticRemoteMembership(71, 'amber-grove', accessRestricted: false),
+            syntheticRemoteMembership(72, 'birch-hollow', accessRestricted: false),
+        ],
+    ]));
+
+    expect($user->unrestrictedTeams()->pluck('slug')->all())->toBe(['amber-grove', 'birch-hollow']);
+});
+
+it('leaves restricted teams out of the teams the user can access', function () {
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user, accessRestricted: true);
+
+    expect($user->teams()->pluck('slug')->all())->toBe(['amber-grove', 'birch-hollow'])
+        ->and($user->accessibleTeams()->pluck('slug')->all())->toBe(['amber-grove'])
+        ->and($user->findAccessibleTeamBySlug('birch-hollow'))->toBeNull();
+});
+
+it('falls back to the next team when the default team is restricted', function () {
+    $user       = createTeamContextUser();
+    $restricted = createTeamContextTeam('amber-grove', $user, accessRestricted: true);
+    $team       = createTeamContextTeam('birch-hollow', $user);
+
+    $user->forceFill(['default_team_id' => $restricted->id])->save();
+
+    expect($user->defaultOrFirstTeam()->is($team))->toBeTrue()
+        ->and($user->currentTeam(teamContextRequest())->is($team))->toBeTrue();
+});
+
+it('has no application access when every team is restricted', function () {
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user, accessRestricted: true);
+
+    expect($user->hasApplicationAccess())->toBeFalse()
+        ->and(fn () => $user->defaultOrFirstTeam())->toThrow(AuthenticationException::class);
+});
+
+it('rejects a team header naming a restricted team', function () {
+    $user = createTeamContextUser();
+    createTeamContextTeam('amber-grove', $user);
+    createTeamContextTeam('birch-hollow', $user, accessRestricted: true);
+
+    $user->currentTeam(teamContextRequest('birch-hollow'));
+})->throws(NotFoundHttpException::class, 'The team from the X-Chief-Team header was not found.');
+
+function syntheticRemoteMembership(int $id, string $slug, bool $accessRestricted): array
+{
+    return [
+        'id'                => $id,
+        'slug'              => $slug,
+        'name'              => str($slug)->headline()->toString(),
+        'timezone'          => 'Europe/Amsterdam',
+        'limits'            => [],
+        'role'              => 'member',
+        'access_restricted' => $accessRestricted,
+    ];
+}

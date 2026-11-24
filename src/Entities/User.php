@@ -22,6 +22,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use ChiefTools\SDK\Auth\AuthenticatesWithRemoteToken;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Grammars\SQLiteGrammar;
 use Illuminate\Database\Query\Grammars\PostgresGrammar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -151,16 +152,17 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     {
         $relation = $this->belongsToMany(Chief::teamModel())
             ->using(TeamMembership::class)
-            ->withPivot('role')
+            ->withPivot(['role', 'access_restricted'])
             ->withTimestamps();
 
         $relation->getQuery()->when($this->default_team_id !== null, function (Builder $query) {
             $grammer = $query->getQuery()->grammar;
 
             match (true) {
-                $grammer instanceof MySqlGrammar    => $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]),
-                $grammer instanceof PostgresGrammar => $query->orderByRaw('CASE WHEN "teams"."id" = ? THEN \'-1\' ELSE "name" END ASC', [$this->default_team_id]),
-                default                             => throw new RuntimeException('Unsupported database grammar for teams relation ordering!'),
+                $grammer instanceof MySqlGrammar  => $query->orderByRaw('IF(`teams`.`id` = ?, -1, `name`) ASC', [$this->default_team_id]),
+                $grammer instanceof PostgresGrammar,
+                $grammer instanceof SQLiteGrammar => $query->orderByRaw('CASE WHEN "teams"."id" = ? THEN \'-1\' ELSE "name" END ASC', [$this->default_team_id]),
+                default                           => throw new RuntimeException('Unsupported database grammar for teams relation ordering!'),
             };
         }, function (Builder $query) {
             $query->orderBy('name');
@@ -283,13 +285,23 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
         return $this->accessibleTeams()->where('slug', '=', $slug)->first();
     }
     /**
-     * The teams the user is a member of, limited to the team of the access token when the token is limited to one team.
+     * The teams the user is a member of without restricted access, Account Chief restricts access to a team when the user
+     * does not meet a requirement of it. The membership stays, so the team is still listed with a link to Account Chief.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<covariant \ChiefTools\SDK\Entities\Team, $this, covariant \ChiefTools\SDK\Entities\PivotEntity>
+     */
+    public function unrestrictedTeams(): BelongsToMany
+    {
+        return $this->teams()->wherePivot('access_restricted', '=', false);
+    }
+    /**
+     * The teams the user can access, limited to the team of the access token when the token is limited to one team.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<covariant \ChiefTools\SDK\Entities\Team, $this, covariant \ChiefTools\SDK\Entities\PivotEntity>
      */
     public function accessibleTeams(): BelongsToMany
     {
-        $relation    = $this->teams();
+        $relation    = $this->unrestrictedTeams();
         $tokenTeamId = $this->getChiefRemoteAccessToken()?->teamId;
 
         if ($tokenTeamId !== null) {
@@ -350,8 +362,8 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
                 ?? throw new AuthenticationException('The user does not have access to applications.');
         }
 
-        return $this->defaultTeam
-            ?? $this->teams()->first()
+        // The teams are ordered with the default team first, a restricted default team falls back to the next team
+        return $this->unrestrictedTeams()->first()
             ?? throw new AuthenticationException('The user does not have access to applications.');
     }
     /** Whether notifications from this app reach the user's phone through the Chief Tools app. */
@@ -369,7 +381,7 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
     }
     public function hasApplicationAccess(): bool
     {
-        return $this->teams()->exists();
+        return $this->unrestrictedTeams()->exists();
     }
     public function getTeamFromSession(): ?Team
     {
@@ -449,7 +461,10 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         $this->teams()->sync(collect($remote->teams)
             ->mapWithKeys(static fn (ChiefTeam $team): array => [
-                $team->id => ['role' => $team->membershipRole()->value],
+                $team->id => [
+                    'role'              => $team->membershipRole()->value,
+                    'access_restricted' => $team->accessRestricted,
+                ],
             ])
             ->all());
 

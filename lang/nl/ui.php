@@ -40,6 +40,7 @@ return [
         'current_team'               => 'Huidig team',
         'all_teams'                  => 'Alle teams',
         'all_teams_description'      => 'Elk team waar je lid van bent',
+        'team_access_restricted'     => 'Toegang beperkt, bekijk wat je moet doen',
         'find_team'                  => 'Team zoeken...',
         'no_teams_found'             => 'Geen teams gevonden.',
         'switch_team_anywhere'       => 'Overal van team wisselen',

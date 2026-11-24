@@ -21,6 +21,7 @@ class ChiefTeam
         public readonly ?bool $planDiscounted,
         public readonly int $actionableInvoicesCount,
         public readonly ?MembershipRole $role = null,
+        public readonly bool $accessRestricted = false,
     ) {}
 
     public static function fromArray(array $team): self
@@ -31,7 +32,7 @@ class ChiefTeam
     public static function fromMembershipArray(array $team): self
     {
         $role = MembershipRole::tryFrom((string)($team['role'] ?? ''))
-            ?? throw new InvalidArgumentException('Chief team membership payloads must contain a valid role.');
+                ?? throw new InvalidArgumentException('Chief team membership payloads must contain a valid role.');
 
         return self::make($team, $role);
     }
@@ -39,7 +40,7 @@ class ChiefTeam
     public function membershipRole(): MembershipRole
     {
         return $this->role
-            ?? throw new LogicException('This Chief team does not contain membership context.');
+               ?? throw new LogicException('This Chief team does not contain membership context.');
     }
 
     private static function make(array $team, ?MembershipRole $role = null): self
@@ -55,6 +56,7 @@ class ChiefTeam
             avatarHash: $team['avatar_hash'] ?? null,
             gravatarEmail: $team['gravatar_email'] ?? null,
             planDiscounted: $team['plan_discounted'] ?? null,
+            accessRestricted: $role !== null && ($team['access_restricted'] ?? false) === true,
             actionableInvoicesCount: $team['actionable_invoices_count'] ?? 0,
         );
     }

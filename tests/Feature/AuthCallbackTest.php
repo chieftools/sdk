@@ -134,3 +134,41 @@ it('rejects callbacks without application-accessible teams before creating a loc
 
     expect(User::query()->doesntExist())->toBeTrue();
 });
+
+it('rejects callbacks when access to every team is restricted before creating a local user', function () {
+    $remote = new ChiefUser([
+        'id'              => '7c2b9e14-3d5a-4f68-b1c0-2e9a7d4f6b83',
+        'name'            => 'Quinn Alder',
+        'email'           => 'quinn@example.test',
+        'timezone'        => 'Europe/Amsterdam',
+        'avatar_hash'     => 'avatar51',
+        'default_team_id' => 64,
+        'teams'           => [[
+            'id'                => 64,
+            'slug'              => 'larch-bay',
+            'name'              => 'Larch Bay',
+            'timezone'          => 'Europe/Amsterdam',
+            'limits'            => [],
+            'role'              => 'member',
+            'access_restricted' => true,
+        ]],
+    ]);
+    $remote->setToken('restricted-access-token');
+
+    $provider = $this->mock(ChiefProvider::class);
+    $provider->shouldReceive('user')->once()->andReturn($remote);
+    $provider->shouldReceive('revokeAccessToken')->once()->with('restricted-access-token');
+
+    Socialite::shouldReceive('driver')->with('chief')->andReturn($provider);
+
+    $this->get('/login/callback?code=synthetic-code')
+        ->assertRedirect(url('/'))
+        ->assertSessionHas('message', [
+            'text' => 'Authentication failed (Your account does not have access to applications.), please try again!',
+            'type' => 'warning',
+        ]);
+
+    $this->assertGuest();
+
+    expect(User::query()->doesntExist())->toBeTrue();
+});

@@ -6,6 +6,7 @@ use ChiefTools\SDK\Chief;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use ChiefTools\SDK\Socialite\ChiefTeam;
 use Laravel\Socialite\Facades\Socialite;
 use ChiefTools\SDK\Socialite\ChiefProvider;
 use Laravel\Socialite\Two\InvalidStateException;
@@ -42,7 +43,7 @@ class Callback
             $driver->revokeAccessToken($token);
         }))->afterResponse();
 
-        if (empty($remote->teams)) {
+        if (array_all($remote->teams, static fn (ChiefTeam $team): bool => $team->accessRestricted)) {
             return $this->authenticationFailed($request, 'Your account does not have access to applications.');
         }
 

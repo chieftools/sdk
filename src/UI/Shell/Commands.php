@@ -129,7 +129,14 @@ class Commands
         /** @var \Illuminate\Support\Collection<int, array<string, mixed>> $commands */
         $commands = $user->teams
             ->reject(static fn (Team $team): bool => $currentTeam !== null && $team->is($currentTeam))
-            ->map(static fn (Team $team): array => [
+            ->map(static fn (Team $team): array => $team->isAccessRestricted() ? [
+                'label'       => "Restore access to {$team} team",
+                'href'        => $team->accessRestrictedUrl(),
+                'icon'        => 'fad fa-lock',
+                'category'    => "{$appTitle} > Teams",
+                'description' => __('chief::ui.shell.team_access_restricted'),
+                'target'      => '_blank',
+            ] : [
                 'label'       => "Switch to {$team} team",
                 'href'        => route('team.switch', [$team]),
                 'icon'        => 'fad fa-arrow-right-arrow-left',

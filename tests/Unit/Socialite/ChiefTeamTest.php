@@ -43,6 +43,22 @@ it('returns the required membership role', function () {
     expect($team->membershipRole())->toBe(MembershipRole::BILLING);
 });
 
+it('parses whether access to the team is restricted from the membership', function (array $overrides, bool $expected) {
+    $team = ChiefTeam::fromMembershipArray(syntheticChiefTeamPayload(['role' => 'member', ...$overrides]));
+
+    expect($team->accessRestricted)->toBe($expected);
+})->with([
+    'restricted'     => [['access_restricted' => true], true],
+    'not restricted' => [['access_restricted' => false], false],
+    'omitted'        => [[], false],
+]);
+
+it('never restricts access for team-only payloads', function () {
+    $team = ChiefTeam::fromArray(syntheticChiefTeamPayload(['access_restricted' => true]));
+
+    expect($team->accessRestricted)->toBeFalse();
+});
+
 it('allows team-only payloads to omit membership context', function () {
     $team = ChiefTeam::fromArray(syntheticChiefTeamPayload());
 

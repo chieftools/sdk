@@ -123,6 +123,25 @@
 
             <div x-ref="teamOptions" class="max-h-80 min-h-0 overflow-y-auto overscroll-contain p-1.5" role="none">
                 @foreach($_other_teams as $_chief_team)
+                    @if($_chief_team->isAccessRestricted())
+                        <a href="{{ $_chief_team->accessRestrictedUrl() }}"
+                           target="_blank"
+                           rel="noopener"
+                           x-show="teamMatches(@js(mb_strtolower($_chief_team->name)))"
+                           data-team-option
+                           data-team-access-restricted
+                           class="group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition outline-none hover:bg-surface-2 focus-visible:bg-surface-2"
+                           role="menuitem">
+                            <img class="size-6 shrink-0 rounded-md opacity-50 grayscale" src="{{ $_chief_team->avatar_url }}" alt="" loading="lazy">
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium text-fg-subtle">{{ $_chief_team }}</span>
+                                <span class="block truncate text-xs text-fg-faint">{{ __('chief::ui.shell.team_access_restricted') }}</span>
+                            </span>
+                            <i class="fad fa-fw fa-lock shrink-0 text-xs text-fg-faint group-hover:text-fg-muted"></i>
+                        </a>
+                        @continue
+                    @endif
+
                     @if($_can_switch_team)
                         <a href="{{ route('team.switch', [$_chief_team]) }}"
                            x-show="teamMatches(@js(mb_strtolower($_chief_team->name)))"

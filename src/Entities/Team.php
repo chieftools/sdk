@@ -128,10 +128,14 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
 
         $this->save();
     }
-    /** Whether the user this team was loaded through cannot access it, loaded without a membership it is never restricted. */
+    /**
+     * Whether the user this team was loaded through cannot access it, loaded without a membership it is never restricted.
+     *
+     * Apps can load memberships through their own pivot model without the boolean cast, so the raw database value counts.
+     */
     public function isAccessRestricted(): bool
     {
-        return $this->relationLoaded('pivot') && $this->getRelation('pivot')->access_restricted === true;
+        return $this->relationLoaded('pivot') && (bool)$this->getRelation('pivot')->getAttribute('access_restricted');
     }
     /** The page in Account Chief that explains what the user needs to do before access to this team is restored. */
     public function accessRestrictedUrl(): string

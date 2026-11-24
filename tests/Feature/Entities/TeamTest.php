@@ -37,3 +37,17 @@ it('does not resolve teams from the route outside the team of a team limited acc
     expect((new Team)->resolveRouteBinding('birch-hollow'))->toBeNull()
         ->and((new Team)->resolveRouteBinding('amber-grove')?->is($limited))->toBeTrue();
 });
+
+it('treats a membership as restricted from the raw database value without a boolean cast on the pivot model', function (mixed $value, bool $restricted) {
+    $team = (new Team)->setRelation('pivot', (new ChiefTools\SDK\Entities\PivotEntity)->setRawAttributes(['access_restricted' => $value]));
+
+    expect($team->isAccessRestricted())->toBe($restricted);
+})->with([
+    'restricted'     => [1, true],
+    'not restricted' => [0, false],
+    'unknown'        => [null, false],
+]);
+
+it('never treats a team loaded without a membership as restricted', function () {
+    expect((new Team)->isAccessRestricted())->toBeFalse();
+});

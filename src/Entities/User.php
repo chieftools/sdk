@@ -409,6 +409,14 @@ class User extends Entity implements AuthenticatableContract, AuthorizableContra
 
         return array_get($this->preferences, $preference, $default ?? $template[3]);
     }
+    /**
+     * Why the user cannot change the preference right now, shown next to it instead of the toggle doing nothing. The app
+     * decides, for example Account Chief keeps a security preference fixed while a team requires it.
+     */
+    public function preferenceLockedReason(string $preference): ?string
+    {
+        return null;
+    }
     public function setPreference($preference, $value): void
     {
         if (config("chief.preferences.{$preference}", false) === false) {

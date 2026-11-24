@@ -150,6 +150,15 @@ test('the API documentation shows the MCP server URL', function () {
     expect(app(ChiefTools\SDK\Http\Controllers\API\Documentation::class)()->getData()['mcp'])->toBeNull();
 });
 
+test('the API documentation links to the token pages in Account Chief', function () {
+    config(['chief.base_url' => 'https://account.example.test', 'chief.id' => 'app']);
+
+    $data = app(ChiefTools\SDK\Http\Controllers\API\Documentation::class)()->getData();
+
+    expect($data['personalTokensUrl'])->toBe('https://account.example.test/api/tokens?ref=app')
+        ->and($data['teamTokensUrl'])->toBe('https://account.example.test/team/select/security?ref=app');
+});
+
 test('only http URLs are used for the MCP server', function () {
     config(['chief.mcp.endpoint' => 'javascript:alert(1)', 'chief.auth.audiences.mcp' => null, 'chief.mcp.documentation_url' => 'https://docs.example.test/app/ai']);
 

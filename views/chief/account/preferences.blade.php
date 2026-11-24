@@ -12,9 +12,10 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
             })
-                .then((response) => response.json())
-                .then((response) => {
-                    this.on = response.state ?? this.on;
+                .then((response) => response.json().then((data) => ({ok: response.ok, data})))
+                .then(({ok, data}) => {
+                    this.on = data.state ?? this.on;
+                    this.error = ok ? null : (data.message ?? 'This preference could not be changed, please try again.');
 
                     // The layout is drawn on the server, so it changes with the page
                     if (preference === '{{ ChiefTools\SDK\Chief::SIDEBAR_LAYOUT_PREFERENCE }}') {
@@ -31,8 +32,10 @@
 
                 <ul role="list" class="divide-y divide-line">
                     @foreach($preferences as $preference => [$title, $description, $icon, $default])
+                        @php($lockedReason = $user->preferenceLockedReason($preference))
                         <li class="py-3 last:pb-0 flex items-center justify-between" x-data="{
                             on: {{ $user->getPreference($preference, $default) ? 'true' : 'false' }},
+                            error: null,
                         }">
                             <div class="flex flex-col">
                                 <p class="text-sm font-medium text-fg">
@@ -41,13 +44,28 @@
                                 <p class="text-sm text-fg-subtle">
                                     {!! $description !!}
                                 </p>
+                                @if($lockedReason !== null)
+                                    <p class="mt-1 text-sm text-amber" data-preference-locked="{{ $preference }}">
+                                        <i class="fal fa-fw fa-lock"></i> {{ $lockedReason }}
+                                    </p>
+                                @endif
+                                <p x-cloak x-show="error" x-text="error" class="mt-1 text-sm text-red" role="alert"></p>
                             </div>
                             <button x-cloak
                                     type="button"
-                                    class="ml-4 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-brand-500 bg-brand-500"
+                                    @class([
+                                        'ml-4 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface focus:ring-brand-500 bg-brand-500',
+                                        'cursor-pointer' => $lockedReason === null,
+                                        'cursor-not-allowed opacity-50' => $lockedReason !== null,
+                                    ])
                                     x-ref="preference_{{ str_slug($preference) }}"
                                     :class="{'bg-brand-500': on, 'bg-line-strong': !on}"
-                                    @click="toggle('{{ $preference }}')">
+                                    @if($lockedReason !== null)
+                                        disabled
+                                        aria-disabled="true"
+                                    @else
+                                        @click="toggle('{{ $preference }}')"
+                                    @endif>
                                 <span class="inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200 translate-x-5" :class="{ 'translate-x-5': on, 'translate-x-0': !(on) }"></span>
                             </button>
                         </li>

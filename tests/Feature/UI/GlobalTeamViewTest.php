@@ -1,5 +1,6 @@
 <?php
 
+use ChiefTools\SDK\UI\Shell\Commands;
 use Illuminate\Support\Facades\Route;
 use ChiefTools\SDK\Http\Controllers\Team\SwitchToGlobal;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -65,4 +66,30 @@ it('switches to the global team view on its home page from a page that needs a t
     session()->setPreviousUrl(url('team/amber-grove/settings'));
 
     expect(app(SwitchToGlobal::class)()->getTargetUrl())->toBe(url('team/global/start'));
+});
+
+it('shows a restricted team greyed out with a link to Account Chief instead of switching to it', function () {
+    $this->user->teams()->updateExistingPivot($this->birch->id, ['access_restricted' => true]);
+    $this->user->unsetRelation('teams');
+    $this->user->setCurrentTeam($this->amber);
+
+    $html = view('chief::partial.menu', ['logoRedirect' => '/', 'menuItems' => []])->render();
+
+    expect($html)
+        ->toContain('href="' . e(chief_base_url('team/birch-hollow')) . '"')
+        ->toContain('data-team-access-restricted')
+        ->toContain('Access restricted, see what to do')
+        ->not->toContain('href="' . route('team.switch', [$this->birch]) . '"');
+});
+
+it('offers to restore access to a restricted team from the palette instead of switching to it', function () {
+    $this->user->teams()->updateExistingPivot($this->birch->id, ['access_restricted' => true]);
+    $this->user->unsetRelation('teams');
+
+    $commands = Commands::teamSwitcher($this->user, $this->amber);
+
+    expect($commands->firstWhere('label', 'Restore access to Birch Hollow team'))->toMatchArray([
+        'href'   => chief_base_url('team/birch-hollow'),
+        'target' => '_blank',
+    ])->and($commands->firstWhere('label', 'Switch to Birch Hollow team'))->toBeNull();
 });

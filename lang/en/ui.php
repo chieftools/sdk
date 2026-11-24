@@ -40,6 +40,7 @@ return [
         'current_team'               => 'Current team',
         'all_teams'                  => 'All teams',
         'all_teams_description'      => 'Every team you are a member of',
+        'team_access_restricted'     => 'Access restricted, see what to do',
         'find_team'                  => 'Find a team...',
         'no_teams_found'             => 'No teams match your search.',
         'switch_team_anywhere'       => 'Switch teams from anywhere',

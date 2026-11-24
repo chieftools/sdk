@@ -109,7 +109,7 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
     {
         return $this->belongsToMany(Chief::userModel())
             ->using(TeamMembership::class)
-            ->withPivot('role')
+            ->withPivot(['role', 'access_restricted'])
             ->withTimestamps()
             ->orderBy('team_user.created_at');
     }
@@ -128,7 +128,16 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
 
         $this->save();
     }
-
+    /** Whether the user this team was loaded through cannot access it, loaded without a membership it is never restricted. */
+    public function isAccessRestricted(): bool
+    {
+        return $this->relationLoaded('pivot') && $this->getRelation('pivot')->access_restricted === true;
+    }
+    /** The page in Account Chief that explains what the user needs to do before access to this team is restored. */
+    public function accessRestrictedUrl(): string
+    {
+        return chief_base_url("team/{$this->slug}");
+    }
     /** The webhook endpoints the team's plan allows, -1 for no limit, which is the default until plans set one. */
     public function webhookEndpointsLimit(): int
     {
@@ -136,7 +145,6 @@ class Team extends Entity implements AuthenticatableContract, AuthenticatesWithR
 
         return (int)($limits['webhook_endpoints'] ?? -1);
     }
-
     public function maybeUpdateLastActivity(): void
     {
         if (!$this->shouldUpdateLastActivity()) {

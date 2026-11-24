@@ -37,7 +37,7 @@ readonly class RemoteUserAccessTokenGuard extends RemoteAccessTokenGuard
                 );
             }
 
-            if ($user === null || !$user->hasApplicationAccess() || $team === null) {
+            if ($user === null || !$user->hasApplicationAccess() || $team === null || $team->isAccessRestricted()) {
                 return null;
             }
 

@@ -25,7 +25,7 @@ function createTeamContextUser(bool $isAdmin = false): User
     return $user->refresh();
 }
 
-function createTeamContextTeam(string $slug, ?User $member = null): Team
+function createTeamContextTeam(string $slug, ?User $member = null, bool $accessRestricted = false): Team
 {
     $team = new Team;
     $team->forceFill([
@@ -33,7 +33,7 @@ function createTeamContextTeam(string $slug, ?User $member = null): Team
         'name' => str($slug)->headline()->toString(),
     ])->save();
 
-    $member?->teams()->attach($team, ['role' => 'member']);
+    $member?->teams()->attach($team, ['role' => 'member', 'access_restricted' => $accessRestricted]);
 
     return $team;
 }

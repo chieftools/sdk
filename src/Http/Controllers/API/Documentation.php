@@ -22,7 +22,7 @@ class Documentation
                 $this->protocol('rest'),
                 $this->protocol('graphql'),
             ])->filter()->values(),
-            'teamTokensUrl'                  => chief_base_url('team/select'),
+            'teamTokensUrl'                  => chief_base_url('team/select/security'),
             'mcp'                            => chief_mcp_endpoint() === null ? null : [
                 'endpoint'          => chief_mcp_endpoint(),
                 'documentation_url' => chief_mcp_documentation_url(),

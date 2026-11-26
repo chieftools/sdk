@@ -6,6 +6,11 @@ const tooltipTimeout = 1000;
 
 export function initializeClipboard(el = document) {
     el.querySelectorAll('[data-clipboard]').forEach(node => {
+        // Livewire initializes every element with a wire: attribute, which reaches the same node more than once
+        if (node._clipboard) {
+            return;
+        }
+
         const targetSelector = node.getAttribute('data-clipboard');
         const options = {};
 
@@ -17,9 +22,14 @@ export function initializeClipboard(el = document) {
 
         const clipboard = new ClipboardJS(node, options);
 
-        const tooltip = tippy(node, {
+        node._clipboard = clipboard;
+
+        // The confirmation is anchored to a detached element placed over the node, which keeps `node._tippy` free for a hover tooltip
+        const tooltip = tippy(document.createElement('div'), {
             content: tooltipText,
             trigger: 'manual',
+            appendTo: () => document.body,
+            getReferenceClientRect: () => node.getBoundingClientRect(),
         });
 
         clipboard.on('success', () => {

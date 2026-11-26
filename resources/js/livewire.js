@@ -1,9 +1,8 @@
-import {initializeTooltips} from './tooltips';
 import {initializeClipboard} from './clipboard';
 
+// Tooltips need no initialization here, they are delegated from the root element (see tooltips.js)
 document.addEventListener('livewire:init', () => {
     const initComponents = ({el}) => {
-        initializeTooltips(el);
         initializeClipboard(el);
     };
 
